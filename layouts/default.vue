@@ -80,7 +80,7 @@ const goSearch = () => {
 .content {
     flex: 1;
     overflow-y: auto;
-    background: #000;
+    background: #FFFFFF1A;
 }
 
 .sidebar {
