@@ -1,67 +1,86 @@
 <template>
-  <div class="layout">
-    <SidebarWishlist />
-    <aside class="sidebar">
-        <h1 class="title">Watchlists</h1>
+    <div class="layout">
+        <SidebarWishlist />
+        <aside class="sidebar">
+            <NuxtLink to="/">
+                <h1 class="title">Watchlists</h1>
+            </NuxtLink>
+            <div class="search-box">
+                <input type="text" placeholder="Search" v-model="keyword" @keyup.enter="goSearch" />
+                <span class="search-icon" @click="goSearch"></span>
+            </div>
 
-        <div class="search-box">
-            <input type="text" placeholder="Search" />
-        </div>
 
-        <nav class="menu">
-            <button class="menu-btn">
-                <img src="/images/home-icon.png" alt="home-icon">
-                <span>Home</span>
-            </button>
-            <button class="menu-btn">
-                <img src="/images/history-icon.png" alt="history-icon">
-                <span>History</span>
-            </button>
-        </nav>
+            <nav class="menu">
+                <NuxtLink to="/" class="menu-btn">
+                    <img src="/icons/home-icon.png" alt="home-icon">
+                    <span>Home</span>
+                </NuxtLink>
+                <NuxtLink to="/history" class="menu-btn">
+                    <img src="/icons/history-icon.png" alt="history-icon">
+                    <span>History</span>
+                </NuxtLink>
+            </nav>
 
-        <button class="create-btn">+ Create watchlist</button>
+            <NuxtLink to="/create" class="create-btn">
+                + Create watchlist
+            </NuxtLink>
 
-        <div class="line"></div>
-        <div class="my-lists">
-            <h3>My Lists</h3>
-        </div>
+            <div class="line"></div>
+            <div class="my-lists">
+                <h3>My Lists</h3>
+            </div>
 
-        <div class="profile-box">
-            <div class="left">
-                <div class="avatar">
-                    <img src="/images/user-icon.png" alt="user" />
+            <NuxtLink to="/profile" class="profile-link">
+                <div class="profile-box">
+                    <div class="left">
+                        <div class="avatar">
+                            <img src="/icons/user-icon.png" alt="user" />
+                        </div>
+                        <span class="name">GUEST</span>
+                    </div>
+
+                    <div class="dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </div>
-                <span class="name">GUEST</span>
-            </div>
+            </NuxtLink>
 
-            <div class="dots">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+        </aside>
+        <div class="content">
+            <slot />
         </div>
-    </aside>
-    <div class="content">
-      <slot />
     </div>
-  </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
+import { navigateTo } from "#app";
+
+const keyword = ref("");
+
+const goSearch = () => {
+    if (!keyword.value) return; // กันช่องว่าง
+
+    navigateTo(`/search?query=${encodeURIComponent(keyword.value)}`);
+};
 </script>
 
 <style scoped>
 .layout {
-  display: flex;          /* <-- สำคัญที่สุด */
-  width: 100%;
-  height: 100vh;
-  background: #000;
+    display: flex;
+    /* <-- สำคัญที่สุด */
+    width: 100%;
+    height: 100vh;
+    background: #000;
 }
 
 .content {
-  flex: 1;
-  overflow-y: auto;
-  background: #000;
+    flex: 1;
+    overflow-y: auto;
+    background: #000;
 }
 
 .sidebar {
@@ -82,6 +101,19 @@
     font-weight: bold;
     margin-bottom: 20px;
     padding-left: 12px;
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1.title {
+    text-decoration: none;
+}
+
+.search-box {
+    cursor: pointer;
 }
 
 /* Search box */
@@ -120,9 +152,10 @@
     font-size: 16px;
     font-weight: 400;
     line-height: 100%;
+    text-decoration: none;
 }
 
-.menu-btn:hover {
+.menu-btn.router-link-exact-active {
     background: #1b1b1b;
 }
 
@@ -139,11 +172,19 @@
     color: #141414;
     border: none;
     border-radius: 6px;
+    text-decoration: none; 
     cursor: pointer;
+    
+}
+
+a.create-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .create-btn:hover {
-    background: #ff4d4d;
+    background: #ECBFC0;
 }
 
 .line {
@@ -200,6 +241,11 @@
     gap: 10px;
 }
 
+.profile-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
 
 .avatar img {
     position: relative;
