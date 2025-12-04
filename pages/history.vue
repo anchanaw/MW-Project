@@ -8,8 +8,9 @@
     <div class="movie-grid">
       <MovieCard
         v-for="(movie, index) in historyList"
-        :key="index"
-        :movie="movie"
+        :key="movie.id"
+        v-bind="movie"
+        :class="{ viewed: movie.isViewed }"
       />
     </div>
 
@@ -18,17 +19,20 @@
 
 <script setup>
 import MovieCard from '~/components/moviecard.vue'
+import { useMainStore } from '~/stores/main'
+import { storeToRefs } from 'pinia'
 
-const movies = [
-  { id: 1, title: 'Top Gun: Maverick', year: 2022, img: '/movies/topgun-poster.jpg', rating: 83 },
-  { id: 2, title: 'Fantastic Beasts: The Secrets of Dumbledore', year: 2022, img: '/movies/fantastic-poster.jpg', rating: 68 },
-];
-const desiredCount = 5
+const store = useMainStore()
+const { history } = storeToRefs(store)
 
-const showMovies = Array.from({ length: desiredCount }, (_, i) => {
-  const m = movies[i % movies.length]
-  return { ...m }
-})
+// ⭐ ใช้ history จาก store
+const historyList = history
+
+// ⭐ เคลียร์ประวัติ
+const clearHistory = () => {
+  store.clearAllHistory()
+}
+console.log("store = ", store)
 
 </script>
 
@@ -57,10 +61,16 @@ const showMovies = Array.from({ length: desiredCount }, (_, i) => {
   text-decoration: underline;
 }
 
+/* grid แบบในภาพ */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 25px;
 }
-</style>
 
+/* ⭐ ถ้าอยากให้มีกรอบแดงสำหรับหนังที่ดูแล้ว */
+.viewed {
+  border: 2px solid #ff4f4f;
+  border-radius: 8px;
+}
+</style>

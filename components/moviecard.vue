@@ -1,5 +1,4 @@
 <script setup>
-// Props ที่รับเข้ามา
 defineProps({
   id: { type: [String, Number], required: true },
   title: { type: String, required: true },
@@ -23,7 +22,6 @@ const formatTitle = (text) => {
 <template>
   <div class="movie-card">
 
-    <!-- พื้นที่โปสเตอร์: NuxtLink เพื่อไป /movie/:id -->
     <NuxtLink :to="`/movie/${id}`" class="poster" aria-label="View movie details">
       <img :src="img" :alt="title" class="poster-img" />
     </NuxtLink>
@@ -32,14 +30,12 @@ const formatTitle = (text) => {
       <img src="/icons/plus-icon.svg" alt="Add" />
     </button>
 
-    <!-- แถบคะแนน (ใต้โปสเตอร์) -->
     <div class="rating-bar">
       <img :src="emojiFor(rating)" class="emoji" />
       <span class="score">{{ rating }}</span>
       <span class="outof">/100</span>
     </div>
 
-    <!-- ข้อมูลชื่อและปี -->
     <div class="meta">
       <p class="title" v-html="formatTitle(title)"></p>
       <p class="year" v-if="year">({{ year }})</p>
@@ -62,7 +58,6 @@ const formatTitle = (text) => {
   filter: brightness(0.7);
 
 }
-/* Poster area (link) */
 .poster {
   display: block;
   position: relative;
@@ -98,8 +93,6 @@ const formatTitle = (text) => {
   filter: brightness(5.5) saturate(2) contrast(2);
 }
 
-
-/* Rating bar */
 .rating-bar,.score,.outof {
     font-family: Lato, sans-serif;
 
@@ -131,7 +124,6 @@ const formatTitle = (text) => {
   font-weight: 400;
 }
 
-/* Meta area */
 .meta {
   padding: 8px 4px 0;
 }

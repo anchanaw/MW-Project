@@ -1,57 +1,66 @@
 <template>
   <div class="search-page">
 
-    <!-- Title -->
     <h1 class="search-title">
       Search Results: movies by <span>{{ query }}</span>
     </h1>
 
-    <!-- Loading -->
     <p v-if="loading" class="loading-text">Searching...</p>
 
-    <!-- Result Grid -->
     <div v-else class="movie-grid">
-      <MovieCard
-        v-for="movie in results"
-        :key="movie.id"
-        :movie="movie"
-      />
+      <MovieCard v-for="movie in results" :key="movie.id" :title="movie.title" :img="movie.img" :year="movie.year" :rating="movie.rating"/>
     </div>
 
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import MovieCard from '~/components/moviecard.vue';
+import { useMainStore } from '~/stores/main';
+
 
 const route = useRoute();
-const query = route.query.query || ""; // เช่น "Tom Cruise"
+const query = ref(route.query.query?.toLowerCase() || "");
 
 const loading = ref(true);
 const results = ref([]);
 
-// ⭐ Dummy data (รอ API จริง)
-const dummyMovies = [
-  { id: 1, title: 'Top Gun: Maverick', year: 2022, img: '/movies/topgun-poster.jpg', rating: 83 },
-  { id: 2, title: 'Fantastic Beasts: The Secrets of Dumbledore', year: 2022, img: '/movies/fantastic-poster.jpg', rating: 68 },
-];
+const store = useMainStore();
+const dummyMovies = store.movies;
 
-// ⭐ โหลดผลลัพธ์ (ตอนนี้ยังใช้ dummy)
+
+// ฟังก์ชันค้นหา
 const fetchSearch = async () => {
   loading.value = true;
 
-  // จำลองโหลด API
-  await new Promise((r) => setTimeout(r, 500));
+  await new Promise((r) => setTimeout(r, 300));
 
-  results.value = dummyMovies; // เอา dummy มาแสดงก่อน
+  if (!query.value) {
+    results.value = [];
+  } else {
+    results.value = dummyMovies.filter(movie =>
+      movie.title.toLowerCase().includes(query.value)
+    );
+  }
 
   loading.value = false;
 };
 
-onMounted(() => fetchSearch());
+// โหลดครั้งแรก
+onMounted(fetchSearch);
+
+// โหลดใหม่ทุกครั้งที่ query เปลี่ยน
+watch(
+  () => route.query.query,
+  (newVal) => {
+    query.value = newVal?.toLowerCase() || "";
+    fetchSearch();
+  }
+);
 </script>
+
 
 <style scoped>
 .search-page {
@@ -60,12 +69,11 @@ onMounted(() => fetchSearch());
 }
 
 .search-title {
-  font-size: 26px;
+  font-family: Lato, sans-serif;
+  font-size: 32px;
+  font-weight: 250;
+  letter-spacing: 1px;
   margin-bottom: 20px;
-}
-
-.search-title span {
-  color: #ffcc55; /* เหลืองอ่อนแบบ UI */
 }
 
 .loading-text {

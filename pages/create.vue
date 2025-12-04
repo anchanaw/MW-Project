@@ -76,14 +76,20 @@ const createWatchlist = () => {
 .input-box,
 .textarea-box {
   width: 100%;
-  background: #FFFFFF0D;
-  border: 1px solid #E1E1E1;
+  background: #FFFFFF05;            
+  border: 1px solid #E1E1E1;      
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 20px;
   color: #fff;
   font-size: 15px;
 }
+
+.input-box:focus,
+.textarea-box:focus {
+  outline: none;
+  border-color: #ff3b3b;
+}           
 
 .textarea-box {
   height: 120px;

@@ -10,14 +10,14 @@
         watched.</p>
     </div>
 
-    <!-- Search -->
     <div class="search-area">
       <img src="/icons/search-icon.png" class="search-icon" alt="search">
-      <input type="text" placeholder="Search for movies by title" />
-      <button class="search-btn">search</button>
+
+      <input v-model="searchText" @keyup.enter="goSearch" type="text" placeholder="Search for movies by title" />
+
+      <button class="search-btn" @click="goSearch">search</button>
     </div>
 
-    <!-- Popular movies title -->
     <h2>Popular movies right now</h2>
 
     <!-- Movie grid -->
@@ -32,24 +32,39 @@
 <script setup>
 const isChecked = ref(false);
 import MovieCard from '~/components/moviecard.vue'
+import { useMainStore } from '~/stores/main';
 
-const movies = [
-  { id: 1, title: 'Top Gun: Maverick', year: 2022, img: '/movies/topgun-poster.jpg', rating: 83 },
-  { id: 2, title: 'Fantastic Beasts: The Secrets of Dumbledore', year: 2022, img: '/movies/fantastic-poster.jpg', rating: 68 },
-]
+
+const store = useMainStore();
+const movies = store.movies;
 const desiredCount = 5
 
 const showMovies = Array.from({ length: desiredCount }, (_, i) => {
   const m = movies[i % movies.length]
   return { ...m }
 })
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+const searchText = ref("");
+
+// ไปหน้า /search?query=xxxx
+const goSearch = () => {
+  if (!searchText.value.trim()) return;
+
+  router.push({
+    path: "/search",
+    query: {
+      query: searchText.value.trim()
+    }
+  });
+};
 </script>
 
 <style scoped>
 .main-container {
   flex: 1;
-  background: #FFFFFF1A;
   color: #E1E1E1;
   padding: 40px;
   overflow-y: auto;
@@ -109,14 +124,16 @@ const showMovies = Array.from({ length: desiredCount }, (_, i) => {
   width: 28px;
   height: 25px;
   display: inline-block;
-  background-image: url('/icons/check-icon.png'); /* สีปกติ */
+  background-image: url('/icons/check-icon.png');
+  /* สีปกติ */
   background-size: contain;
   background-repeat: no-repeat;
   cursor: pointer;
 }
 
 .check-icon.active {
-  background-image: url('/icons/check-icon-green.png'); /* สีเขียว */
+  background-image: url('/icons/check-icon-green.png');
+  /* สีเขียว */
 }
 
 /* Search section */
