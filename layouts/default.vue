@@ -66,12 +66,21 @@ const goSearch = () => {
 
     navigateTo(`/search?query=${encodeURIComponent(keyword.value)}`);
 };
+import { useMainStore } from '~/stores/main'
+import { onMounted } from 'vue'
+
+// ⭐ โหลด history ทันทีเมื่อเปิดเว็บ
+const store = useMainStore()
+
+onMounted(() => {
+  store.loadHistoryFromLocalStorage()
+})
 </script>
 
 <style scoped>
 .layout {
     display: flex;
-    /* <-- สำคัญที่สุด */
+    /* สำคัญที่สุด */
     width: 100%;
     height: 100vh;
     background: #000;

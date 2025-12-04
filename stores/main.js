@@ -28,7 +28,6 @@ export const useMainStore = defineStore("main", {
       }
     ],
 
-    // อื่น ๆ
     watchlists: [],
     searchResults: [],
     history: [],
@@ -36,62 +35,74 @@ export const useMainStore = defineStore("main", {
   }),
 
   actions: {
-    // ตั้ง current movie และเริ่ม timer เก็บ history แบบ delayed
+    // =========================
+    // SET CURRENT MOVIE
+    // =========================
     setCurrentMovie(movie) {
       this.currentMovie = movie;
 
-      // เริ่ม timer เก็บ history หากผู้ใช้อยู่ในหน้ารายละเอียดนานพอ
+      // เริ่มจับเวลา 5 วิ
       this.addToHistoryAfterDelay(movie);
     },
 
-    // เพิ่มเข้า history ทันที (ไม่ delay) — ถ้าจำเป็นจะเรียกโดยตรง
+    // =========================
+    // ADD HISTORY IMMEDIATE
+    // =========================
     addToHistory(movie) {
-      // ลบรายการเดิมก่อนกันซ้ำ
+      // กันซ้ำ
       this.history = this.history.filter(i => i.id !== movie.id);
 
-      // ใส่รายการใหม่ไว้บนสุด
+      // push ใหม่
       this.history.unshift({
         ...movie,
         viewedAt: new Date().toISOString(),
         isViewed: true
       });
 
-      // ถ้าต้องการจำกัดจำนวน history
+      // limit 50
       if (this.history.length > 50) {
         this.history.splice(50);
       }
+
+      // ⭐ persist
+      this.saveHistoryToLocalStorage();
     },
 
-    // เก็บ history แบบ delay (default 5000 ms = 5s)
+    // =========================
+    // ADD HISTORY AFTER DELAY
+    // =========================
     addToHistoryAfterDelay(movie, delay = 5000) {
-      // เคลียร์ timer เดิมก่อน (กันการตั้ง timer ซ้อน)
+      // clear timer เดิม
       if (this._historyTimer) {
         clearTimeout(this._historyTimer);
-        this._historyTimer = null;
       }
 
       this._historyTimer = setTimeout(() => {
         // กันซ้ำ
-        this.history = this.history.filter(item => item.id !== movie.id);
+        this.history = this.history.filter(i => i.id !== movie.id);
 
-        // ใส่เข้าข้างบนสุดพร้อม metadata
+        // push รายการใหม่
         this.history.unshift({
           ...movie,
           viewedAt: new Date().toISOString(),
           isViewed: true
         });
 
-        // ลบ timer reference เพราะเสร็จแล้ว
-        this._historyTimer = null;
-
-        // ถ้าจำกัดความยาว
+        // limit
         if (this.history.length > 50) {
           this.history.splice(50);
         }
+
+        // persist
+        this.saveHistoryToLocalStorage();
+
+        this._historyTimer = null;
       }, delay);
     },
 
-    // ถ้าต้องการยกเลิก timer (เช่น เมื่อออกจากหน้านี้เร็ว ๆ)
+    // =========================
+    // CLEAR TIMER
+    // =========================
     clearHistoryTimer() {
       if (this._historyTimer) {
         clearTimeout(this._historyTimer);
@@ -99,15 +110,43 @@ export const useMainStore = defineStore("main", {
       }
     },
 
-    // ตัวช่วยอื่น ๆ เช่น ลบ history รายการเดียว หรือ clear all
+    // =========================
+    // CLEAR SINGLE HISTORY
+    // =========================
     removeHistoryItem(id) {
       this.history = this.history.filter(i => i.id !== id);
+      this.saveHistoryToLocalStorage();
     },
 
+    // =========================
+    // CLEAR ALL HISTORY
+    // =========================
     clearAllHistory() {
       this.history = [];
+      if (process.client) {
+        localStorage.removeItem("history");
+      }
+    },
+
+    // =========================
+    // ⭐ SAVE → LocalStorage
+    // =========================
+    saveHistoryToLocalStorage() {
+      if (process.client) {
+        localStorage.setItem("history", JSON.stringify(this.history));
+      }
+    },
+
+    // =========================
+    // ⭐ LOAD → LocalStorage
+    // =========================
+    loadHistoryFromLocalStorage() {
+      if (process.client) {
+        const data = localStorage.getItem("history");
+        if (data) {
+          this.history = JSON.parse(data);
+        }
+      }
     }
-    
   }
-  
 });

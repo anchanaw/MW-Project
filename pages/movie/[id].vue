@@ -1,31 +1,30 @@
 <script setup>
-import { useRoute } from 'vue-router';
-import { useMainStore } from '~/stores/main';
-import { computed } from 'vue';
-import { onBeforeUnmount } from 'vue';
+import { useRoute } from "vue-router";
+import { useMainStore } from "~/stores/main";
+import { onMounted, onBeforeUnmount } from "vue";
 
-const route = useRoute();
 const store = useMainStore();
+const route = useRoute();
 
-const movieId = Number(route.params.id);
+// ดึงหนังตาม ID
+const movie = store.movies.find((m) => m.id === Number(route.params.id));
 
-// 🔥 โหลดจาก store (เพราะคุณเก็บทุกอย่างใน store).
-const movie = computed(() =>
-  store.movies.find(m => m.id === movieId)
-);
+// ⭐ โหลด history ทุกครั้งที่เข้าหน้านี้
+onMounted(() => {
+  store.loadHistoryFromLocalStorage();
 
-// dummy cast data (เอาไว้ก่อน)
-const cast = computed(() => movie.value.cast);
+  // ⭐ เริ่มจับเวลาเก็บ history 5 วิ
+  if (movie) {
+    store.setCurrentMovie(movie);
+  }
+});
 
-if (movie.value) {
-  store.setCurrentMovie(movie.value);
-}
-
+// ⭐ ถ้าออกจากหน้านี้ก่อน 5 วิ → ไม่เก็บ
 onBeforeUnmount(() => {
   store.clearHistoryTimer();
 });
-
 </script>
+
 
 <template>
   <div class="detail-page" v-if="movie">

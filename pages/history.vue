@@ -7,7 +7,7 @@
 
     <div class="movie-grid">
       <MovieCard
-        v-for="(movie, index) in historyList"
+        v-for="movie in history"
         :key="movie.id"
         v-bind="movie"
         :class="{ viewed: movie.isViewed }"
@@ -21,19 +21,32 @@
 import MovieCard from '~/components/moviecard.vue'
 import { useMainStore } from '~/stores/main'
 import { storeToRefs } from 'pinia'
+import { onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 const store = useMainStore()
 const { history } = storeToRefs(store)
+const route = useRoute()
 
-// ⭐ ใช้ history จาก store
-const historyList = history
+// ⭐ โหลด history ทุกครั้งที่เข้าหน้านี้
+onMounted(() => {
+  store.loadHistoryFromLocalStorage()
+})
 
-// ⭐ เคลียร์ประวัติ
+// ⭐ โหลดซ้ำเมื่อเปลี่ยน route มาที่ /history
+watch(
+  () => route.fullPath,
+  (newVal) => {
+    if (newVal === '/history') {
+      store.loadHistoryFromLocalStorage()
+    }
+  },
+  { immediate: true }
+)
+
 const clearHistory = () => {
   store.clearAllHistory()
 }
-console.log("store = ", store)
-
 </script>
 
 <style scoped>
@@ -47,9 +60,6 @@ console.log("store = ", store)
   justify-content: flex-end;
   align-items: center;
   margin-bottom: 10px;
-  font-family: Lato, sans-serif;
-  font-size: 16px;
-  font-weight: 700;
 }
 
 .clear-btn {
@@ -61,16 +71,15 @@ console.log("store = ", store)
   text-decoration: underline;
 }
 
-/* grid แบบในภาพ */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 25px;
 }
 
-/* ⭐ ถ้าอยากให้มีกรอบแดงสำหรับหนังที่ดูแล้ว */
+/* ⭐ ทำให้หนังที่ดูแล้วมีกรอบแดง */
 .viewed {
   border: 2px solid #ff4f4f;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 </style>
