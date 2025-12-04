@@ -79,11 +79,17 @@ onBeforeUnmount(() => {
 <style scoped>
 .detail-page {
   display: flex;
+  flex-direction: column;
   padding: 50px;
   gap: 40px;
   background: #111;
   color: #fff;
   font-family: Lato, sans-serif;
+}
+
+.top-container {
+  display: flex;
+  gap: 40px;
 }
 
 /* LEFT SIDE (Poster) */
@@ -104,6 +110,15 @@ onBeforeUnmount(() => {
   font-size: 36px;
   font-weight: 600;
   margin-bottom: 8px;
+}
+/* CAST SECTION — แถวล่าง */
+.cast-section {
+  margin-top: 10px;
+}
+
+.cast-section h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
 }
 
 /* Genres & Runtime */
@@ -182,19 +197,19 @@ onBeforeUnmount(() => {
   margin-bottom: 20px;
 }
 
-/* Cast Grid */
+/* ให้ cast อยู่แถวล่างเต็มความกว้าง */
 .cast-grid {
   display: flex;
-  gap: 25px;
   flex-wrap: nowrap;
+  gap: 25px;
   overflow-x: auto;
   padding-bottom: 10px;
 }
 
-/* Cast Card */
+
+/* cast card */
 .cast-card {
   width: 150px;
-  cursor: pointer;
 }
 
 .cast-img {
