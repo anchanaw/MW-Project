@@ -5,16 +5,20 @@ export const useMainStore = defineStore("main", {
     movies: [
       {
         id: 1,
-        title: 'Top Gun: Maverick',
-        year: 2022,
-        img: '/movies/topgun-poster.jpg',
-        rating: 83,
-        cast: [
-          {
-            id: 1,
-            name: "Tom Cruise With a Long Name",
-            role: "Capt. Pete 'Maverick' Mitchell",
-            img: "/cast/tom-cruise.jpg"
+    title: 'Top Gun: Maverick',
+    year: 2022,
+    img: '/movies/topgun-poster.jpg',
+    rating: 83,
+    genres: "Action, Drama",
+    runtime: "2h 11m",
+    overview:
+      "After more than thirty years of service as one of the Navy’s top aviators, and dodging the advancement in rank that would ground him, Pete “Maverick” Mitchell finds himself training a detachment of TOP GUN graduates for a specialized mission the likes of which no living pilot has ever seen.",
+    cast: [
+      {
+        id: 1,
+        name: "Tom Cruise With a Long Name",
+        role: "Capt. Pete 'Maverick' Mitchell",
+        img: "/cast/tom-cruise.jpg"
           }
         ]
       },

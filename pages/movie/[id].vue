@@ -1,214 +1,220 @@
+<template>
+  <div class="detail-page" v-if="movie">
+
+    <!-- Left Section (Poster) -->
+    <div class="left">
+      <img :src="movie.img" alt="Movie Poster" class="poster" />
+    </div>
+
+    <!-- Right Section -->
+    <div class="right">
+      <h1>{{ movie.title }} ({{ movie.year }})</h1>
+
+      <p class="genres">{{ movie.genres }}</p>
+
+      <div class="overview-section">
+        <h2>Overview</h2>
+        <p class="overview">{{ movie.overview }}</p>
+      </div>
+
+      <div class="score-section">
+        <div class="score-box">
+          <span class="score">{{ movie.rating }}</span>
+          <span class="outof">/100</span>
+        </div>
+
+        <button class="add-btn">
+          Add to Watchlist
+        </button>
+      </div>
+    </div>
+    <div class="cast-section">
+        <h2>Cast</h2>
+
+        <div class="cast-grid">
+          <div
+            class="cast-card"
+            v-for="c in movie.cast"
+            :key="c.id"
+          >
+            <img :src="c.img" class="cast-img" />
+            <p class="cast-name">{{ c.name }}</p>
+            <p class="cast-role">{{ c.role }}</p>
+          </div>
+        </div>
+      </div>
+
+  </div>
+</template>
+
 <script setup>
+import { computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
 import { useMainStore } from "~/stores/main";
-import { onMounted, onBeforeUnmount } from "vue";
 
 const store = useMainStore();
 const route = useRoute();
 
-// ดึงหนังตาม ID
-const movie = store.movies.find((m) => m.id === Number(route.params.id));
+// ⭐ ดึงหนังแบบ reactive
+const movie = computed(() =>
+  store.movies.find((m) => m.id === Number(route.params.id))
+);
 
-// ⭐ โหลด history ทุกครั้งที่เข้าหน้านี้
+// ⭐ โหลด history เมื่อเข้าหน้า
 onMounted(() => {
   store.loadHistoryFromLocalStorage();
 
-  // ⭐ เริ่มจับเวลาเก็บ history 5 วิ
-  if (movie) {
-    store.setCurrentMovie(movie);
+  // ⭐ เริ่มจับเวลา 5 วิ เพื่อบันทึก history
+  if (movie.value) {
+    store.setCurrentMovie(movie.value);
   }
 });
 
-// ⭐ ถ้าออกจากหน้านี้ก่อน 5 วิ → ไม่เก็บ
+// ⭐ ถ้าออกก่อน 5 วิ → ยกเลิก timer
 onBeforeUnmount(() => {
   store.clearHistoryTimer();
 });
 </script>
 
-
-<template>
-  <div class="detail-page" v-if="movie">
-
-    <div class="header-box">
-
-      <!-- LEFT: Poster -->
-      <div class="poster-box">
-        <img :src="movie.img" class="poster" />
-      </div>
-
-      <!-- RIGHT: Movie Info -->
-      <div class="info-box">
-        <h1 class="title">
-          {{ movie.title }}
-          <span class="year">({{ movie.year }})</span>
-        </h1>
-
-        <p class="meta">Action, Drama • 2h 11m</p>
-
-        <h3 class="section-title">Overview</h3>
-        <p class="overview">
-          After more than thirty years of service as one of the Navy's top aviators, and dodging the advancement in rank
-          that would ground him, Pete "Maverick" Mitchell finds himself training a detachment of TOP GUN graduates for a
-          specialized mission the likes of which no living pilot has ever seen.
-        </p>
-
-        <div class="actions">
-          <!-- Score -->
-          <div class="score-box">
-            <div class="label">Score</div>
-            <div class="score">{{ movie.rating }}</div>
-          </div>
-
-          <!-- Add button -->
-          <button class="add-btn">Add to Watchlist</button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Cast -->
-    <h2 class="cast-title">Cast</h2>
-
-    <div class="cast-grid">
-      <div class="cast-card" v-for="c in cast" :key="c.id">
-        <img :src="c.img" class="cast-img" />
-        <p class="cast-name">{{ c.name }}</p>
-        <p class="cast-role">{{ c.role }}</p>
-      </div>
-    </div>
-
-
-  </div>
-</template>
 <style scoped>
 .detail-page {
-  padding: 40px;
+  display: flex;
+  padding: 50px;
+  gap: 40px;
+  background: #111;
   color: #fff;
   font-family: Lato, sans-serif;
 }
 
-.header-box {
-  display: flex;
-  gap: 40px;
-}
-
-.poster-box {
-  width: 250px;
-  flex-shrink: 0;
-}
-
-.poster {
-  width: 100%;
+/* LEFT SIDE (Poster) */
+.left .poster {
+  width: 260px;
   border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0px 0px 8px #000;
 }
 
-.info-box {
+/* RIGHT SIDE */
+.right {
   flex: 1;
 }
 
-.title {
-  font-size: 32px;
-  font-weight: 400;
+/* Title */
+.right h1 {
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Genres & Runtime */
+.genres {
+  opacity: 0.8;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+/* Overview Section */
+.overview-section h2 {
+  font-size: 20px;
   margin-bottom: 10px;
 }
 
-.year {
-  color: #aaa;
-}
-
-.meta {
-  color: #bbb;
-  margin-bottom: 20px;
-}
-
-.section-title {
-  margin-top: 20px;
-  font-size: 22px;
-  font-weight: 400;
-  margin-bottom: 8px;
-}
-
 .overview {
-  width: 80%;
-  color: #ddd;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-size: 15px;
+  max-width: 650px;
+  opacity: 0.9;
 }
 
-.actions {
+/* SCORE + WATCHLIST BUTTON */
+.score-section {
   display: flex;
   align-items: center;
-  gap: 90px;
-  margin-top: 25px;
+  gap: 40px;
+  margin: 30px 0 40px;
 }
 
 .score-box {
-  background: #222;
-  padding: 12px 18px;
-  border-radius: 8px;
-  text-align: center;
-  border: 1px solid #A41B1B;
-}
-
-.score-box .label {
-  font-size: 14px;
-  color: #bbb;
-}
-
-.score-box .score {
-  font-size: 28px;
-  font-weight: 700;
-  color: #ff4646;
-}
-
-.add-btn {
-  width: 200px;
-  height: 63px;
-  padding: 31px 23px;
-  background: #ff4646;
-  border: none;
+  padding: 15px 22px;
+  background: #00000066;
+  border: 1px solid #444;
   border-radius: 6px;
-  color: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
+  width: 90px;
+}
+
+.score {
+  display: block;
+  color: #ff4646;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.outof {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+/* Add Button */
+.add-btn {
+  background: #ff4646;
+  color: #111;
+  border: none;
+  padding: 12px 35px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
+  border-radius: 6px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .add-btn:hover {
-  background: #ff5c5c;
+  background: #ff5d5d;
 }
 
-/* Cast Section */
-.cast-title {
-  margin-top: 50px;
-  font-size: 28px;
+/* CAST SECTION */
+.cast-section {
+  margin-top: 40px;
+}
+
+.cast-section h2 {
+  font-size: 20px;
   margin-bottom: 20px;
 }
 
+/* Cast Grid */
 .cast-grid {
   display: flex;
-  gap: 20px;
+  gap: 25px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 10px;
 }
 
+/* Cast Card */
 .cast-card {
   width: 150px;
+  cursor: pointer;
 }
 
 .cast-img {
-  width: 100%;
-  border-radius: 6px;
-  margin-bottom: 8px;
+  width: 150px;
+  height: 180px;
+  border-radius: 8px;
+  object-fit: cover;
 }
 
+/* Cast Name + Role */
 .cast-name {
+  margin-top: 10px;
   font-size: 15px;
   font-weight: 600;
 }
 
 .cast-role {
   font-size: 13px;
-  color: #bbb;
+  opacity: 0.7;
+  margin-top: 2px;
 }
+
 </style>
