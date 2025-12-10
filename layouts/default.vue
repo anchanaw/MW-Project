@@ -37,7 +37,11 @@
                         <div class="avatar">
                             <img src="/icons/user-icon.png" alt="user" />
                         </div>
-                        <span class="name">GUEST</span>
+
+                        <!-- SHOW USER NAME OR GUEST -->
+                        <span class="name">
+                            {{ auth.isAuthenticated && auth.user ? auth.user.name : 'GUEST' }}
+                        </span>
                     </div>
 
                     <div class="dots">
@@ -73,8 +77,17 @@ import { onMounted } from 'vue'
 const store = useMainStore()
 
 onMounted(() => {
-  store.loadHistoryFromLocalStorage()
+    store.loadHistoryFromLocalStorage()
 })
+
+import { useAuthStore } from '~/stores/auth'
+
+const auth = useAuthStore()
+
+onMounted(() => {
+    auth.init()
+})
+
 </script>
 
 <style scoped>
@@ -181,9 +194,9 @@ h1.title {
     color: #141414;
     border: none;
     border-radius: 6px;
-    text-decoration: none; 
+    text-decoration: none;
     cursor: pointer;
-    
+
 }
 
 a.create-btn {
