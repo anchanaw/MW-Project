@@ -34,20 +34,18 @@
             <NuxtLink to="/profile" class="profile-link">
                 <div class="profile-box">
                     <div class="left">
+
                         <div class="avatar">
-                            <img src="/icons/user-icon.png" alt="user" />
+                            <img :src="auth.user?.avatar || '/icons/user-icon.png'" alt="avatar" />
                         </div>
 
-                        <!-- SHOW USER NAME OR GUEST -->
                         <span class="name">
-                            {{ auth.isAuthenticated && auth.user ? auth.user.name : 'GUEST' }}
+                            {{ auth.isAuthenticated ? auth.user.name : "GUEST" }}
                         </span>
                     </div>
 
                     <div class="dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                        <span></span><span></span><span></span>
                     </div>
                 </div>
             </NuxtLink>
