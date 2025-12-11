@@ -1,6 +1,5 @@
 <template>
     <div class="layout">
-        <SidebarWishlist />
         <aside class="sidebar">
             <NuxtLink to="/">
                 <h1 class="title">Watchlists</h1>
@@ -29,8 +28,15 @@
             <div class="line"></div>
             <div class="my-lists">
                 <h3>My Lists</h3>
-            </div>
 
+                <div v-if="auth.user?.watchlists && auth.user.watchlists.length > 0">
+                    <NuxtLink v-for="list in auth.user.watchlists" :key="list.id" :to="`/watchlist/${list.id}`"
+                        class="list-item">
+                        <span class="icon">{{ list.title.charAt(0).toUpperCase() }}</span>
+                        <span class="list-title">{{ list.title }}</span>
+                    </NuxtLink>
+                </div>
+            </div>
             <NuxtLink to="/profile" class="profile-link">
                 <div class="profile-box">
                     <div class="left">
@@ -58,34 +64,24 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { navigateTo } from "#app";
+import { useMainStore } from "~/stores/main";
+import { useAuthStore } from "~/stores/auth";
 
 const keyword = ref("");
 
 const goSearch = () => {
-    if (!keyword.value) return; // กันช่องว่าง
-
+    if (!keyword.value.trim()) return;
     navigateTo(`/search?query=${encodeURIComponent(keyword.value)}`);
 };
-import { useMainStore } from '~/stores/main'
-import { onMounted } from 'vue'
 
-// ⭐ โหลด history ทันทีเมื่อเปิดเว็บ
-const store = useMainStore()
+const store = useMainStore();
+onMounted(() => store.loadHistoryFromLocalStorage());
 
-onMounted(() => {
-    store.loadHistoryFromLocalStorage()
-})
-
-import { useAuthStore } from '~/stores/auth'
-
-const auth = useAuthStore()
-
-onMounted(() => {
-    auth.init()
-})
-
+// Auth store
+const auth = useAuthStore();
+onMounted(() => auth.init());
 </script>
 
 <style scoped>
@@ -238,6 +234,33 @@ a.create-btn {
 .my-lists li {
     padding: 8px 0;
     color: #ddd;
+}
+
+.my-lists .list-item {
+  color: #ffffff;        /* สีข้อความ */
+  text-decoration: none; /* เอาเส้นใต้ลิงก์ออก */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-family: Lato, sans-serif;
+  font-size: 16px;
+}
+
+.my-lists .list-item:hover {
+  color: #ff3b3b;        /* สีแดงตอน hover */
+}
+
+.my-lists .icon {
+  font-weight: bold;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e5e5e5;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .profile-box {

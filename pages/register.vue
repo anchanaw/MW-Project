@@ -84,14 +84,14 @@ export default {
         return;
       }
 
-      // ตรวจ Email ซ้ำ
-      const exist = JSON.parse(localStorage.getItem("myapp_auth"));
-      if (exist?.user?.email === this.email) {
+      //ตรวจ Email ซ้ำใน users array
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      if (users.some(u => u.email === this.email)) {
         alert("Email already exists");
         return;
       }
 
-      // สมัครสมาชิก
+      //สมัครสมาชิก (store จะสร้าง watchlists: [] ให้เองใน auth.js)
       await this.auth.register({
         name: this.name,
         email: this.email,

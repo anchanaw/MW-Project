@@ -4,21 +4,12 @@
 
     <div class="form-group">
       <label for="name">Name</label>
-      <input 
-        type="text" 
-        id="name" 
-        v-model="name"
-        class="input-box"
-      />
+      <input type="text" id="name" v-model="name" class="input-box" />
     </div>
 
     <div class="form-group">
       <label for="description">Description</label>
-      <textarea 
-        id="description" 
-        v-model="description"
-        class="textarea-box"
-      ></textarea>
+      <textarea id="description" v-model="description" class="textarea-box"></textarea>
     </div>
 
     <button class="create-btn" @click="createWatchlist">
@@ -27,38 +18,60 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script>
+import { useAuthStore } from "../stores/auth";
+import { useRouter } from "vue-router";
 
-const name = ref('')
-const description = ref('')
+export default {
+  data() {
+    return {
+      name: "",
+      description: ""
+    };
+  },
 
-const createWatchlist = () => {
-  if (!name.value) {
-    alert("Please enter a name")
-    return
+  setup() {
+    const auth = useAuthStore();
+    const router = useRouter();
+    return { auth, router };
+  },
+
+  methods: {
+    createWatchlist() {
+      if (!this.name.trim()) {
+        alert("Please enter a name");
+        return;
+      }
+
+      // ⭐ เพิ่ม watchlist เข้า user ปัจจุบัน
+      this.auth.addWatchlist({
+        title: this.name,
+        description: this.description
+      });
+
+      alert("Watchlist created!");
+      this.router.push("/profile"); // กลับไปหน้าโปรไฟล์
+    }
   }
-
-  console.log("New Watchlist:", {
-    name: name.value,
-    description: description.value
-  })
-
-
-}
+};
 </script>
+
 
 <style scoped>
 .create-container {
   padding: 23px;
   color: #fff;
 }
-.title,.form-group,.create-btn {
+
+.title,
+.form-group,
+.create-btn {
   font-family: Lato, sans-serif;
   letter-spacing: 1px;
 }
+
 .title {
-    display: flex;
+  display: flex;
   font-size: 32px;
   font-weight: 400;
   margin-bottom: 50px;
@@ -76,8 +89,8 @@ const createWatchlist = () => {
 .input-box,
 .textarea-box {
   width: 100%;
-  background: #FFFFFF05;            
-  border: 1px solid #E1E1E1;      
+  background: #FFFFFF05;
+  border: 1px solid #E1E1E1;
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 20px;
@@ -89,7 +102,7 @@ const createWatchlist = () => {
 .textarea-box:focus {
   outline: none;
   border-color: #ff3b3b;
-}           
+}
 
 .textarea-box {
   height: 120px;
