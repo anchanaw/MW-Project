@@ -55,6 +55,7 @@
 
 <script>
 import { useAuthStore } from "../stores/auth";
+import { useRouter } from "vue-router";
 
 export default {
   data() {
@@ -66,9 +67,14 @@ export default {
 
   setup() {
     const auth = useAuthStore();
-    auth.init();   // ⭐ สำคัญมาก: โหลดข้อมูล user + avatar ตอนเข้าเพจ
+    const router = useRouter();
 
-    return { auth };
+    auth.init();   // ⭐ โหลดค่าผู้ใช้ตอนเปิดหน้า
+
+    return {
+      auth,
+      router,
+    };
   },
 
   methods: {
@@ -79,10 +85,14 @@ export default {
     logoutUser() {
       this.auth.logout();
     },
+
+    // ⭐ ฟังก์ชัน Edit Profile ที่ทำงานจริง!
+    goEdit() {
+      this.router.push("/edit");
+    },
   },
 };
 </script>
-
 
 <style scoped>
 .profile-page {

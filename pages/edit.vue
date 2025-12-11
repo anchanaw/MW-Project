@@ -97,6 +97,7 @@ const updateProfile = () => {
   min-height: 100vh;
   padding: 40px 60px;
   color: white;
+  font-family: Lato, sans-serif;
 }
 
 .top-bar {
@@ -163,9 +164,11 @@ label {
 
 input {
   height: 42px;
+  background-color: #FFFFFF05;
   margin-bottom: 12px;
   border-radius: 6px;
-  border: 1px solid #aaa;
+  border: 1px solid #E1E1E1;
+  color: #fff;
   padding-left: 10px;
 }
 
