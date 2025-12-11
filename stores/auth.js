@@ -1,95 +1,98 @@
-// /stores/auth.js
+// stores/auth.js
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
-  // STATE
+
   const user = ref(null)
   const token = ref(null)
   const isAuthenticated = ref(false)
-  const showLoginModal = ref(false)
 
-  // LOAD AUTH DATA
+  // ⭐ โหลดข้อมูล session ตอนเริ่ม
   function init() {
-    if (process.client) {
-      const raw = localStorage.getItem('myapp_auth')
-      if (raw) {
-        const data = JSON.parse(raw)
-        user.value = data.user
-        token.value = data.token
-        isAuthenticated.value = !!data.token
+    const session = JSON.parse(localStorage.getItem("auth_user"))
+    const users = JSON.parse(localStorage.getItem("users")) || []
+
+    if (session) {
+      const found = users.find(u => u.id === session.id)
+      if (found) {
+        user.value = found
+        token.value = session.token
+        isAuthenticated.value = true
       }
     }
   }
 
-  // SAVE AUTH DATA
-  function persist() {
-    if (!process.client) return
-    localStorage.setItem(
-      "myapp_auth",
-      JSON.stringify({
-        user: user.value,
-        token: token.value,
-      })
-    )
-  }
-
-  // ⭐ REGISTER (เก็บ avatar จริง)
+  // ⭐ REGISTER แบบหลายบัญชี
   async function register(data) {
+    let users = JSON.parse(localStorage.getItem("users")) || []
+
+    // ❗ กัน email ซ้ำ
+    if (users.some(u => u.email === data.email)) {
+      alert("Email already exists")
+      return
+    }
+
     const newUser = {
       id: Date.now(),
       name: data.name,
       email: data.email,
       password: data.password,
-      avatar: data.avatar || null    // ⭐ base64 avatar stored
+      avatar: data.avatar || null
     }
 
-    // ⭐ เซฟถูกที่แล้ว (myapp_auth) แทน myapp_user เดิม
+    users.push(newUser)
+    localStorage.setItem("users", JSON.stringify(users))
+
+    // Login อัตโนมัติหลังสมัคร
+    const session = {
+      id: newUser.id,
+      token: "TOKEN_" + newUser.id
+    }
+    localStorage.setItem("auth_user", JSON.stringify(session))
+
     user.value = newUser
-    token.value = "REGISTER_TOKEN"
+    token.value = session.token
     isAuthenticated.value = true
-
-    persist()
   }
 
-  // ⭐ LOGIN (โหลด user ที่เคย register)
+  // ⭐ LOGIN
   async function loginWithCredentials(email, password) {
+    const users = JSON.parse(localStorage.getItem("users")) || []
 
-    // โหลดข้อมูลที่ register ไว้
-    const raw = localStorage.getItem("myapp_auth")
-    if (!raw) return
-    
-    const saved = JSON.parse(raw)
+    const found = users.find(u => u.email === email)
+    if (!found) return alert("Email not found")
+    if (found.password !== password) return alert("Incorrect password")
 
-    // ตรวจ email & password (mock)
-    if (saved.user.email !== email) return alert("Email not found")
-    if (saved.user.password !== password) return alert("Incorrect password")
+    const session = {
+      id: found.id,
+      token: "TOKEN_" + found.id
+    }
+    localStorage.setItem("auth_user", JSON.stringify(session))
 
-    user.value = saved.user      // ⭐ avatar ถูกโหลดครบถ้วน
-    token.value = "FAKE_LOGIN_TOKEN"
+    user.value = found
+    token.value = session.token
     isAuthenticated.value = true
-
-    persist()
   }
 
-  // LOGOUT
+  // ⭐ LOGOUT (สำคัญสุด!)
   function logout() {
-    token.value = null
+    // ❗ ไม่ลบ users
+    // ลบเฉพาะ session
+    localStorage.removeItem("auth_user")
+
     user.value = null
+    token.value = null
     isAuthenticated.value = false
-    localStorage.removeItem("myapp_auth")
   }
 
   return {
     user,
     token,
     isAuthenticated,
-    showLoginModal,
-
     init,
-    persist,
-    loginWithCredentials,
     register,
+    loginWithCredentials,
     logout,
   }
 })

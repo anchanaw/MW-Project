@@ -17,7 +17,7 @@
           <label>Password *</label>
           <input v-model="password" type="password" />
 
-          <button class="login-btn" @click="login">Log in</button>
+          <button class="login-btn" @click="loginUser">Login</button>
 
           <p class="create-link">
             or <NuxtLink to="/register">create an account</NuxtLink>
@@ -28,11 +28,10 @@
     </div>
 
 
-    <!-- ⭐ LOGGED-IN MODE -->
+    <!-- LOGGED-IN MODE -->
     <div v-else class="profile-user">
       <div class="profile-center">
 
-        <!-- Avatar -->
         <div class="profile-avatar">
           <img :src="auth.user.avatar || '/icons/user-icon.png'" />
         </div>
@@ -43,51 +42,49 @@
           You are logged in as <strong>{{ auth.user.email }}</strong>
         </p>
 
-        <button class="logout-btn" @click="logout">Log out</button>
+        <button class="logout-btn" @click="logoutUser">Logout</button>
 
-        <!-- ⭐ Edit Profile Button — โผล่เฉพาะตอนเป็น User -->
         <button class="edit-btn" @click="goEdit">
-  Edit Profile
-</button>
-
-
+          Edit Profile
+        </button>
 
       </div>
     </div>
-
   </div>
 </template>
 
+<script>
+import { useAuthStore } from "../stores/auth";
 
+export default {
+  data() {
+    return {
+      email: "",
+      password: "",
+    };
+  },
 
-<script setup>
-import { ref } from 'vue'
-import { useAuthStore } from '~/stores/auth'
+  setup() {
+    const auth = useAuthStore();
+    auth.init();   // ⭐ สำคัญมาก: โหลดข้อมูล user + avatar ตอนเข้าเพจ
 
-const auth = useAuthStore()
+    return { auth };
+  },
 
-const email = ref("")
-const password = ref("")
+  methods: {
+    async loginUser() {
+      await this.auth.loginWithCredentials(this.email, this.password);
+    },
 
-const login = async () => {
-  await auth.loginWithCredentials(email.value, password.value)
-}
-
-const logout = () => {
-  auth.logout()
-}
-
-const goEdit = () => {
-  navigateTo('/profile/edit')
-}
-
+    logoutUser() {
+      this.auth.logout();
+    },
+  },
+};
 </script>
 
 
-
-
 <style scoped>
-/* PAGE BACKGROUND */
 .profile-page {
   background: #111;
   min-height: 100vh;
@@ -96,29 +93,22 @@ const goEdit = () => {
   position: relative;
 }
 
-/* LEFT HEADER */
 .header-text {
   max-width: 450px;
   margin-bottom: 103px;
   font-family: Lato, sans-serif;
 }
 
-/* Hello! + paragraph = สไตล์เดียวกัน */
 .header-text h2,
 .header-text p {
   font-size: 28px;
-  /* เท่ากันเป๊ะ */
   font-weight: 300;
-  /* น้ำหนักเดียว */
   line-height: 1.35;
-  /* ระยะห่างสวยเหมือนภาพ */
   margin: 0;
   padding: 0;
   opacity: 0.9;
-  /* เฉดสีเทาเหมือนใน UI */
 }
 
-/* LOGIN SECTION CENTERED */
 .login-section {
   width: 100%;
   display: flex;
@@ -134,13 +124,11 @@ const goEdit = () => {
   flex-direction: column;
 }
 
-/* LABEL */
 label {
   font-size: 20px;
   margin-bottom: 4px;
 }
 
-/* INPUT */
 input {
   width: 100%;
   background: #FFFFFF05;
@@ -152,7 +140,6 @@ input {
   margin-bottom: 18px;
 }
 
-/* LOGIN BUTTON */
 .login-btn {
   width: 247px;
   height: 41px;
@@ -164,20 +151,15 @@ input {
   font-weight: bold;
   color: #111;
   cursor: pointer;
-  margin-top: 5px;
-
-  /* ⭐ อยู่ตรงกลาง */
   margin-left: auto;
   margin-right: auto;
   margin-top: 52px;
 }
 
-
 .login-btn:hover {
   background: #ff5d5d;
 }
 
-/* CREATE ACCOUNT */
 .create-link {
   text-align: center;
   margin-top: 14px;
@@ -188,7 +170,6 @@ input {
   color: #ff5d5d;
 }
 
-/* LOGGED-IN */
 .logged-section {
   margin-top: 80px;
 }
@@ -204,7 +185,6 @@ input {
   font-weight: bold;
 }
 
-/* USER PROFILE LAYOUT */
 .profile-user {
   width: 100%;
   display: flex;
@@ -216,7 +196,6 @@ input {
   text-align: center;
 }
 
-/* Avatar */
 .profile-avatar {
   width: 110px;
   height: 110px;
@@ -232,21 +211,18 @@ input {
   object-fit: cover;
 }
 
-/* Name Text */
 .profile-name {
   font-size: 28px;
   font-weight: 600;
   margin-bottom: 6px;
 }
 
-/* Email Text */
 .profile-email {
   font-size: 16px;
   opacity: 0.8;
   margin-bottom: 30px;
 }
 
-/* Logout button (ใช้ของเดิมแต่จัดให้อยู่ตรงกลาง) */
 .logout-btn {
   background: #ff4646;
   padding: 10px 22px;
