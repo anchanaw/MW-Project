@@ -34,16 +34,18 @@
             <NuxtLink to="/profile" class="profile-link">
                 <div class="profile-box">
                     <div class="left">
+
                         <div class="avatar">
-                            <img src="/icons/user-icon.png" alt="user" />
+                            <img :src="auth.user?.avatar || '/icons/user-icon.png'" alt="avatar" />
                         </div>
-                        <span class="name">GUEST</span>
+
+                        <span class="name">
+                            {{ auth.isAuthenticated ? auth.user.name : "GUEST" }}
+                        </span>
                     </div>
 
                     <div class="dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                        <span></span><span></span><span></span>
                     </div>
                 </div>
             </NuxtLink>
@@ -73,8 +75,17 @@ import { onMounted } from 'vue'
 const store = useMainStore()
 
 onMounted(() => {
-  store.loadHistoryFromLocalStorage()
+    store.loadHistoryFromLocalStorage()
 })
+
+import { useAuthStore } from '~/stores/auth'
+
+const auth = useAuthStore()
+
+onMounted(() => {
+    auth.init()
+})
+
 </script>
 
 <style scoped>
@@ -181,9 +192,9 @@ h1.title {
     color: #141414;
     border: none;
     border-radius: 6px;
-    text-decoration: none; 
+    text-decoration: none;
     cursor: pointer;
-    
+
 }
 
 a.create-btn {

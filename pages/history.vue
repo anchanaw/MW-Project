@@ -47,6 +47,10 @@ watch(
 const clearHistory = () => {
   store.clearAllHistory()
 }
+
+definePageMeta({
+  middleware: ['auth']
+})
 </script>
 
 <style scoped>
