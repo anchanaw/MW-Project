@@ -40,7 +40,7 @@
 
         <!-- Movie List -->
         <div class="movies-grid">
-            <MovieCard v-for="movie in (watchlist?.movies || [])" :key="movie.id" :id="movie.id" :title="movie.title"
+            <watchlistmoviecard v-for="movie in (watchlist?.movies || [])" :key="movie.id" :id="movie.id" :title="movie.title"
                 :year="movie.year" :img="movie.img" :rating="movie.rating" />
         </div>
 
@@ -49,6 +49,7 @@
 </template>
 
 <script setup>
+import WatchlistMovieCard from '~/components/watchlistmoviecard.vue';
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
@@ -67,6 +68,16 @@ onMounted(() => {
 const watchlist = computed(() => {
   if (!auth.user?.watchlists) return null;
   return auth.user.watchlists.find(w => w.id === id) || null;
+});
+const averageScore = computed(() => {
+  const movies = watchlist.value?.movies;
+  if (!movies?.length) return 0;
+
+  const total = movies.reduce((sum, m) => {
+    return sum + Number(m.rating || 0);
+  }, 0);
+
+  return Math.round(total / movies.length);
 });
 
 </script>

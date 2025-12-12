@@ -137,7 +137,7 @@ export const useAuthStore = defineStore('auth', () => {
       title: movie.title,
       year: movie.year,
       img: movie.img,
-      rating: movie.rating
+      rating: movie.rating ?? movie.vote_average ?? 0
     });
 
     localStorage.setItem("users", JSON.stringify(users));
