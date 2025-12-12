@@ -146,6 +146,33 @@ export const useAuthStore = defineStore('auth', () => {
     Object.assign(user.value, users[index]);
   }
 
+  function updateWatchlist(listId, updated) {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const index = users.findIndex(u => u.id === user.value.id);
+    if (index === -1) return;
+
+    const list = users[index].watchlists.find(w => w.id === listId);
+    if (!list) return;
+
+    list.title = updated.title;
+    list.description = updated.description;
+    list.movies = updated.movies;
+
+    localStorage.setItem("users", JSON.stringify(users));
+    Object.assign(user.value, users[index]);
+  }
+
+  function deleteWatchlist(listId) {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const index = users.findIndex(u => u.id === user.value.id);
+    if (index === -1) return;
+
+    users[index].watchlists = users[index].watchlists.filter(w => w.id !== listId);
+
+    localStorage.setItem("users", JSON.stringify(users));
+    Object.assign(user.value, users[index]);
+  }
+
   return {
     user,
     token,
@@ -155,7 +182,9 @@ export const useAuthStore = defineStore('auth', () => {
     loginWithCredentials,
     logout,
     addWatchlist,
-    addMovieToWatchlist
+    addMovieToWatchlist,
+    updateWatchlist,
+    deleteWatchlist
   }
 
 });

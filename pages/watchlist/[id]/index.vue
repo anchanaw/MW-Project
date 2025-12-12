@@ -7,7 +7,10 @@
                 {{ watchlist?.title }}
             </h1>
 
-            <button class="edit-btn">✏️</button>
+            <button class="edit-btn" @click="goToEdit">
+                <img src="/icons/edit-icon.png" class="edit-icon" />
+            </button>
+
         </div>
 
         <!-- About Section -->
@@ -40,8 +43,8 @@
 
         <!-- Movie List -->
         <div class="movies-grid">
-            <watchlistmoviecard v-for="movie in (watchlist?.movies || [])" :key="movie.id" :id="movie.id" :title="movie.title"
-                :year="movie.year" :img="movie.img" :rating="movie.rating" />
+            <watchlistmoviecard v-for="movie in (watchlist?.movies || [])" :key="movie.id" :id="movie.id"
+                :title="movie.title" :year="movie.year" :img="movie.img" :rating="movie.rating" />
         </div>
 
 
@@ -53,6 +56,7 @@ import WatchlistMovieCard from '~/components/watchlistmoviecard.vue';
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
+import { navigateTo } from "#app";
 
 const route = useRoute();
 const auth = useAuthStore();
@@ -61,23 +65,27 @@ const id = Number(route.params.id);
 const loading = ref(true);
 
 onMounted(() => {
-  auth.init();
-  loading.value = false;
+    auth.init();
+    loading.value = false;
 });
+const goToEdit = () => {
+    console.log("Edit clicked!");
+    navigateTo(`/watchlist/${id}/edit`);
+};
 
 const watchlist = computed(() => {
-  if (!auth.user?.watchlists) return null;
-  return auth.user.watchlists.find(w => w.id === id) || null;
+    if (!auth.user?.watchlists) return null;
+    return auth.user.watchlists.find(w => w.id === id) || null;
 });
 const averageScore = computed(() => {
-  const movies = watchlist.value?.movies;
-  if (!movies?.length) return 0;
+    const movies = watchlist.value?.movies;
+    if (!movies?.length) return 0;
 
-  const total = movies.reduce((sum, m) => {
-    return sum + Number(m.rating || 0);
-  }, 0);
+    const total = movies.reduce((sum, m) => {
+        return sum + Number(m.rating || 0);
+    }, 0);
 
-  return Math.round(total / movies.length);
+    return Math.round(total / movies.length);
 });
 
 </script>
@@ -92,7 +100,7 @@ const averageScore = computed(() => {
 .watchlist-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 50px;
     margin-bottom: 20px;
 }
 
@@ -100,6 +108,25 @@ const averageScore = computed(() => {
     font-size: 38px;
     font-weight: 700;
     color: #E1E1E1;
+}
+
+.edit-btn {
+    background: transparent !important;
+    border: none !important;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.edit-btn img {
+    background: transparent !important;
+    filter: brightness(0) invert(1);
+    /* ให้เป็นสีขาวล้วน */
+    align-items: center;
+}
+
+.edit-btn:hover img {
+    opacity: 1;
 }
 
 .watchlist-description {
