@@ -5,17 +5,25 @@
     <div class="welcome-box">
       <h1>Welcome to <span class="highlight">Watchlists</span></h1>
       <p>Browse movies, add them to watchlists and share them with friends.</p>
-      <p>Just click the <span class="plus-icon"></span> to add a movie, the poster to see more details or <span
-          class="check-icon" :class="{ active: isChecked }" @click="isChecked = !isChecked"></span> to mark the movie as
-        watched.</p>
+      <p>
+  Just click the 
+  <img class="welcome-plus-icon" src="/icons/plus-icon.svg" alt="Add" />
+  to add a movie, the poster to see more details or 
+  <img class="check-icon" 
+       :src="isChecked ? '/icons/check-icon-green.png' : '/icons/check-icon.png'" 
+       @click="isChecked = !isChecked"
+  />
+  to mark the movie as watched.
+</p>
+
+
     </div>
 
     <!-- Search area -->
     <div class="search-area">
       <img src="/icons/search-icon.png" class="search-icon" alt="search">
 
-      <input v-model="searchText" @keyup.enter="goSearch"
-             type="text" placeholder="Search for movies by title" />
+      <input v-model="searchText" @keyup.enter="goSearch" type="text" placeholder="Search for movies by title" />
 
       <button class="search-btn" @click="goSearch">search</button>
     </div>
@@ -24,12 +32,7 @@
 
     <!-- Movie grid -->
     <div class="movie-grid">
-      <MovieCard 
-        v-for="m in movies" 
-        :key="m.id" 
-        v-bind="m" 
-        @add-to-list="openPopup(m)"
-      />
+      <MovieCard v-for="m in movies" :key="m.id" v-bind="m" @add-to-list="openPopup(m)" />
     </div>
 
     <!-- =============== POPUP ADD MOVIE =============== -->
@@ -45,12 +48,8 @@
         <p class="to-watchlist">To watchlist:</p>
 
         <div class="watchlist-scroll">
-          <div 
-            class="watchlist-option" 
-            v-for="list in auth.user?.watchlists || []"
-            :key="list.id"
-            @click="addMovieToList(list.id)"
-          >
+          <div class="watchlist-option" v-for="list in auth.user?.watchlists || []" :key="list.id"
+            @click="addMovieToList(list.id)">
             <div class="list-icon">
               {{ list.title.charAt(0).toUpperCase() }}
             </div>
@@ -98,6 +97,7 @@ import MovieCard from "~/components/moviecard.vue";
 import { useMainStore } from "~/stores/main";
 import { useAuthStore } from "~/stores/auth";
 
+const isChecked = ref(false);
 // store
 const store = useMainStore();
 const auth = useAuthStore();
@@ -203,39 +203,36 @@ const saveNewWatchlist = () => {
   gap: 10px;
 }
 
-.plus-icon {
+.welcome-plus-icon {
   width: 24px;
   height: 35px;
-  background-image: url('/icons/plus-icon.svg');
-  background-size: 24px 35px;
-  background-repeat: no-repeat;
-  background-position: center;
+  display: inline-block;
   cursor: pointer;
-  z-index: 10;
+  transition: opacity 0.15s ease;
 }
 
-.plus-icon:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  /* ใช้ background-color แทน */
-  transform: scale(1.05);
-  filter: brightness(5.5) saturate(2) contrast(2);
+/* ตอน hover: เปลี่ยนรูปเป็นอีกไฟล์ */
+.welcome-plus-icon:hover {
+  content: url('/icons/plus-icon-hover.svg');
+  opacity: 1;
 }
 
+
+
+/* CHECK ICON (img version) */
 .check-icon {
   width: 28px;
   height: 25px;
-  display: inline-block;
-  background-image: url('/icons/check-icon.png');
-  /* สีปกติ */
-  background-size: contain;
-  background-repeat: no-repeat;
+  vertical-align: middle;
   cursor: pointer;
+  margin-left: 6px;
 }
 
+/* active = เปลี่ยนเป็นรูปสีเขียว */
 .check-icon.active {
-  background-image: url('/icons/check-icon-green.png');
-  /* สีเขียว */
+  content: url('/icons/check-icon-green.png');
 }
+
 
 /* Search section */
 .search-area {
