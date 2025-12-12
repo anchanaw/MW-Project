@@ -1,3 +1,27 @@
+<template>
+  <div class="movie-card">
+
+    <NuxtLink :to="`/movie/${id}`" class="poster" aria-label="View movie details">
+      <img :src="img" :alt="title" class="poster-img" />
+    </NuxtLink>
+
+    <button class="plus" @click.stop="$emit('add-to-list')" aria-label="Add to list">
+      <img src="/icons/plus-icon.svg" alt="Add" />
+    </button>
+
+    <div class="rating-bar">
+      <img :src="emojiFor(rating)" class="emoji" />
+      <span class="score">{{ rating }}</span>
+      <span class="outof">/100</span>
+    </div>
+
+    <div class="meta">
+      <p class="title" v-html="formatTitle(title)"></p>
+      <p class="year" v-if="year">({{ year }})</p>
+    </div>
+  </div>
+</template>
+
 <script setup>
 defineProps({
   id: { type: [String, Number], required: true },
@@ -17,31 +41,9 @@ const formatTitle = (text) => {
   return text.replace(":", ":<br>");
 };
 
+defineEmits(['add-to-list']);
+
 </script>
-
-<template>
-  <div class="movie-card">
-
-    <NuxtLink :to="`/movie/${id}`" class="poster" aria-label="View movie details">
-      <img :src="img" :alt="title" class="poster-img" />
-    </NuxtLink>
-
-    <button class="plus" @click.stop="$router.push(`/add/${id}`)" aria-label="Add to list">
-      <img src="/icons/plus-icon.svg" alt="Add" />
-    </button>
-
-    <div class="rating-bar">
-      <img :src="emojiFor(rating)" class="emoji" />
-      <span class="score">{{ rating }}</span>
-      <span class="outof">/100</span>
-    </div>
-
-    <div class="meta">
-      <p class="title" v-html="formatTitle(title)"></p>
-      <p class="year" v-if="year">({{ year }})</p>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .movie-card {
