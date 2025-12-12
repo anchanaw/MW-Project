@@ -68,7 +68,7 @@ const goSearch = () => {
   color: #E1E1E1;
   padding: 40px;
   overflow-y: auto;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .welcome-box {
@@ -197,7 +197,7 @@ const goSearch = () => {
 
 /* Popular movies */
 h2 {
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
   margin-bottom: 35px;
   font-size: 32px;
   font-weight: 400;

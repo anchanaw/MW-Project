@@ -53,19 +53,20 @@
         <div class="popup-header">
           <span class="popup-label-text">Add movie:</span>
           <span class="movie-title">{{ movie.title }} ({{ movie.year }})</span>
-
           <button class="close-btn" @click="showPopup = false">✖</button>
         </div>
 
         <p class="to-watchlist">To watchlist:</p>
 
-        <!-- Watchlists -->
-        <div class="watchlist-option" v-for="list in (auth.user?.watchlists || [])" :key="list.id"
-          @click="addMovieToList(list.id)">
-          <div class="list-icon">
-            {{ list.title.charAt(0).toUpperCase() }}
+        <!-- ⭐⭐ SCROLL AREA สำหรับลิสท์ ⭐⭐ -->
+        <div class="watchlist-scroll">
+          <div class="watchlist-option" v-for="list in (auth.user?.watchlists || [])" :key="list.id"
+            @click="addMovieToList(list.id)">
+            <div class="list-icon">
+              {{ list.title.charAt(0).toUpperCase() }}
+            </div>
+            <span class="list-title">{{ list.title }}</span>
           </div>
-          <span class="list-title">{{ list.title }}</span>
         </div>
 
         <!-- New List Button -->
@@ -76,26 +77,28 @@
 
       </div>
     </div>
+
     <!-- POPUP: CREATE NEW WATCHLIST -->
     <div v-if="showCreatePopup" class="popup-backdrop">
       <div class="create-popup">
 
         <h2 class="create-title">Create new watchlist</h2>
 
-        <!-- Name -->
-        <label class="input-label">Name</label>
-        <input type="text" v-model="newListName" class="input-box" />
-
-        <!-- Description -->
-        <label class="input-label">Description</label>
-        <textarea v-model="newListDescription" class="textarea-box"></textarea>
-
-        <div class="button-row">
-          <button class="cancel-btn" @click="showCreatePopup = false">Cancel</button>
-          <button class="save-btn" @click="saveNewWatchlist">Save</button>
+        <div class="form-group">
+          <label class="input-label">Name</label>
+          <input type="text" v-model="newListName" class="input-box" />
         </div>
 
+        <div class="form-group">
+          <label class="input-label">Description</label>
+          <textarea v-model="newListDescription" class="textarea-box"></textarea>
+        </div>
+
+        <button class="cancel-btn" @click="goBackPopup">Cancel</button>
+        <button class="save-btn" @click="saveNewWatchlist">Save</button>
+
       </div>
+
     </div>
 
   </div>
@@ -153,15 +156,25 @@ function saveNewWatchlist() {
     return;
   }
 
+  // 1) สร้างลิสใหม่
   auth.addWatchlist({
     title: newListName.value,
     description: newListDescription.value
   });
 
+  // 2) หาลิสล่าสุดที่เพิ่งสร้าง
+  const newList = auth.user.watchlists[auth.user.watchlists.length - 1];
+
+  // 3) เพิ่มหนังลงลิสใหม่ทันที
+  auth.addMovieToWatchlist(newList.id, movie.value);
+
+  // 4) ล้างฟอร์ม
   newListName.value = "";
   newListDescription.value = "";
 
+  // 5) ปิด popup create และกลับไป popup ก่อนหน้า
   showCreatePopup.value = false;
+  showPopup.value = true;
 }
 
 // open create popup
@@ -169,6 +182,13 @@ function openCreatePopup() {
   showPopup.value = false;
   showCreatePopup.value = true;
 }
+
+function goBackPopup() {
+  showCreatePopup.value = false;  // ปิด popup create
+  showPopup.value = true;         // เปิด popup ก่อนหน้า
+}
+
+
 </script>
 
 
@@ -180,7 +200,7 @@ function openCreatePopup() {
   color: #fff;
   padding: 50px;
   gap: 40px;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .top-section {
@@ -297,7 +317,7 @@ function openCreatePopup() {
   background: #ff5d5d;
 }
 
-/* ⭐ CAST SECTION (ด้านล่างแนวนอน) */
+/* CAST SECTION (ด้านล่างแนวนอน) */
 .cast-section {
   width: 100%;
   margin-top: 20px;
@@ -360,12 +380,22 @@ function openCreatePopup() {
   background: #1d1d1d;
   padding: 30px;
   width: 700px;
-  height: 300px;
+  max-height: 300px;
   border-radius: 10px;
   border: 1px solid #444;
   color: white;
   position: relative;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.watchlist-scroll {
+  flex: 1;                
+  overflow-y: auto;        
+  padding-right: 8px;      
 }
 
 /* HEADER */
@@ -453,6 +483,7 @@ function openCreatePopup() {
   align-items: center;
   gap: 12px;
   color: white;
+  margin-top: auto;
 }
 
 .plus-icon {
@@ -467,97 +498,99 @@ function openCreatePopup() {
   font-weight: 800;
 }
 
-/* creat pop up */
-/* CREATE POPUP */
 .create-popup {
-  background: #1d1d1d;
-  padding: 32px 40px;
+  position: relative;
+  /* ให้ปุ่มลอยในกรอบ */
   width: 700px;
-  border-radius: 10px;
-  border: 1px solid #555;
-  color: white;
+  height: 300px;
+  background: #161616;
+  border: 1px solid #E1E1E1;
+  border-radius: 4px;
+  padding: 30px;
+  padding-bottom: 80px;
+  /* ทำพื้นที่สำหรับปุ่ม */
+  box-sizing: border-box;
+  color: #E1E1E1;
+}
 
+.create-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.form-area {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-
-  /* auto height (สำคัญมาก) */
-  height: auto;
+  gap: 20px;
 }
 
-/* Title */
-.create-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 10px;
+.form-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-top: 20px;
 }
 
-/* Label */
 .input-label {
   font-size: 16px;
-  color: #ddd;
-  margin-bottom: 6px;
+  font-weight: 700;
 }
 
-/* Text Input */
 .input-box {
-  background: #111;
-  border: 1px solid #777;
-  padding: 12px;
-  width: 100%;
+  width: 295px;
+  height: 40px;
+  padding: 8px 10px;
+  background: #161616;
+  border: 1px solid #E1E1E1;
   border-radius: 6px;
-  color: white;
-  font-size: 15px;
-
-  height: 46px;
+  color: #E1E1E1;
+  margin-left: 41px;
 }
 
-/* Textarea */
 .textarea-box {
-  background: #111;
-  border: 1px solid #777;
-  padding: 12px;
-  width: 100%;
-  height: 150px;       /* ปรับให้สวยตามภาพ */
+  width: 295px;
+  height: 140px;
+  padding: 10px;
+  background: #161616;
+  border: 1px solid #E1E1E1;
   border-radius: 6px;
-  color: white;
+  color: #E1E1E1;
   resize: none;
-  font-size: 15px;
 }
 
-/* Button Row */
-.button-row {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 24px;
-  margin-top: 15px;
+.cancel-btn,
+.save-btn {
+  position: absolute;
 }
 
-/* Cancel Button */
 .cancel-btn {
+  right: 150px;
+  bottom: 30px;
   background: none;
   border: none;
-  color: #ff3b3b;
-  cursor: pointer;
-  font-size: 16px;
+  color: #F33F3F;
+  font-weight: 700;
   text-decoration: underline;
+  cursor: pointer;
 }
 
-/* Save Button */
 .save-btn {
-  background: #ff4646;
-  padding: 12px 34px;
+  right: 10px;
+  bottom: 20px;
+  width: 110px;
+  height: 41px;
+  background: #F33F3F;
+  color: black;
+  padding: 8px 28px;
   border-radius: 6px;
   border: none;
-  color: #111;
   font-size: 16px;
-  cursor: pointer;
   font-weight: 700;
+  cursor: pointer;
 }
 
 .save-btn:hover {
   background: #ff5d5d;
 }
-
 </style>

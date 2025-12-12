@@ -66,7 +66,7 @@ const watchlist = auth.user.watchlists.find(w => w.id === id);
 .watchlist-page {
     margin-left: 30px;
     margin-top: 26px;
-    font-family: Lato, sans-serif;
+    font-family: 'Lato', sans-serif;
 }
 
 .watchlist-header {

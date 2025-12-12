@@ -120,7 +120,7 @@ export default {
 .header-text {
   max-width: 450px;
   margin-bottom: 40px;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .header-text h2,
@@ -203,7 +203,7 @@ export default {
 /* Inputs */
 label {
   font-size: 20px;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
   letter-spacing: 1.4px;
   opacity: 0.9;
   margin-bottom: 4px;
@@ -231,7 +231,7 @@ input {
   border: none;
   border-radius: 6px;
   color: #111;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
   font-weight: 700;
   font-size: 18px;
   cursor: pointer;

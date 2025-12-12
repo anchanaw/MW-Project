@@ -69,7 +69,7 @@ watch(
 }
 
 .search-title {
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
   font-size: 32px;
   font-weight: 250;
   letter-spacing: 1px;

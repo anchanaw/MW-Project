@@ -164,7 +164,7 @@ h1.title {
     gap: 10px;
     align-items: center;
     cursor: pointer;
-    font-family: Lato, sans-serif;
+    font-family: 'Lato', sans-serif;
     font-size: 16px;
     font-weight: 400;
     line-height: 100%;
@@ -177,7 +177,7 @@ h1.title {
 
 /* Create button */
 .create-btn {
-    font-family: Lato, sans-serif;
+    font-family: 'Lato', sans-serif;
     font-size: 16px;
     font-weight: 700;
     line-height: 100%;
@@ -217,7 +217,7 @@ a.create-btn {
 }
 
 .my-lists h3 {
-    font-family: Lato, sans-serif;
+    font-family: 'Lato', sans-serif;
     font-size: 20px;
     font-weight: 400;
     font-style: normal;
@@ -243,7 +243,7 @@ a.create-btn {
   align-items: center;
   gap: 10px;
   padding: 6px 0;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
   font-size: 16px;
 }
 

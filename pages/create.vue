@@ -66,7 +66,7 @@ export default {
 .title,
 .form-group,
 .create-btn {
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
   letter-spacing: 1px;
 }
 
@@ -111,7 +111,7 @@ export default {
 
 /* Button */
 .create-btn {
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 100%;

@@ -106,7 +106,7 @@ export default {
 .header-text {
   max-width: 450px;
   margin-bottom: 103px;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .header-text h2,
@@ -124,7 +124,7 @@ export default {
   display: flex;
   justify-content: center;
   margin-top: 40px;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .login-box {

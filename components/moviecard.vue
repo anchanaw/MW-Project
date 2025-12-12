@@ -94,7 +94,7 @@ const formatTitle = (text) => {
 }
 
 .rating-bar,.score,.outof {
-    font-family: Lato, sans-serif;
+    font-family: 'Lato', sans-serif;
 
 }
 .rating-bar {

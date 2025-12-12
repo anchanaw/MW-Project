@@ -97,7 +97,7 @@ const updateProfile = () => {
   min-height: 100vh;
   padding: 40px 60px;
   color: white;
-  font-family: Lato, sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .top-bar {
