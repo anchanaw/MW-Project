@@ -175,7 +175,6 @@ export default {
   height: 50px;
   object-fit: contain;
   opacity: 0.7;
-  /* optional ให้ดูจางกว่ารูปจริง */
 }
 
 .add-avatar-btn {

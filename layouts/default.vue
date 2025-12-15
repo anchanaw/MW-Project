@@ -87,7 +87,6 @@ onMounted(() => auth.init());
 <style scoped>
 .layout {
     display: flex;
-    /* สำคัญที่สุด */
     width: 100%;
     height: 100vh;
     background: #000;
@@ -237,8 +236,8 @@ a.create-btn {
 }
 
 .my-lists .list-item {
-  color: #ffffff;        /* สีข้อความ */
-  text-decoration: none; /* เอาเส้นใต้ลิงก์ออก */
+  color: #ffffff;        
+  text-decoration: none; 
   display: flex;
   align-items: center;
   gap: 10px;
@@ -248,7 +247,7 @@ a.create-btn {
 }
 
 .my-lists .list-item:hover {
-  color: #ff3b3b;        /* สีแดงตอน hover */
+  color: #ff3b3b;        
 }
 
 .my-lists .icon {
@@ -277,7 +276,6 @@ a.create-btn {
     background: #000;
 }
 
-/* ซ้าย: avatar + name */
 .left {
     display: flex;
     align-items: center;
@@ -297,7 +295,6 @@ a.create-btn {
     top: 3px;
 }
 
-/* ชื่อ */
 .name {
     font-family: 'Roboto', sans-serif;
     font-size: 12px;
@@ -305,7 +302,6 @@ a.create-btn {
     color: #ffffff;
 }
 
-/* จุดสามจุด */
 .dots {
     display: flex;
     gap: 3px;

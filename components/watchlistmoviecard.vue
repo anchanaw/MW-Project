@@ -12,7 +12,6 @@
           ? '/icons/watched-icon.png'
           : '/icons/unwatched-icon.png'" class="tv-icon" alt="watch-status" />
       </button>
-
     </div>
 
     <!-- Info -->
@@ -26,12 +25,10 @@
       <div class="title" v-html="formatTitle(title)"></div>
       <div class="year">({{ year }})</div>
     </div>
-
   </div>
 </template>
 
 <script setup>
-
 defineProps({
   id: Number,
   title: String,

@@ -1,7 +1,7 @@
 <template>
   <div class="profile-page">
 
-    <!-- ⭐ GUEST MODE -->
+    <!-- GUEST MODE -->
     <div v-if="!auth.isAuthenticated">
       <div class="header-text">
         <h2>Hello!</h2>
@@ -228,7 +228,7 @@ input {
 }
 .profile-actions {
   display: flex;
-  gap: 14px;            /* ระยะห่างระหว่างปุ่ม */
+  gap: 14px;           
   margin-top: 20px;
 }
 

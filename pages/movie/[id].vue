@@ -1,7 +1,7 @@
 <template>
   <div class="detail-page" v-if="movie">
 
-    <!-- ⭐ TOP Section -->
+    <!-- TOP Section -->
     <div class="top-section">
 
       <!-- Poster -->
@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <!-- ⭐ CAST SECTION -->
+    <!-- CAST SECTION -->
     <div class="cast-section">
       <h2>Cast</h2>
 
@@ -58,7 +58,7 @@
 
         <p class="to-watchlist">To watchlist:</p>
 
-        <!-- ⭐⭐ SCROLL AREA สำหรับลิสท์ ⭐⭐ -->
+        <!-- SCROLL AREA สำหรับลิสท์ -->
         <div class="watchlist-scroll">
           <div class="watchlist-option" v-for="list in (auth.user?.watchlists || [])" :key="list.id"
             @click="addMovieToList(list.id)">

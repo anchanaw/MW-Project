@@ -168,7 +168,6 @@ const unwatchedRuntime = computed(() => {
     justify-content: center;
     align-items: center;
     height: 121px;
-    /* สูงเท่ากัน */
 }
 
 .stat-box:nth-child(1) {

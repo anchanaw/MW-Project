@@ -81,7 +81,6 @@ definePageMeta({
   gap: 25px;
 }
 
-/* ⭐ ทำให้หนังที่ดูแล้วมีกรอบแดง */
 .viewed {
   border: 2px solid #ff4f4f;
   border-radius: 6px;
