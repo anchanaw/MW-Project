@@ -18,22 +18,28 @@ export const useAuthStore = defineStore('auth', () => {
   const isReady = ref(false)
   // โหลด session ตอนเปิดเว็บ
   function init() {
-    const session = JSON.parse(localStorage.getItem("auth_user"));
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const session = JSON.parse(localStorage.getItem("auth_user"))
+    const users = JSON.parse(localStorage.getItem("users")) || []
 
     if (session) {
-      const found = users.find(u => u.id === session.id);
+      const found = users.find(u => u.id === session.id)
+
       if (found) {
-        Object.assign(user.value, found);
-        token.value = session.token;
-        isAuthenticated.value = true;
+        found.watchlists?.forEach(list => {
+          list.movies?.forEach(movie => {
+            if (movie.watched === undefined) {
+              movie.watched = false
+            }
+          })
+        })
+
+        Object.assign(user.value, found)
+        isAuthenticated.value = true
       }
     }
 
-    // ✅ บอกว่าโหลดเสร็จแล้ว
-    isReady.value = true;
+    isReady.value = true
   }
-
 
   // REGISTER
   async function register(data) {
@@ -105,6 +111,13 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated.value = false;
   }
 
+  function getUnwatchedMinutes() {
+    return user.value.watchlists
+      .flatMap(list => list.movies || [])
+      .filter(movie => movie.watched !== true)
+      .reduce((total, movie) => total + (movie.runtime || 0), 0)
+  }
+
   // CREATE WATCHLIST
   function addWatchlist({ title, description }) {
     const users = JSON.parse(localStorage.getItem("users")) || [];
@@ -125,6 +138,18 @@ export const useAuthStore = defineStore('auth', () => {
     Object.assign(user.value, users[index]);
   }
 
+  function formatRuntime(minutes) {
+    const h = Math.floor(minutes / 60)
+    const m = minutes % 60
+    return `${h}h ${m}m`
+  }
+
+  function getUnwatchedRuntime() {
+    const minutes = getUnwatchedMinutes()
+    return formatRuntime(minutes)
+  }
+
+
   // ADD MOVIE TO LIST
   function addMovieToWatchlist(listId, movie) {
     const users = JSON.parse(localStorage.getItem("users")) || [];
@@ -139,13 +164,32 @@ export const useAuthStore = defineStore('auth', () => {
       title: movie.title,
       year: movie.year,
       img: movie.img,
-      rating: movie.rating ?? movie.vote_average ?? 0
+      rating: movie.rating ?? 0,
+      runtime: movie.runtime ?? 0,
+      watched: false
     });
 
     localStorage.setItem("users", JSON.stringify(users));
 
     // อัปเดต reactive
     Object.assign(user.value, users[index]);
+  }
+
+  function toggleWatched(listId, movieId) {
+    const users = JSON.parse(localStorage.getItem("users")) || []
+
+    const userIndex = users.findIndex(u => u.id === user.value.id)
+    if (userIndex === -1) return
+
+    const list = users[userIndex].watchlists.find(w => w.id === listId)
+    if (!list) return
+
+    const movie = list.movies.find(m => m.id === movieId)
+    if (!movie) return
+
+    movie.watched = !movie.watched
+    localStorage.setItem("users", JSON.stringify(users))
+    Object.assign(user.value, users[userIndex])
   }
 
   function updateWatchlist(listId, updated) {
@@ -176,21 +220,21 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function updateProfile(updatedData) {
-  const users = JSON.parse(localStorage.getItem("users")) || [];
-  const index = users.findIndex(u => u.id === user.value.id);
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const index = users.findIndex(u => u.id === user.value.id);
 
-  if (index === -1) return;
+    if (index === -1) return;
 
-  // อัปเดตข้อมูล user
-  users[index] = {
-    ...users[index],
-    ...updatedData
-  };
+    // อัปเดตข้อมูล user
+    users[index] = {
+      ...users[index],
+      ...updatedData
+    };
 
-  localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("users", JSON.stringify(users));
 
-  Object.assign(user.value, users[index]);
-}
+    Object.assign(user.value, users[index]);
+  }
 
   return {
     user,
@@ -205,7 +249,11 @@ export const useAuthStore = defineStore('auth', () => {
     addWatchlist,
     addMovieToWatchlist,
     updateWatchlist,
-    deleteWatchlist
+    deleteWatchlist,
+    getUnwatchedMinutes,
+    getUnwatchedRuntime,
+    formatRuntime,
+    toggleWatched
   }
 
 });

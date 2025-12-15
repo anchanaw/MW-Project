@@ -1,25 +1,29 @@
 <template>
   <div class="watchlist-card">
 
-    <!-- Poster + Checkmark -->
+    <!-- Poster -->
     <div class="poster-wrapper">
       <img :src="img" alt="" class="poster" />
+
       <div v-if="rating >= 60" class="checkmark">✔</div>
+
+      <button class="watch-toggle" :class="{ watched }" @click.stop="$emit('toggle')" aria-label="Toggle watched">
+        <img :src="watched
+          ? '/icons/watched-icon.png'
+          : '/icons/unwatched-icon.png'" class="tv-icon" alt="watch-status" />
+      </button>
+
     </div>
 
     <!-- Info -->
     <div class="info">
-
-      <!-- Emoji + Score -->
       <div class="score-row">
         <img :src="emojiFor(rating)" class="emoji" />
         <span class="score">{{ rating }}</span>
         <span class="total">/100</span>
       </div>
 
-      <!-- Title  -->
       <div class="title" v-html="formatTitle(title)"></div>
-
       <div class="year">({{ year }})</div>
     </div>
 
@@ -27,12 +31,17 @@
 </template>
 
 <script setup>
+
 defineProps({
   id: Number,
   title: String,
   img: String,
   year: [Number, String],
-  rating: Number
+  rating: Number,
+  watched: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const emojiFor = (rating) => {
@@ -57,10 +66,6 @@ const formatTitle = (text) => {
   position: relative;
 }
 
-.poster-wrapper {
-  position: relative;
-}
-
 .poster {
   width: 100%;
   object-fit: cover;
@@ -77,7 +82,7 @@ const formatTitle = (text) => {
 }
 
 .info {
-  padding: 12px;
+  padding: 5px 10px 10px 10px;
   color: white;
 }
 
@@ -118,5 +123,34 @@ const formatTitle = (text) => {
   font-size: 16px;
   font-weight: 300;
   opacity: 0.8;
+}
+
+.watch-toggle {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 6px;
+  cursor: pointer;
+
+  transition: all .2s ease;
+}
+
+.watch-toggle:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.watch-toggle.watched {
+  box-shadow: 0 0 10px rgba(140, 255, 140, .45);
+}
+
+.tv-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  pointer-events: none;
 }
 </style>

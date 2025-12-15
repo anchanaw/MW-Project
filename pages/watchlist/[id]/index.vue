@@ -31,7 +31,7 @@
 
             <div class="stat-box">
                 <span class="label">UNWATCHED RUNTIME</span>
-                <span class="value">14h 30m</span>
+                <span class="value">{{ unwatchedRuntime }}</span>
             </div>
 
             <div class="stat-box">
@@ -44,9 +44,9 @@
         <!-- Movie List -->
         <div class="movies-grid">
             <watchlistmoviecard v-for="movie in (watchlist?.movies || [])" :key="movie.id" :id="movie.id"
-                :title="movie.title" :year="movie.year" :img="movie.img" :rating="movie.rating" />
+                :title="movie.title" :year="movie.year" :img="movie.img" :rating="movie.rating" :watched="movie.watched"
+                @toggle="auth.toggleWatched(watchlist.id, movie.id)" />
         </div>
-
 
     </div>
 </template>
@@ -77,6 +77,7 @@ const watchlist = computed(() => {
     if (!auth.user?.watchlists) return null;
     return auth.user.watchlists.find(w => w.id === id) || null;
 });
+
 const averageScore = computed(() => {
     const movies = watchlist.value?.movies;
     if (!movies?.length) return 0;
@@ -88,6 +89,9 @@ const averageScore = computed(() => {
     return Math.round(total / movies.length);
 });
 
+const unwatchedRuntime = computed(() => {
+    return auth.getUnwatchedRuntime()
+});
 </script>
 
 <style scoped>

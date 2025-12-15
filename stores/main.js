@@ -10,7 +10,7 @@ export const useMainStore = defineStore("main", {
     img: '/movies/topgun-poster.jpg',
     rating: 83,
     genres: "Action, Drama",
-    runtime: "2h 11m",
+    runtime: 131,
     overview:
       "After more than thirty years of service as one of the Navy’s top aviators, and dodging the advancement in rank that would ground him, Pete “Maverick” Mitchell finds himself training a detachment of TOP GUN graduates for a specialized mission the likes of which no living pilot has ever seen.",
     cast: [
@@ -28,7 +28,17 @@ export const useMainStore = defineStore("main", {
         year: 2022,
         img: '/movies/fantastic-poster.jpg',
         rating: 68,
-        cast: []
+        genres: "Adventure, Fantasy",
+        runtime: 142,
+        overview:
+          "Professor Albus Dumbledore knows the powerful Dark wizard Gellert Grindelwald is moving to seize control of the wizarding world. Unable to stop him alone, he entrusts Magizoologist Newt Scamander to lead a team of wizards, witches and one brave Muggle baker on a dangerous mission, where they encounter old and new beasts and clash with Grindelwald’s growing legion of followers.",
+        cast: [
+          {
+            id: 1,
+            name: "Mads Dittmann Mikkelsen",
+            role: "Gellert Grindelwald",
+            img: "/cast/mads-mikkelsen-cannes.jpg"}
+        ]
       }
     ],
 
