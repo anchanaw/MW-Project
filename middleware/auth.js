@@ -1,11 +1,15 @@
-// /middleware/auth.js
 import { useAuthStore } from '~/stores/auth'
 
-export default defineNuxtRouteMiddleware(() => {
+export default defineNuxtRouteMiddleware(async () => {
   const auth = useAuthStore()
 
-  // ถ้ายังไม่ login → ส่งไป login
-  if (!auth.isAuthenticated) {
-    return navigateTo('/profile')
+  // ⏳ รอให้ store โหลดข้อมูลก่อน
+  if (!auth.isReady) {
+    await auth.init()
+  }
+
+  if (!auth.user) {
+    return navigateTo("/profile")
   }
 })
+

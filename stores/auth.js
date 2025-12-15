@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
+
 export const useAuthStore = defineStore('auth', () => {
 
   const user = ref({
@@ -14,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const token = ref(null)
   const isAuthenticated = ref(false)
-
+  const isReady = ref(false)
   // โหลด session ตอนเปิดเว็บ
   function init() {
     const session = JSON.parse(localStorage.getItem("auth_user"));
@@ -23,15 +24,16 @@ export const useAuthStore = defineStore('auth', () => {
     if (session) {
       const found = users.find(u => u.id === session.id);
       if (found) {
-
-        // อัปเดตแบบ reactive 
         Object.assign(user.value, found);
-
         token.value = session.token;
         isAuthenticated.value = true;
       }
     }
+
+    // ✅ บอกว่าโหลดเสร็จแล้ว
+    isReady.value = true;
   }
+
 
   // REGISTER
   async function register(data) {
@@ -177,6 +179,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     token,
     isAuthenticated,
+    isReady,
     init,
     register,
     loginWithCredentials,
