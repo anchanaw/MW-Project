@@ -42,11 +42,15 @@
           You are logged in as <strong>{{ auth.user.email }}</strong>
         </p>
 
-        <button class="logout-btn" @click="logoutUser">Logout</button>
+        <div class="profile-actions">
+          <button class="edit-btn" @click="goEdit">
+            Edit Profile
+          </button>
 
-        <button class="edit-btn" @click="goEdit">
-          Edit Profile
-        </button>
+          <button class="logout-btn" @click="logoutUser">
+            Logout
+          </button>
+        </div>
 
       </div>
     </div>
@@ -69,7 +73,7 @@ export default {
     const auth = useAuthStore();
     const router = useRouter();
 
-    auth.init();   // ⭐ โหลดค่าผู้ใช้ตอนเปิดหน้า
+    auth.init();
 
     return {
       auth,
@@ -86,7 +90,6 @@ export default {
       this.auth.logout();
     },
 
-    // ⭐ ฟังก์ชัน Edit Profile ที่ทำงานจริง!
     goEdit() {
       this.router.push("/edit");
     },
@@ -101,12 +104,12 @@ export default {
   padding: 40px 60px;
   color: white;
   position: relative;
+  font-family: 'Lato', sans-serif;
 }
 
 .header-text {
   max-width: 450px;
   margin-bottom: 103px;
-  font-family: 'Lato', sans-serif;
 }
 
 .header-text h2,
@@ -184,83 +187,6 @@ input {
   margin-top: 80px;
 }
 
-.logout-btn {
-  background: #ff4646;
-  padding: 10px 20px;
-  color: #111;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 15px;
-  font-weight: bold;
-}
-
-.profile-user {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 60px;
-}
-
-.profile-center {
-  text-align: center;
-}
-
-.profile-avatar {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #ddd;
-  margin: 0 auto 18px auto;
-}
-
-.profile-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.profile-name {
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.profile-email {
-  font-size: 16px;
-  opacity: 0.8;
-  margin-bottom: 30px;
-}
-
-.logout-btn {
-  background: #ff4646;
-  padding: 10px 22px;
-  color: #111;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.logout-btn:hover {
-  background: #ff5d5d;
-}
-
-.edit-btn {
-  background: #444;
-  padding: 8px 20px;
-  margin-top: 15px;
-  color: #fff;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.edit-btn:hover {
-  background: #666;
-}
-
 /* -------------------- USER MODE -------------------- */
 
 .profile-user {
@@ -300,6 +226,34 @@ input {
   opacity: 0.8;
   margin-bottom: 30px;
 }
+.profile-actions {
+  display: flex;
+  gap: 14px;            /* ระยะห่างระหว่างปุ่ม */
+  margin-top: 20px;
+}
+
+.edit-btn {
+  flex: 1;
+}
+
+.logout-btn {
+  flex: 1;
+}
+
+.logout-btn {
+  background: #ff4646;
+  padding: 10px 20px;
+  color: #111;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.logout-btn:hover {
+  background: #ff5d5d;
+} 
 
 .edit-btn {
   background: #444;

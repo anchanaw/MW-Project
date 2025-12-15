@@ -79,22 +79,21 @@ const removeAvatar = () => {
 
 // Update Profile
 const updateProfile = () => {
-  auth.user.name = name.value
-  auth.user.email = email.value
-  auth.user.password = password.value
+  auth.updateProfile({
+    name: name.value,
+    email: email.value,
+    password: password.value || auth.user.password,
+    avatar: newAvatar.value ?? auth.user.avatar
+  })
 
-  // Only update avatar if changed
-  if (newAvatar.value !== null) {
-    auth.user.avatar = newAvatar.value
-  }
-
-  auth.persist()
   navigateTo("/profile")
 }
+
 const logout = () => {
-  auth.logout()          
-  navigateTo("/profile")   
+  auth.logout()
+  navigateTo("/profile")
 }
+
 
 </script>
 

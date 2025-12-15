@@ -175,6 +175,23 @@ export const useAuthStore = defineStore('auth', () => {
     Object.assign(user.value, users[index]);
   }
 
+  function updateProfile(updatedData) {
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  const index = users.findIndex(u => u.id === user.value.id);
+
+  if (index === -1) return;
+
+  // อัปเดตข้อมูล user
+  users[index] = {
+    ...users[index],
+    ...updatedData
+  };
+
+  localStorage.setItem("users", JSON.stringify(users));
+
+  Object.assign(user.value, users[index]);
+}
+
   return {
     user,
     token,
@@ -184,6 +201,7 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     loginWithCredentials,
     logout,
+    updateProfile,
     addWatchlist,
     addMovieToWatchlist,
     updateWatchlist,
