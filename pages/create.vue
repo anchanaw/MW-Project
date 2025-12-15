@@ -43,14 +43,14 @@ export default {
         return;
       }
 
-      // ⭐ เพิ่ม watchlist เข้า user ปัจจุบัน
+      // เพิ่ม watchlist เข้า user ปัจจุบัน
       this.auth.addWatchlist({
         title: this.name,
         description: this.description
       });
 
       alert("Watchlist created!");
-      this.router.push("/profile"); // กลับไปหน้าโปรไฟล์
+      this.router.push("/profile"); 
     }
   }
 };

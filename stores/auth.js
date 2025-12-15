@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref(null)
   const isAuthenticated = ref(false)
 
-  // ⭐ โหลด session ตอนเปิดเว็บ
+  // โหลด session ตอนเปิดเว็บ
   function init() {
     const session = JSON.parse(localStorage.getItem("auth_user"));
     const users = JSON.parse(localStorage.getItem("users")) || [];
@@ -24,7 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
       const found = users.find(u => u.id === session.id);
       if (found) {
 
-        // ⭐⭐ อัปเดตแบบ reactive (สำคัญมาก)
+        // อัปเดตแบบ reactive 
         Object.assign(user.value, found);
 
         token.value = session.token;
@@ -33,7 +33,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  // ⭐ REGISTER
+  // REGISTER
   async function register(data) {
     let users = JSON.parse(localStorage.getItem("users")) || [];
 
@@ -60,13 +60,13 @@ export const useAuthStore = defineStore('auth', () => {
     };
     localStorage.setItem("auth_user", JSON.stringify(session));
 
-    // ⭐ อัปเดต reactive
+    // อัปเดต reactive
     Object.assign(user.value, newUser);
     token.value = session.token;
     isAuthenticated.value = true;
   }
 
-  // ⭐ LOGIN
+  // LOGIN
   async function loginWithCredentials(email, password) {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     const found = users.find(u => u.email === email);
@@ -80,13 +80,13 @@ export const useAuthStore = defineStore('auth', () => {
     };
     localStorage.setItem("auth_user", JSON.stringify(session));
 
-    // ⭐ อัปเดต reactive
+    // อัปเดต reactive
     Object.assign(user.value, found);
     token.value = session.token;
     isAuthenticated.value = true;
   }
 
-  // ⭐ LOGOUT
+  // LOGOUT
   function logout() {
     localStorage.removeItem("auth_user");
 
@@ -103,7 +103,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated.value = false;
   }
 
-  // ⭐ CREATE WATCHLIST
+  // CREATE WATCHLIST
   function addWatchlist({ title, description }) {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     const index = users.findIndex(u => u.id === user.value.id);
@@ -119,11 +119,11 @@ export const useAuthStore = defineStore('auth', () => {
     users[index].watchlists.push(newWatchlist);
     localStorage.setItem("users", JSON.stringify(users));
 
-    // ⭐ อัปเดต reactive
+    // อัปเดต reactive
     Object.assign(user.value, users[index]);
   }
 
-  // ⭐ ADD MOVIE TO LIST
+  // ADD MOVIE TO LIST
   function addMovieToWatchlist(listId, movie) {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     const index = users.findIndex(u => u.id === user.value.id);
@@ -142,7 +142,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     localStorage.setItem("users", JSON.stringify(users));
 
-    // ⭐ อัปเดต reactive
+    // อัปเดต reactive
     Object.assign(user.value, users[index]);
   }
 

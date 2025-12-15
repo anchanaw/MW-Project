@@ -317,7 +317,6 @@ function goBackPopup() {
   background: #ff5d5d;
 }
 
-/* CAST SECTION (ด้านล่างแนวนอน) */
 .cast-section {
   width: 100%;
   margin-top: 20px;
@@ -328,7 +327,6 @@ function goBackPopup() {
   margin-bottom: 15px;
 }
 
-/* ให้ cast อยู่แถวล่างเต็มความกว้าง */
 .cast-grid {
   display: flex;
   flex-wrap: nowrap;
@@ -337,8 +335,6 @@ function goBackPopup() {
   padding-bottom: 10px;
 }
 
-
-/* cast card */
 .cast-card {
   width: 150px;
 }
@@ -361,7 +357,6 @@ function goBackPopup() {
   opacity: 0.7;
 }
 
-/* BACKDROP */
 .popup-backdrop {
   position: fixed;
   top: 0;
@@ -375,7 +370,6 @@ function goBackPopup() {
   z-index: 5000;
 }
 
-/* POPUP CONTAINER */
 .popup-container {
   background: #1d1d1d;
   padding: 30px;
@@ -425,14 +419,12 @@ function goBackPopup() {
   cursor: pointer;
 }
 
-/* TO WATCHLIST TEXT */
 .to-watchlist {
   color: #ddd;
   font-size: 16px;
   margin-bottom: 21px;
 }
 
-/* WATCHLIST ITEM */
 .watchlist-option {
   display: flex;
   align-items: center;
@@ -468,7 +460,6 @@ function goBackPopup() {
   font-weight: 600;
 }
 
-/* NEW WATCHLIST BUTTON */
 .new-watchlist {
   width: 247px;
   height: 41px;
@@ -500,7 +491,6 @@ function goBackPopup() {
 
 .create-popup {
   position: relative;
-  /* ให้ปุ่มลอยในกรอบ */
   width: 700px;
   height: 300px;
   background: #161616;
@@ -508,7 +498,6 @@ function goBackPopup() {
   border-radius: 4px;
   padding: 30px;
   padding-bottom: 80px;
-  /* ทำพื้นที่สำหรับปุ่ม */
   box-sizing: border-box;
   color: #E1E1E1;
 }

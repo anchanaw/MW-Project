@@ -68,7 +68,7 @@ export const useMainStore = defineStore("main", {
         this.history.splice(50);
       }
 
-      // ⭐ persist
+      // persist
       this.saveHistoryToLocalStorage();
     },
 
@@ -133,7 +133,7 @@ export const useMainStore = defineStore("main", {
     },
 
     // =========================
-    // ⭐ SAVE → LocalStorage
+    // SAVE → LocalStorage
     // =========================
     saveHistoryToLocalStorage() {
       if (process.client) {
@@ -142,7 +142,7 @@ export const useMainStore = defineStore("main", {
     },
 
     // =========================
-    // ⭐ LOAD → LocalStorage
+    // LOAD → LocalStorage
     // =========================
     loadHistoryFromLocalStorage() {
       if (process.client) {

@@ -219,7 +219,7 @@ const saveNewWatchlist = () => {
 
 
 
-/* CHECK ICON (img version) */
+/* CHECK ICON */
 .check-icon {
   width: 28px;
   height: 25px;
@@ -228,11 +228,9 @@ const saveNewWatchlist = () => {
   margin-left: 6px;
 }
 
-/* active = เปลี่ยนเป็นรูปสีเขียว */
 .check-icon.active {
   content: url('/icons/check-icon-green.png');
 }
-
 
 /* Search section */
 .search-area {
@@ -449,7 +447,6 @@ h2 {
 
 .create-popup {
   position: relative;
-  /* ให้ปุ่มลอยในกรอบ */
   width: 700px;
   height: 300px;
   background: #161616;
@@ -457,7 +454,6 @@ h2 {
   border-radius: 4px;
   padding: 30px;
   padding-bottom: 80px;
-  /* ทำพื้นที่สำหรับปุ่ม */
   box-sizing: border-box;
   color: #E1E1E1;
 }

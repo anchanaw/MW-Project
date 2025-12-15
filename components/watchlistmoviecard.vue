@@ -17,7 +17,7 @@
         <span class="total">/100</span>
       </div>
 
-      <!-- Title (with <br>) -->
+      <!-- Title  -->
       <div class="title" v-html="formatTitle(title)"></div>
 
       <div class="year">({{ year }})</div>
