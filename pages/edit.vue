@@ -4,7 +4,9 @@
     <!-- Header -->
     <div class="top-bar">
       <h2>Edit profile</h2>
-      <NuxtLink to="/profile" class="logout-link">Back</NuxtLink>
+      <button class="logout-link" @click="logout">
+        Logout
+      </button>
     </div>
 
     <div class="edit-container">
@@ -89,6 +91,11 @@ const updateProfile = () => {
   auth.persist()
   navigateTo("/profile")
 }
+const logout = () => {
+  auth.logout()          
+  navigateTo("/profile")   
+}
+
 </script>
 
 <style scoped>
@@ -107,8 +114,13 @@ const updateProfile = () => {
 }
 
 .logout-link {
+  background: none;
+  border: none;
   color: #ff5d5d;
+  cursor: pointer;
+  font-size: 14px;
 }
+
 
 .edit-container {
   width: 400px;

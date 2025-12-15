@@ -43,12 +43,12 @@ onMounted(() => {
   auth.init(); // โหลด user
 });
 
-// 🎯 โหลด watchlist ที่ต้องการแก้ไข
+// โหลด watchlist ที่ต้องการแก้ไข
 const watchlist = computed(() =>
   auth.user?.watchlists?.find(w => w.id === id)
 );
 
-// 🎯 สร้างตัวแปรแก้ไขได้
+// สร้างตัวแปรแก้ไขได้
 const name = ref("");
 const description = ref("");
 const movies = ref([]);
@@ -57,7 +57,7 @@ const movies = ref([]);
 watchlist.value && (() => {
   name.value = watchlist.value.title;
   description.value = watchlist.value.description;
-  movies.value = [...watchlist.value.movies]; // clone array
+  movies.value = [...watchlist.value.movies]; 
 })();
 
 // ลบหนังในลิสต์

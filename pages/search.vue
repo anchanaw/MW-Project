@@ -40,9 +40,20 @@ const fetchSearch = async () => {
   if (!query.value) {
     results.value = [];
   } else {
-    results.value = dummyMovies.filter(movie =>
-      movie.title.toLowerCase().includes(query.value)
-    );
+    results.value = dummyMovies.filter(movie => {
+      // 🔍 ค้นจากชื่อหนัง
+      const matchTitle = movie.title
+        .toLowerCase()
+        .includes(query.value);
+
+      // 🔍 ค้นจากชื่อนักแสดง
+      const matchCast = movie.cast?.some(actor =>
+        actor.name.toLowerCase().includes(query.value)
+      );
+
+      // เจออย่างใดอย่างหนึ่งก็ผ่าน
+      return matchTitle || matchCast;
+    });
   }
 
   loading.value = false;
