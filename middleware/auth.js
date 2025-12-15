@@ -1,15 +1,11 @@
 import { useAuthStore } from '~/stores/auth'
 
-export default defineNuxtRouteMiddleware(async () => {
+export default defineNuxtRouteMiddleware(() => {
   const auth = useAuthStore()
 
-  // ⏳ รอให้ store โหลดข้อมูลก่อน
-  if (!auth.isReady) {
-    await auth.init()
-  }
+  if (!auth.isReady) return
 
-  if (!auth.user) {
+  if (!auth.isAuthenticated) {
     return navigateTo("/profile")
   }
 })
-

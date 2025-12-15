@@ -28,12 +28,12 @@ const store = useMainStore()
 const { history } = storeToRefs(store)
 const route = useRoute()
 
-// ⭐ โหลด history ทุกครั้งที่เข้าหน้านี้
+// โหลด history ทุกครั้งที่เข้าหน้านี้
 onMounted(() => {
   store.loadHistoryFromLocalStorage()
 })
 
-// ⭐ โหลดซ้ำเมื่อเปลี่ยน route มาที่ /history
+// โหลดซ้ำเมื่อเปลี่ยน route มาที่ /history
 watch(
   () => route.fullPath,
   (newVal) => {
@@ -49,7 +49,7 @@ const clearHistory = () => {
 }
 
 definePageMeta({
-  middleware: ['auth']
+  middleware: "auth"
 })
 </script>
 
