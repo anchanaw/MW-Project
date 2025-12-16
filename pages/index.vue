@@ -372,7 +372,6 @@ h2 {
   cursor: pointer;
 }
 
-/* TO WATCHLIST TEXT */
 .to-watchlist {
   color: #ddd;
   font-size: 16px;

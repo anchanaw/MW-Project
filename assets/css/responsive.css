@@ -1,4 +1,3 @@
-/* ===== SAFE RESPONSIVE ===== */
 img {
   max-width: 100%;
   height: auto;
@@ -175,45 +174,75 @@ img {
   }
 
   .popup-container {
-    width: 90%;
-    max-width: 360px;
+    width: 80%;
+    max-width: 520px;
     max-height: 80vh;
-    padding: 20px;
+
+    padding: 24px;
+    border-radius: 10px;
   }
 
-  .watchlist-option,
+  .popup-header {
+    gap: 10px;
+  }
+
+  .popup-label-text {
+    font-size: 15px;
+  }
+
+  .movie-title {
+    font-size: 18px;
+  }
+
+  .to-watchlist {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .watchlist-option {
+    width: 100%;          
+    height: auto;
+    padding: 12px 16px;
+  }
+
   .new-watchlist {
     width: 100%;
+    height: auto;
+    padding: 12px;
+    font-size: 15px;
   }
 
   .create-popup {
-    width: 90%;
-    max-width: 360px;
-    height: auto;
-    padding: 20px;
+    width: 80% !important;
+    max-width: 650px;
+    height: auto !important;          
+    padding: 24px !important;
+    padding-bottom: 24px !important;
+  }
+
+  .create-title {
+    font-size: 18px;
+    margin-bottom: 16px;
   }
 
   .input-box,
   .textarea-box {
-    width: 100%;
+    width: 100%;           
     margin-left: 0;
   }
 
-  .form-group {
-    flex-direction: column;
-    gap: 8px;
+  .textarea-box {
+    height: 120px;
   }
 
-  .cancel-btn,
+  .cancel-btn {
+    right: 130px !important;
+    bottom: 24px ;
+  }
+
   .save-btn {
-    position: static;
-    margin-top: 12px;
-  }
-
-  h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
-    letter-spacing: 0.5px;
+    right: 24px ;
+    bottom: 24px ;
   }
 
 }
@@ -222,7 +251,7 @@ img {
 @media (max-width: 767px) {
 
   .main-container {
-    padding: 12px !important;
+    padding: 70px 12px 12px 12px !important;
   }
 
   .movie-grid {
@@ -404,4 +433,237 @@ img {
     font-size: 15px;
     margin-top: 16px;
   }
+
+  .popup-container {
+    width: 92% !important;
+    max-width: 360px;
+    max-height: 85vh !important;
+    padding: 16px !important;
+    border-radius: 10px !important;
+  }
+
+  .popup-header {
+    flex-wrap: wrap;
+    gap: 8px !important;
+  }
+
+  .movie-title {
+    font-size: 16px;
+  }
+
+  .popup-label-text {
+    font-size: 14px;
+  }
+
+  .to-watchlist {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .watchlist-scroll {
+    padding-right: 4px;
+  }
+
+  .watchlist-option {
+    width: 100%;          
+    height: auto;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .list-title {
+    font-size: 14px;
+  }
+
+  .new-watchlist {
+    width: 100%;
+    height: auto;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .create-popup {
+    width: 92% !important;
+    max-width: 360px;
+    height: auto !important;              
+    padding: 16px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .create-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .form-group {
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .input-label {
+    font-size: 14px;
+  }
+
+  .input-box,
+  .textarea-box {
+    width: 100% !important;               
+    margin-left: 0 !important;
+    font-size: 14px;
+  }
+
+  .textarea-box {
+    height: 100px;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    position: static !important;
+    width: 100% !important;
+    margin-top: 12px;
+  }
+
+  .save-btn {
+    font-size: 14px;
+    height: auto;
+    padding: 12px;
+  }
+
+  .detail-page {
+    padding: 20px 16px;
+    gap: 30px;
+  }
+
+  .top-section {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .left {
+    display: flex;
+    justify-content: center;
+  }
+
+  .left .poster {
+    width: 180px;
+  }
+
+  .right h1 {
+    font-size: 22px;
+    line-height: 1.3;
+  }
+
+  .genres {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .overview-section h2 {
+    font-size: 18px;
+  }
+
+  .overview {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .score-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .score-box {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 12px 16px;
+  }
+
+  .score-title {
+    font-size: 16px;
+  }
+
+  .score-value {
+    font-size: 28px;
+  }
+
+  .add-btn {
+    width: 100%;
+    height: 48px;
+    font-size: 15px;
+  }
+
+  /* cast */
+  .cast-section h2 {
+    font-size: 18px;
+  }
+
+  .cast-card {
+    width: 120px;
+  }
+
+  .cast-img {
+    width: 120px;
+    height: 160px;
+  }
+
+  .cast-name {
+    font-size: 14px;
+  }
+
+  .cast-role {
+    font-size: 13px;
+  }
+
+  /* ================= POPUP ================= */
+
+  .popup-container {
+    width: 90%;
+    max-width: 360px;
+    max-height: 80vh;
+    padding: 20px;
+  }
+
+  .movie-title {
+    font-size: 16px;
+  }
+
+  .watchlist-option,
+  .new-watchlist {
+    width: 100%;
+  }
+
+  .create-popup {
+    width: 90%;
+    max-width: 360px;
+    height: auto;
+    padding: 20px;
+    padding-bottom: 90px;
+  }
+
+  .form-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-box,
+  .textarea-box {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    position: static;
+    margin-top: 12px;
+    width: 100%;
+  }
+
+  .save-btn {
+    margin-top: 6px;
+  }
+
 }
