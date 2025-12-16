@@ -126,13 +126,11 @@ const formatTitle = (text) => {
   position: absolute;
   bottom: 10px;
   right: 10px;
-
   background: rgba(0, 0, 0, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   padding: 6px;
   cursor: pointer;
-
   transition: all .2s ease;
 }
 

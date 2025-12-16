@@ -25,9 +25,10 @@
             <span class="score-value">{{ movie.rating }}</span>
           </div>
 
-          <button class="add-btn" @click="showPopup = true">
+          <button class="add-btn" @click="handleAddToWatchlist">
             Add to Watchlist
           </button>
+
         </div>
       </div>
     </div>
@@ -149,6 +150,15 @@ function addMovieToList(listId) {
   showPopup.value = false;
 }
 
+function handleAddToWatchlist() {
+  if (!auth.isAuthenticated) {
+    navigateTo('/profile')
+    return
+  }
+
+  // logic ปกติ
+  showPopup.value = true
+}
 // save new list
 function saveNewWatchlist() {
   if (!newListName.value.trim()) {
@@ -387,9 +397,9 @@ function goBackPopup() {
 }
 
 .watchlist-scroll {
-  flex: 1;                
-  overflow-y: auto;        
-  padding-right: 8px;      
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
 /* HEADER */

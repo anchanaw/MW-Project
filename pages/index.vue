@@ -160,6 +160,7 @@ const saveNewWatchlist = () => {
 
   showCreatePopup.value = false;
 };
+
 </script>
 
 
