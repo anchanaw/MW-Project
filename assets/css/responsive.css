@@ -69,17 +69,151 @@ img {
   }
 
   .movie-card {
-    width: 100%;
+    width: 100%;          
+    max-width: 180px;     
   }
 
-  .movie-card img {
-    width: 100%;
+  .movie-card .plus {
+    top: 6px;
+    left: 6px;
+  }
+
+  .movie-card .plus img {
+    width: 28px;          
+    height: 40px;
+  }
+
+  .movie-card:hover {
+    filter: none;
+  }
+
+  .plus:hover img {
+    transform: none;
+    filter: none;
+    background: none;
+  }
+
+  .movie-card .title {
+    font-size: 14px;
+    line-height: 1.4;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;    
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .movie-card .year {
+    font-size: 13px;
+  }
+
+  .rating-bar {
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .rating-bar .emoji {
+    width: 18px;
+    height: 18px;
+  }
+
+  .score {
+    font-size: 14px;
+  }
+
+  .outof {
+    font-size: 9px;
+  }
+
+  .main-container {
+    padding: 18px !important; 
+  }
+
+  .welcome-box {
+    width: 100% !important;
+    padding: 16px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .welcome-box h1,
+  .welcome-box .highlight {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .welcome-box p {
+    font-size: 14px;
+    line-height: 1.4;
+    flex-wrap: wrap;   
+  }
+
+  .welcome-plus-icon,
+  .check-icon {
+    width: 20px;
     height: auto;
-    display: block;
   }
 
-  .content {
-    padding: 16px;
+  .search-area {
+    width: 100% !important;
+    height: 44px;
+    margin-bottom: 20px;
+    overflow: hidden !important;
+  }
+
+  .search-area input {
+    font-size: 14px;
+  }
+
+  .search-btn {
+    padding: 0 16px !important;
+    font-size: 14px !important;
+  }
+
+  .movie-grid {
+    gap: 16px !important;
+  }
+
+  .popup-container {
+    width: 90%;
+    max-width: 360px;
+    max-height: 80vh;
+    padding: 20px;
+  }
+
+  .watchlist-option,
+  .new-watchlist {
+    width: 100%;
+  }
+
+  .create-popup {
+    width: 90%;
+    max-width: 360px;
+    height: auto;
+    padding: 20px;
+  }
+
+  .input-box,
+  .textarea-box {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .form-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    position: static;
+    margin-top: 12px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
   }
 
 }
@@ -87,14 +221,187 @@ img {
 /* Mobile */
 @media (max-width: 767px) {
 
+  .main-container {
+    padding: 12px !important;
+  }
+
   .movie-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px !important;
+  }
+
+  .movie-card {
+    max-width: none;     
+  }
+
+  .movie-card .plus {
+    top: 4px;
+    left: 4px;
+  }
+
+  .movie-card .plus img {
+    width: 26px;
+    height: 36px;
+  }
+
+  .movie-card .title {
+    font-size: 13px;
+  }
+
+  .movie-card .year {
+    font-size: 12px;
+  }
+
+  .score {
+    font-size: 13px;
+  }
+
+  .outof {
+    font-size: 8px;
+  }
+
+  .welcome-box h1,
+  .welcome-box .highlight {
+    font-size: 20px;
+  }
+
+  .search-area {
+    height: 42px;
+  }
+
+  .search-btn {
+    padding: 0 12px !important;
+    font-size: 13px !important;
+  }
+
+  .popup-container,
+  .create-popup {
+    width: 94%;
+    padding: 16px;
+  }
+
+  .watchlist-page {
+    margin: 10px !important;
+    padding: 0 12px;
+  }
+
+  .watchlist-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .watchlist-title {
+    font-size: 24px;  
+    line-height: 1.3;
+  }
+
+  .edit-btn img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .watchlist-description {
+    margin-bottom: 32px;
+  }
+
+  .desc-title {
+    font-size: 16px;
+  }
+
+  .desc-text {
+    font-size: 14px;
+  }
+
+  .watchlist-stats {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-box {
+    width: 100% !important;  
+    height: auto;
+    padding: 14px 10px;
+  }
+
+  .stat-box .label {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .stat-box .value {
+    font-size: 22px;  
+  }
+
+  .movies-grid {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
-  .content {
-    padding: 12px;
+  .movie-card {
+    width: 100%;  
   }
 
-}
+  .edit-page {
+    margin: 20px 12px 0 12px !important;
+  }
 
+  .edit-page {
+    padding: 20px 16px !important;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .top-bar h2 {
+    font-size: 20px;
+  }
+
+  .logout-link {
+    font-size: 13px;
+    padding: 0;
+  }
+
+  .edit-container {
+    width: 100% !important;
+  }
+
+  .avatar-circle {
+    width: 90px;
+    height: 90px;
+  }
+
+  .avatar-btn img {
+    width: 24px;
+  }
+
+  .avatar-btn {
+    font-size: 14px;
+  }
+
+  .remove-btn {
+    font-size: 13px;
+  }
+
+  label {
+    font-size: 14px;
+  }
+
+  input {
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .update-btn {
+    width: 100%;        
+    padding: 12px;
+    font-size: 15px;
+    margin-top: 16px;
+  }
+}

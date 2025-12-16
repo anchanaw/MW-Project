@@ -85,9 +85,7 @@ function deleteList() {
 
 <style scoped>
 .edit-page {
-  margin-left: 30px;
-  margin-top: 26px;
-  margin-right: 60px;
+  margin: 26px 60px 0 30px;
   font-family: "Lato", sans-serif;
   color: white;
 }
