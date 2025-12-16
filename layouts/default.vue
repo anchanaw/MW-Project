@@ -1,6 +1,10 @@
 <template>
     <div class="layout">
-        <aside class="sidebar">
+        <button v-if="!isSidebarOpen" class="sidebar-toggle" @click="toggleSidebar">
+            ☰
+        </button>
+
+        <aside class="sidebar" :class="{ open: isSidebarOpen }">
             <NuxtLink to="/">
                 <h1 class="title">Watchlists</h1>
             </NuxtLink>
@@ -57,6 +61,9 @@
             </NuxtLink>
 
         </aside>
+
+        <div class="overlay" v-if="isSidebarOpen" @click="isSidebarOpen = false"></div>
+
         <div class="content">
             <slot />
         </div>
@@ -68,6 +75,7 @@ import { ref, onMounted } from "vue";
 import { navigateTo } from "#app";
 import { useMainStore } from "~/stores/main";
 import { useAuthStore } from "~/stores/auth";
+import { useRoute } from 'vue-router';
 
 const keyword = ref("");
 
@@ -82,6 +90,20 @@ onMounted(() => store.loadHistoryFromLocalStorage());
 // Auth store
 const auth = useAuthStore();
 onMounted(() => auth.init());
+const isSidebarOpen = ref(false);
+
+const route = useRoute();
+
+watch(
+    () => route.fullPath,
+    () => {
+        isSidebarOpen.value = false;
+    }
+);
+
+const toggleSidebar = () => {
+    isSidebarOpen.value = !isSidebarOpen.value;
+};
 </script>
 
 <style scoped>
@@ -236,30 +258,30 @@ a.create-btn {
 }
 
 .my-lists .list-item {
-  color: #ffffff;        
-  text-decoration: none; 
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  font-family: 'Lato', sans-serif;
-  font-size: 16px;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
 }
 
 .my-lists .list-item:hover {
-  color: #ff3b3b;        
+    color: #ff3b3b;
 }
 
 .my-lists .icon {
-  font-weight: bold;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #e5e5e5;
-  color: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    font-weight: bold;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #e5e5e5;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .profile-box {
@@ -289,11 +311,14 @@ a.create-btn {
 }
 
 .avatar img {
-    position: relative;
-    width: 32px;
-    height: 32px;
-    top: 3px;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  top: 3px;
+  border-radius: 50%;   
+  object-fit: cover;    
 }
+
 
 .name {
     font-family: 'Roboto', sans-serif;

@@ -5,7 +5,7 @@
       <img :src="img" :alt="title" class="poster-img" />
     </NuxtLink>
 
-    <button class="plus" @click.stop="$emit('add-to-list')" aria-label="Add to list">
+    <button class="plus" @click.stop="handleAdd" aria-label="Add to list">
       <img src="/icons/plus-icon.svg" alt="Add" />
     </button>
 
@@ -23,6 +23,9 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '~/stores/auth'
+import { navigateTo } from '#app'
+
 defineProps({
   id: { type: [String, Number], required: true },
   title: { type: String, required: true },
@@ -41,8 +44,16 @@ const formatTitle = (text) => {
   return text.replace(":", ":<br>");
 };
 
-defineEmits(['add-to-list']);
+const emit = defineEmits(['add-to-list']);
+const auth = useAuthStore();
+const handleAdd = () => {
+  if (!auth.isAuthenticated) {
+    navigateTo('/profile');
+    return;
+  }
 
+  emit('add-to-list');
+};
 </script>
 
 <style scoped>
@@ -60,6 +71,7 @@ defineEmits(['add-to-list']);
   filter: brightness(0.7);
 
 }
+
 .poster {
   display: block;
   position: relative;
@@ -95,10 +107,13 @@ defineEmits(['add-to-list']);
   filter: brightness(5.5) saturate(2) contrast(2);
 }
 
-.rating-bar,.score,.outof {
-    font-family: 'Lato', sans-serif;
+.rating-bar,
+.score,
+.outof {
+  font-family: 'Lato', sans-serif;
 
 }
+
 .rating-bar {
   display: flex;
   align-items: flex-start;

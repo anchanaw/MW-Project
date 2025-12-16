@@ -12,5 +12,8 @@ export default defineNuxtConfig({
     display: 'swap'
   },
 
-  css: ['~/assets/css/reset.css']
+ css: [
+    '~/assets/css/reset.css',
+    '~/assets/css/responsive.css'
+  ]
 })

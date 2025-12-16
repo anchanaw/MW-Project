@@ -54,8 +54,11 @@ export default {
     }
   }
 };
-</script>
 
+definePageMeta({
+  middleware: 'auth'
+});
+</script>
 
 <style scoped>
 .create-container {
