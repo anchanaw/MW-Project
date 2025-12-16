@@ -6,16 +6,13 @@
       <h1>Welcome to <span class="highlight">Watchlists</span></h1>
       <p>Browse movies, add them to watchlists and share them with friends.</p>
       <p>
-  Just click the 
-  <img class="welcome-plus-icon" src="/icons/plus-icon.svg" alt="Add" />
-  to add a movie, the poster to see more details or 
-  <img class="check-icon" 
-       :src="isChecked ? '/icons/check-icon-green.png' : '/icons/check-icon.png'" 
-       @click="isChecked = !isChecked"
-  />
-  to mark the movie as watched.
-</p>
-
+        Just click the
+        <img class="welcome-plus-icon" src="/icons/plus-icon.svg" alt="Add" />
+        to add a movie, the poster to see more details or
+        <img class="check-icon" :src="isChecked ? '/icons/check-icon-green.png' : '/icons/check-icon.png'"
+          @click="isChecked = !isChecked" />
+        to mark the movie as watched.
+      </p>
 
     </div>
 
@@ -32,7 +29,7 @@
 
     <!-- Movie grid -->
     <div class="movie-grid">
-      <MovieCard v-for="m in movies" :key="m.id" v-bind="m" @add-to-list="openPopup(m)" />
+      <Moviecard v-for="m in movies" :key="m.id" v-bind="m" @add-to-list="openPopup(m)" />
     </div>
 
     <!-- =============== POPUP ADD MOVIE =============== -->
@@ -93,7 +90,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import MovieCard from "~/components/moviecard.vue";
+// import MovieCard from "~/components/moviecard.vue";
 import { useMainStore } from "~/stores/main";
 import { useAuthStore } from "~/stores/auth";
 
