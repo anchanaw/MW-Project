@@ -17,7 +17,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import MovieCard from '~/components/moviecard.vue';
+import MovieCard from '~/components/MovieCard.vue';
 import { useMainStore } from '~/stores/main';
 
 

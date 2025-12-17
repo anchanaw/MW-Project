@@ -6,7 +6,8 @@
 
         <aside class="sidebar" :class="{ open: isSidebarOpen }">
             <NuxtLink to="/">
-                <h1 class="title">Watchlists</h1>
+                <img src="/icons/watchlists-icon.png" alt="Watchlists" class="title-image" />
+
             </NuxtLink>
             <div class="search-box">
                 <input type="text" placeholder="Search" v-model="keyword" @keyup.enter="goSearch" />
@@ -41,28 +42,44 @@
                     </NuxtLink>
                 </div>
             </div>
-            <NuxtLink to="/profile" class="profile-link">
-                <div class="profile-box">
-                    <div class="left">
 
-                        <div class="avatar">
-                            <img :src="auth.user?.avatar || '/icons/user-icon.png'" alt="avatar" />
-                        </div>
-
-                        <span class="name">
-                            {{ auth.isAuthenticated ? auth.user.name : "GUEST" }}
-                        </span>
+            <div class="profile-box">
+                <div class="left">
+                    <div class="avatar">
+                        <img :src="auth.user?.avatar || '/icons/user-icon.png'" alt="avatar" />
                     </div>
 
-                    <div class="dots">
-                        <span></span><span></span><span></span>
+                    <span class="name">
+                        {{ auth.isAuthenticated ? auth.user.name : "GUEST" }}
+                    </span>
+                </div>
+
+                <!-- จุด + popup -->
+                <div class="dots-wrapper">
+                    <NuxtLink to="/profile" class="dots">
+                        <img src="/icons/dot-icon.png" alt="More options" class="dots-icon" />
+                    </NuxtLink>
+                    <div class="popup-menu">
+                        <NuxtLink to="/edit" class="popup-item">
+                            Edit
+                        </NuxtLink>
+
+                        <button class="popup-item logout" @click="logout">
+                            Logout
+                        </button>
                     </div>
                 </div>
-            </NuxtLink>
+            </div>
 
         </aside>
 
-        <div class="overlay" v-if="isSidebarOpen" @click="isSidebarOpen = false"></div>
+        <AddMoviePopup />
+
+        <div
+  class="overlay"
+  v-if="isSidebarOpen && !popup.showPopup"
+  @click="isSidebarOpen = false"
+></div>
 
         <div class="content">
             <slot />
@@ -71,39 +88,45 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { navigateTo } from "#app";
-import { useMainStore } from "~/stores/main";
-import { useAuthStore } from "~/stores/auth";
-import { useRoute } from 'vue-router';
+import { ref, onMounted, watch } from 'vue'
+import { navigateTo } from '#app'
+import { useRoute } from 'vue-router'
+import { useMainStore } from '~/stores/main'
+import { useAuthStore } from '~/stores/auth'
+import AddMoviePopup from '~/components/AddMoviePopup.vue'
 
-const keyword = ref("");
+const keyword = ref('')
+const route = useRoute()
+const isSidebarOpen = ref(false)
+
+const store = useMainStore()
+const auth = useAuthStore()
 
 const goSearch = () => {
-    if (!keyword.value.trim()) return;
-    navigateTo(`/search?query=${encodeURIComponent(keyword.value)}`);
-};
-
-const store = useMainStore();
-onMounted(() => store.loadHistoryFromLocalStorage());
-
-// Auth store
-const auth = useAuthStore();
-onMounted(() => auth.init());
-const isSidebarOpen = ref(false);
-
-const route = useRoute();
+  if (!keyword.value.trim()) return
+  navigateTo(`/search?query=${encodeURIComponent(keyword.value)}`)
+}
 
 watch(
-    () => route.fullPath,
-    () => {
-        isSidebarOpen.value = false;
-    }
-);
+  () => route.fullPath,
+  () => {
+    isSidebarOpen.value = false
+  }
+)
 
 const toggleSidebar = () => {
-    isSidebarOpen.value = !isSidebarOpen.value;
-};
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
+const logout = () => {
+  auth.logout()
+  navigateTo('/profile') 
+}
+
+onMounted(() => {
+  store.loadHistoryFromLocalStorage()
+  auth.init()
+})
 </script>
 
 <style scoped>
@@ -128,18 +151,19 @@ const toggleSidebar = () => {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: 'Lato', sans-serif;
+
 }
 
-.title {
-    color: #ff3b3b;
-    font-family: Archivo, sans-serif;
-    line-height: 100%;
-    font-size: 40px;
-    font-weight: bold;
+.title-image {
+    width: 212px;
+    height: auto;
+    display: block;
     margin-bottom: 20px;
-    padding-left: 12px;
     cursor: pointer;
+    padding-left: 12px;
 }
+
 
 a {
     text-decoration: none;
@@ -185,7 +209,6 @@ h1.title {
     gap: 10px;
     align-items: center;
     cursor: pointer;
-    font-family: 'Lato', sans-serif;
     font-size: 16px;
     font-weight: 400;
     line-height: 100%;
@@ -290,11 +313,9 @@ a.create-btn {
     border: 1px solid #b1b1b1;
     border-radius: 8px;
     padding: 0 15px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     background: #000;
 }
 
@@ -311,12 +332,12 @@ a.create-btn {
 }
 
 .avatar img {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  top: 3px;
-  border-radius: 50%;   
-  object-fit: cover;    
+    position: relative;
+    width: 32px;
+    height: 32px;
+    top: 3px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 
@@ -327,15 +348,66 @@ a.create-btn {
     color: #ffffff;
 }
 
-.dots {
-    display: flex;
-    gap: 3px;
+.dots-wrapper {
+    position: relative;
+    padding: 10px;
 }
 
-.dots span {
-    width: 5px;
-    height: 5px;
-    background: #e3e3e3;
-    border-radius: 50%;
+.dots-icon {
+    display: flex;
+    width: 16px;
+    height: 4px;
+    cursor: pointer;
 }
+
+/* popup ซ่อนก่อน */
+.popup-menu {
+    position: absolute;
+    right: 0;
+    bottom: 28px;
+
+    background: #1d1d1d;
+    border: 1px solid #444;
+    border-radius: 6px;
+    min-width: 120px;
+
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+
+/* hover แล้วโชว์ */
+.dots-wrapper:hover .popup-menu {
+    display: flex;
+}
+
+.popup-item {
+    padding: 10px 14px;
+    white-space: nowrap;
+    color: white;
+    text-decoration: none;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.popup-item:hover {
+    background: #333;
+}
+
+.popup-item.logout {
+    color: #ff6b6b;
+}
+
+.popup-backdrop {
+  z-index: 9999;        /* สูงกว่า sidebar แน่นอน */
+  pointer-events: auto;
+}
+
+.popup-container {
+  pointer-events: auto;
+}
+
 </style>

@@ -6,32 +6,35 @@
     </div>
 
     <div class="movie-grid">
-      <MovieCard
-        v-for="movie in history"
-        :key="movie.id"
-        v-bind="movie"
-        :class="{ viewed: movie.isViewed }"
-      />
+      <MovieCard v-for="movie in history" :key="movie.id" v-bind="movie" :class="{ viewed: movie.isViewed }"
+        @add-to-list="openPopup(movie)" />
+
     </div>
 
   </div>
 </template>
 
 <script setup>
-import MovieCard from '~/components/moviecard.vue'
+import MovieCard from '~/components/MovieCard.vue'
 import { useMainStore } from '~/stores/main'
 import { storeToRefs } from 'pinia'
-import { onMounted, watch } from 'vue'
+import { onMounted, watch ,readonly} from 'vue'
 import { useRoute } from 'vue-router'
+import { usePopupStore } from '~/stores/popup'
 
+const popup = usePopupStore()
 const store = useMainStore()
 const { history } = storeToRefs(store)
 const route = useRoute()
 
-// โหลด history ทุกครั้งที่เข้าหน้านี้
-onMounted(() => {
-  store.loadHistoryFromLocalStorage()
+definePageMeta({
+  middleware: "auth"
 })
+
+const openPopup = (movie) => {
+  console.log('page send movie:', movie)
+  popup.openPopup(movie)
+}
 
 // โหลดซ้ำเมื่อเปลี่ยน route มาที่ /history
 watch(
@@ -48,8 +51,9 @@ const clearHistory = () => {
   store.clearAllHistory()
 }
 
-definePageMeta({
-  middleware: "auth"
+// โหลด history ทุกครั้งที่เข้าหน้านี้
+onMounted(() => {
+  store.loadHistoryFromLocalStorage()
 })
 </script>
 
@@ -82,7 +86,6 @@ definePageMeta({
 }
 
 .viewed {
-  border: 2px solid #ff4f4f;
   border-radius: 6px;
 }
 </style>

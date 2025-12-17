@@ -137,6 +137,7 @@ const handleAdd = () => {
 
 .outof {
   color: #E1E1E1;
+  margin-top: 3px;
   font-size: 10px;
   font-weight: 400;
 }

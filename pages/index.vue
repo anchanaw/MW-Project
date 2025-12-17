@@ -29,7 +29,7 @@
 
     <!-- Movie grid -->
     <div class="movie-grid">
-      <Moviecard v-for="m in movies" :key="m.id" v-bind="m" @add-to-list="openPopup(m)" />
+      <MovieCard v-for="m in movies" :key="m.id" v-bind="m" @add-to-list="openPopup(m)" />
     </div>
 
     <!-- =============== POPUP ADD MOVIE =============== -->
@@ -238,10 +238,16 @@ const saveNewWatchlist = () => {
   width: 988px;
   height: 45px;
   margin-bottom: 30px;
-
-  background: #FFFFFF0D;
-  border: 1px solid #333;
+  background: #1b1b1b;          
+  border: 1px solid #D9D9D94D;
   border-radius: 8px;
+
+  transition: background 0.2s ease, border 0.2s ease;
+}
+
+.search-area:focus-within {
+  background: #FFFFFF1A;          
+  border: 1px solid #444;
 }
 
 /* input inside the box */
@@ -249,15 +255,18 @@ const saveNewWatchlist = () => {
   flex: 1;
   height: 100%;
   padding: 0 12px 0 50px;
-  background: transparent;
+  background: transparent;    
   border: none;
+  outline: none;
   color: white;
+  font-size: 15px;
   -webkit-appearance: none;
   appearance: none;
 }
 
-.search-area input:focus {
-  outline: none;
+/* placeholder */
+.search-area input::placeholder {
+  color: #777;
 }
 
 /* search icon inside input */
@@ -269,23 +278,24 @@ const saveNewWatchlist = () => {
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
+  opacity: 0.7;
 }
 
+/* search button */
 .search-btn {
   position: absolute;
   right: -2px;
   height: 45px;
   padding: 0 25px;
-
   background: #ff4646;
-  border: 1px solid #333;
+  border: none;               
   border-radius: 6px;
   cursor: pointer;
-
   font-size: 16px;
   font-weight: 600;
   color: #000;
 }
+
 
 .search-btn:hover {
   background: #ff5c5c;
