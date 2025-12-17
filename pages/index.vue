@@ -165,7 +165,7 @@ const saveNewWatchlist = () => {
 .main-container {
   flex: 1;
   color: #E1E1E1;
-  padding: 40px;
+  padding: 60px;
   overflow-y: auto;
   font-family: 'Lato', sans-serif;
 }
@@ -239,7 +239,7 @@ const saveNewWatchlist = () => {
   height: 45px;
   margin-bottom: 30px;
 
-  background: #111;
+  background: #FFFFFF0D;
   border: 1px solid #333;
   border-radius: 8px;
 }
@@ -248,10 +248,12 @@ const saveNewWatchlist = () => {
 .search-area input {
   flex: 1;
   height: 100%;
-  padding: 0 12px 0 40px;
+  padding: 0 12px 0 50px;
   background: transparent;
   border: none;
   color: white;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .search-area input:focus {

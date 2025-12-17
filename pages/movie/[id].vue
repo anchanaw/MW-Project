@@ -280,7 +280,7 @@ function goBackPopup() {
   width: 81px;
   height: 95px;
   padding: 15px 15px;
-  background: #161616;
+  background: #D9D9D91A;
   border: 1px solid #A41B1B;
   border-radius: 8px;
   display: flex;
@@ -298,7 +298,7 @@ function goBackPopup() {
 }
 
 .score-value {
-  color: #ff4646;
+  color: #F33F3F;
   font-size: 36px;
   font-weight: 700;
 }
@@ -454,10 +454,11 @@ function goBackPopup() {
 }
 
 .list-icon {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   background: #e6e6e6;
   color: black;
+  font-size: 20px;
   font-weight: 700;
   border-radius: 50%;
   display: flex;
