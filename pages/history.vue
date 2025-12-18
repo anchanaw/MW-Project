@@ -324,13 +324,32 @@ onMounted(() => {
 .plus-icon {
   width: 22px;
   height: 22px;
-  background: white;
-  color: #ff3b3b;
   border-radius: 50%;
+  background: #fff;        /* วงกลมขาว */
+  color: #000;             /* + สีดำ */
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+  font-size: 16px;
   font-weight: 800;
+  line-height: 1;
+}
+
+.new-watchlist {
+  background: #ff3b3b;
+  color: #000;             /* ตัวหนังสือสีดำ */
+  border: none;
+  border-radius: 6px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 16px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .create-popup {

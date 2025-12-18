@@ -5,12 +5,11 @@
     <div class="poster-wrapper">
       <img :src="img" alt="" class="poster" />
 
-      <div v-if="rating >= 60" class="checkmark">✔</div>
-
-      <button class="watch-toggle" :class="{ watched }" @click.stop="$emit('toggle')" aria-label="Toggle watched">
+      <!-- MARK TOP RIGHT (CLICKABLE) -->
+      <button class="watch-mark" :class="{ watched }" @click.stop="$emit('toggle')" aria-label="Toggle watched">
         <img :src="watched
-          ? '/icons/watched-icon.png'
-          : '/icons/unwatched-icon.png'" class="tv-icon" alt="watch-status" />
+          ? '/icons/check-icon-green.png'
+          : '/icons/check-icon.png'" alt="watch-mark" />
       </button>
     </div>
 
@@ -122,25 +121,33 @@ const formatTitle = (text) => {
   opacity: 0.8;
 }
 
-.watch-toggle {
+.watch-mark {
   position: absolute;
-  bottom: 10px;
+  top: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  padding: 6px;
+  background: transparent;
+  border: none;
+  padding: 0;
   cursor: pointer;
-  transition: all .2s ease;
+  z-index: 2;
 }
 
-.watch-toggle:hover {
-  background: rgba(0, 0, 0, 0.85);
+.watch-mark img {
+  width: 26px;
+  height: 26px;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.watch-toggle.watched {
-  box-shadow: 0 0 10px rgba(140, 255, 140, .45);
+/* ดูแล้ว = เขียว */
+.watch-mark.watched img {
+  filter: drop-shadow(0 0 6px rgba(120, 255, 120, 0.6));
 }
+
+/* hover เบา ๆ */
+.watch-mark:hover img {
+  transform: scale(1.08);
+}
+
 
 .tv-icon {
   width: 20px;

@@ -19,6 +19,7 @@
       <p class="title" v-html="formatTitle(title)"></p>
       <p class="year" v-if="year">({{ year }})</p>
     </div>
+
   </div>
 </template>
 
@@ -26,13 +27,14 @@
 import { useAuthStore } from '~/stores/auth'
 import { navigateTo } from '#app'
 
-defineProps({
+const props = defineProps({
   id: { type: [String, Number], required: true },
   title: { type: String, required: true },
   year: { type: [String, Number], required: false },
   img: { type: String, required: true },
   rating: { type: Number, required: false }
-});
+})
+
 
 const emojiFor = (rating) => {
   if (rating >= 70) return "/emojis/great-80.png"
@@ -54,6 +56,7 @@ const handleAdd = () => {
 
   emit('add-to-list');
 };
+
 </script>
 
 <style scoped>
@@ -160,4 +163,5 @@ const handleAdd = () => {
   font-weight: 300;
   opacity: 0.8;
 }
+
 </style>

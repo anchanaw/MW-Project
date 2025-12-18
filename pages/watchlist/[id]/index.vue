@@ -43,9 +43,8 @@
 
         <!-- Movie List -->
         <div class="movies-grid">
-            <WatchlistMovieCard v-for="movie in (watchlist?.movies || [])" :key="movie.id" :id="movie.id"
-                :title="movie.title" :year="movie.year" :img="movie.img" :rating="movie.rating" :watched="movie.watched"
-                @toggle="auth.toggleWatched(watchlist.id, movie.id)" />
+            <WatchlistMovieCard v-for="movie in watchlist?.movies ?? []" :key="movie.id" v-bind="movie"
+                @toggle="watchlist && auth.toggleWatched(watchlist.id, movie.id)" />
         </div>
 
     </div>
