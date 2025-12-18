@@ -36,12 +36,12 @@
 
         <div class="form-group">
           <label class="input-label">Name</label>
-          <input type="text" v-model="newListName" class="input-box" />
+          <input type="text" v-model="popup.newListName" class="input-box" />
         </div>
 
         <div class="form-group">
           <label class="input-label">Description</label>
-          <textarea v-model="newListDescription" class="textarea-box"></textarea>
+          <textarea v-model="popup.newListDescription" class="textarea-box"></textarea>
         </div>
 
         <button class="cancel-btn" @click="goBackPopup">Cancel</button>
@@ -82,7 +82,13 @@ const goBackPopup = () => {
 const close = () => {
   popup.closeAll()
 }
+
+const saveNewWatchlist = () => {
+  popup.saveNewWatchlist()
+}
+
 </script>
+
 <style scoped>
     
 /* BACKDROP */

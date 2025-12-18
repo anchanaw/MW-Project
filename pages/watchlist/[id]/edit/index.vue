@@ -39,14 +39,10 @@ const route = useRoute();
 const auth = useAuthStore();
 const id = Number(route.params.id);
 
-onMounted(() => {
-  auth.init(); // โหลด user
-});
-
 // โหลด watchlist ที่ต้องการแก้ไข
 const watchlist = computed(() =>
-  auth.user?.watchlists?.find(w => w.id === id)
-);
+  auth.user.watchlists.find(w => w.id === id)
+)
 
 // สร้างตัวแปรแก้ไขได้
 const name = ref("");

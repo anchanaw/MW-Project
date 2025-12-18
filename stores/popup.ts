@@ -23,7 +23,7 @@ export const usePopupStore = defineStore('popup', {
       this.showCreatePopup = true
     },
 
-    goBackPopup() {
+    closeCreatePopup() {
       this.showCreatePopup = false
       this.showPopup = true
     },
@@ -37,19 +37,19 @@ export const usePopupStore = defineStore('popup', {
     },
 
     saveNewWatchlist() {
-      if (!this.newListName.trim() || !this.selectedMovie) return
+  if (!this.newListName.trim()) return
 
-      const auth = useAuthStore()
+  const auth = useAuthStore()
 
-      auth.addWatchlist(
-        {
-          title: this.newListName,
-          description: this.newListDescription
-        },
-        this.selectedMovie
-      )
+  if (this.selectedMovie) {
+    auth.addWatchlist({
+      title: this.newListName,
+      description: this.newListDescription
+    }, this.selectedMovie)
+  }
 
-      this.closeAll()
-    }
+  this.closeAll()
+}
+
   }
 })
