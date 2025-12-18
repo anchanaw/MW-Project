@@ -25,7 +25,7 @@
         <div class="watchlist-stats">
             <div class="stat-box">
                 <span class="label">ITEMS ON LIST</span>
-                <span class="value">{{ itemsOnList }}
+                <span class="value">{{ watchlist?.movies?.length || 0 }}
                 </span>
             </div>
 
@@ -65,6 +65,7 @@ const id = Number(route.params.id);
 const loading = ref(true);
 
 onMounted(() => {
+    auth.init();
     loading.value = false;
 });
 const goToEdit = () => {
@@ -73,12 +74,9 @@ const goToEdit = () => {
 };
 
 const watchlist = computed(() => {
-  return auth.user.watchlists.find(w => w.id === id)
+    if (!auth.user?.watchlists) return null;
+    return auth.user.watchlists.find(w => w.id === id) || null;
 });
-
-const itemsOnList = computed(() => {
-  return watchlist.value?.movies.length ?? 0
-})
 
 const averageScore = computed(() => {
     const movies = watchlist.value?.movies;

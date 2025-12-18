@@ -166,27 +166,38 @@ export const useAuthStore = defineStore('auth', () => {
 
   // CREATE WATCHLIST
   function addWatchlist(
-    { title, description }: { title: string; description?: string },
-    selectedMovie: Movie
-  ): void {
-    const users: User[] =
-      JSON.parse(localStorage.getItem("users") || '[]')
+  data: { title: string; description?: string },
+  selectedMovie?: Movie
+): void {
+  const users: User[] =
+    JSON.parse(localStorage.getItem("users") || "[]")
 
-    const index = users.findIndex(u => u.id === user.value.id)
-    if (index === -1) return
+  const index = users.findIndex(u => u.id === user.value.id)
+  if (index === -1) return
 
-    const newWatchlist: Watchlist = {
-      id: Date.now(),
-      title: title.trim(),
-      description: description || "",
-      movies: []
-    }
-
-    users[index].watchlists.push(newWatchlist)
-    localStorage.setItem("users", JSON.stringify(users))
-
-    user.value = { ...users[index] }
+  const newWatchlist: Watchlist = {
+    id: Date.now(),
+    title: data.title.trim(),
+    description: data.description || "",
+    movies: selectedMovie
+      ? [{
+          id: selectedMovie.id,
+          title: selectedMovie.title,
+          year: selectedMovie.year,
+          img: selectedMovie.img,
+          rating: selectedMovie.rating ?? 0,
+          runtime: selectedMovie.runtime ?? 0,
+          watched: false
+        }]
+      : []
   }
+
+  users[index].watchlists.push(newWatchlist)
+  localStorage.setItem("users", JSON.stringify(users))
+
+  // ✅ reactive 100%
+  user.value = { ...users[index] }
+}
 
   function formatRuntime(minutes: number): string {
     const h = Math.floor(minutes / 60)

@@ -32,7 +32,7 @@
       <MovieCard v-for="m in movies" :key="m.id" v-bind="m" @add-to-list="openPopup(m)" />
     </div>
 
-    <!-- =============== POPUP ADD MOVIE =============== -->
+     <!-- =============== POPUP ADD MOVIE =============== -->
     <div v-if="showPopup" class="popup-backdrop">
       <div class="popup-container">
 
@@ -82,7 +82,6 @@
 
       </div>
     </div>
-
   </div>
 </template>
 
@@ -145,18 +144,20 @@ const goBackPopup = () => {
 
 // save new list
 const saveNewWatchlist = () => {
-  if (!newListName.value.trim()) return;
+  if (!newListName.value.trim()) return
 
-  auth.addWatchlist({
-    title: newListName.value,
-    description: newListDescription.value,
-  });
+  auth.addWatchlist(
+    {
+      title: newListName.value,
+      description: newListDescription.value,
+    },
+    selectedMovie.value 
+  )
 
-  newListName.value = "";
-  newListDescription.value = "";
-
-  showCreatePopup.value = false;
-};
+  newListName.value = ""
+  newListDescription.value = ""
+  showCreatePopup.value = false
+}
 
 </script>
 

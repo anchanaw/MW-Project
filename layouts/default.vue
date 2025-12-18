@@ -93,7 +93,6 @@ import { navigateTo } from '#app'
 import { useRoute } from 'vue-router'
 import { useMainStore } from '~/stores/main'
 import { useAuthStore } from '~/stores/auth'
-import AddMoviePopup from '~/components/AddMoviePopup.vue'
 
 const keyword = ref('')
 const route = useRoute()
