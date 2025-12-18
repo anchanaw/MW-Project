@@ -6,94 +6,46 @@
     </div>
 
     <div class="movie-grid">
-      <MovieCard
-        v-for="movie in history"
-        :key="movie.id"
-        v-bind="movie"
-        :class="{ viewed: movie.isViewed }"
-        @add-to-list="openPopup(movie)"
-      />
+      <MovieCard v-for="movie in history" :key="movie.id" v-bind="movie" :class="{ viewed: movie.isViewed }"
+        @add-to-list="openAddPopup(movie)" />
     </div>
 
-    <!-- =============== POPUP ADD MOVIE =============== -->
-    <div v-if="showPopup" class="popup-backdrop">
-      <div class="popup-container">
-        <div class="popup-header">
-          <span class="popup-label-text">Add movie:</span>
-          <span class="movie-title">
-            {{ selectedMovie?.title }} ({{ selectedMovie?.year }})
-          </span>
-          <button class="close-btn" @click="showPopup = false">✖</button>
-        </div>
-
-        <p class="to-watchlist">To watchlist:</p>
-
-        <div class="watchlist-scroll">
-          <div
-            class="watchlist-option"
-            v-for="list in auth.user?.watchlists ?? []"
-            :key="list.id"
-            @click="addMovieToList(list.id)"
-          >
-            <div class="list-icon">
-              {{ list.title.charAt(0).toUpperCase() }}
-            </div>
-            <span class="list-title">{{ list.title }}</span>
-          </div>
-        </div>
-
-        <button class="new-watchlist" @click="openCreatePopup">
-          <span class="plus-icon">+</span> New watchlist
-        </button>
-      </div>
-    </div>
-
-    <!-- =============== POPUP CREATE LIST =============== -->
-    <div v-if="showCreatePopup" class="popup-backdrop">
-      <div class="create-popup">
-        <h2 class="create-title">Create new watchlist</h2>
-
-        <div class="form-group">
-          <label class="input-label">Name</label>
-          <input v-model="newListName" class="input-box" />
-        </div>
-
-        <div class="form-group">
-          <label class="input-label">Description</label>
-          <textarea v-model="newListDescription" class="textarea-box"></textarea>
-        </div>
-
-        <button class="cancel-btn" @click="goBackPopup">Cancel</button>
-        <button class="save-btn" @click="saveNewWatchlist">Save</button>
-      </div>
-    </div>
+    <AddToWatchlistPopup :open="showAddPopup" :movie="selectedMovie" @close="showAddPopup = false" />
 
   </div>
 </template>
 
 <script setup>
-import MovieCard from '~/components/MovieCard.vue'
-import { useMainStore } from '~/stores/main'
-import { storeToRefs } from 'pinia'
-import { onMounted, watch ,readonly} from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAuthStore } from '~/stores/auth' 
+import { storeToRefs } from 'pinia'
 
-const auth = useAuthStore()
+import MovieCard from '~/components/MovieCard.vue'
+import AddToWatchlistPopup from '~/components/watchlist/AddToWatchlistPopup.vue'
+
+import { useMainStore } from '~/stores/main'
+import { useAuthStore } from '~/stores/auth'
+
 const store = useMainStore()
+const auth = useAuthStore()
 const { history } = storeToRefs(store)
 const route = useRoute()
 
+/* ===== popup state (ตัวเดียวพอ) ===== */
+const showAddPopup = ref(false)
+const selectedMovie = ref(null)
 
-definePageMeta({
-  middleware: "auth"
-})
-
-function onAddMovie(movie) {
-  popup.openPopup(movie)
+/* ===== open popup ===== */
+const openAddPopup = (movie) => {
+  selectedMovie.value = movie
+  showAddPopup.value = true
 }
 
-// โหลดซ้ำเมื่อเปลี่ยน route มาที่ /history
+/* ===== other ===== */
+const clearHistory = () => {
+  store.clearAllHistory()
+}
+
 watch(
   () => route.fullPath,
   (newVal) => {
@@ -104,66 +56,11 @@ watch(
   { immediate: true }
 )
 
-const clearHistory = () => {
-  store.clearAllHistory()
-}
-
-// popup states
-const showPopup = ref(false);
-const showCreatePopup = ref(false);
-const selectedMovie = ref(null);
-
-const newListName = ref("");
-const newListDescription = ref("");
-
-// open popup for a movie
-const openPopup = (movie) => {
-  selectedMovie.value = movie;
-  showPopup.value = true;
-};
-
-// add movie to list
-const addMovieToList = (listId) => {
-  if (!selectedMovie.value) return
-  auth.addMovieToWatchlist(listId, selectedMovie.value)
-  showPopup.value = false
-}
-
-// open create list
-const openCreatePopup = () => {
-  showPopup.value = false;
-  showCreatePopup.value = true;
-};
-
-// go back popup 1
-const goBackPopup = () => {
-  showCreatePopup.value = false;
-  showPopup.value = true;
-};
-
-// save new list
-const saveNewWatchlist = () => {
-  if (!newListName.value.trim()) return
-
-  auth.addWatchlist(
-    {
-      title: newListName.value,
-      description: newListDescription.value,
-    },
-    selectedMovie.value 
-  )
-
-  newListName.value = ""
-  newListDescription.value = ""
-  showCreatePopup.value = false
-}
-
-
-// โหลด history ทุกครั้งที่เข้าหน้านี้
 onMounted(() => {
   store.loadHistoryFromLocalStorage()
 })
 </script>
+
 
 <style scoped>
 .history-page {
@@ -325,8 +222,10 @@ onMounted(() => {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #fff;        /* วงกลมขาว */
-  color: #000;             /* + สีดำ */
+  background: #fff;
+  /* วงกลมขาว */
+  color: #000;
+  /* + สีดำ */
 
   display: flex;
   justify-content: center;
@@ -339,7 +238,8 @@ onMounted(() => {
 
 .new-watchlist {
   background: #ff3b3b;
-  color: #000;             /* ตัวหนังสือสีดำ */
+  color: #000;
+  /* ตัวหนังสือสีดำ */
   border: none;
   border-radius: 6px;
 

@@ -78,19 +78,37 @@ const watchlist = computed(() => {
 });
 
 const averageScore = computed(() => {
-    const movies = watchlist.value?.movies;
-    if (!movies?.length) return 0;
+  if (!watchlist.value) return 0
 
-    const total = movies.reduce((sum, m) => {
-        return sum + Number(m.rating || 0);
-    }, 0);
+  const ratedMovies = watchlist.value.movies.filter(
+    m => typeof m.rating === 'number' && m.rating > 0
+  )
 
-    return Math.round(total / movies.length);
-});
+  if (ratedMovies.length === 0) return 0
+
+  const total = ratedMovies.reduce(
+    (sum, m) => sum + m.rating,
+    0
+  )
+
+  return Math.round(total / ratedMovies.length)
+})
+
+const unwatchedMinutes = computed(() => {
+  if (!watchlist.value) return 0
+
+  return watchlist.value.movies
+    .filter(movie => movie.watched !== true)
+    .reduce((total, movie) => total + (movie.runtime || 0), 0)
+})
 
 const unwatchedRuntime = computed(() => {
-    return auth.getUnwatchedRuntime()
-});
+  const m = unwatchedMinutes.value
+  const h = Math.floor(m / 60)
+  const min = m % 60
+  return `${h}h ${min}m`
+})
+
 </script>
 
 <style scoped>

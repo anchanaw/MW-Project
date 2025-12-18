@@ -75,11 +75,7 @@
 
         <AddMoviePopup />
 
-        <div
-  class="overlay"
-  v-if="isSidebarOpen && !popup.showPopup"
-  @click="isSidebarOpen = false"
-></div>
+        <div class="overlay" v-if="isSidebarOpen && !popup.showPopup" @click="isSidebarOpen = false"></div>
 
         <div class="content">
             <slot />
@@ -102,29 +98,29 @@ const store = useMainStore()
 const auth = useAuthStore()
 
 const goSearch = () => {
-  if (!keyword.value.trim()) return
-  navigateTo(`/search?query=${encodeURIComponent(keyword.value)}`)
+    if (!keyword.value.trim()) return
+    navigateTo(`/search?query=${encodeURIComponent(keyword.value)}`)
 }
 
 watch(
-  () => route.fullPath,
-  () => {
-    isSidebarOpen.value = false
-  }
+    () => route.fullPath,
+    () => {
+        isSidebarOpen.value = false
+    }
 )
 
 const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
+    isSidebarOpen.value = !isSidebarOpen.value
 }
 
 const logout = () => {
-  auth.logout()
-  navigateTo('/profile') 
+    auth.logout()
+    navigateTo('/profile')
 }
 
 onMounted(() => {
-  store.loadHistoryFromLocalStorage()
-  auth.init()
+    store.loadHistoryFromLocalStorage()
+    auth.init()
 })
 </script>
 
@@ -280,6 +276,7 @@ a.create-btn {
 }
 
 .my-lists .list-item {
+    height: 41px;
     color: #ffffff;
     text-decoration: none;
     display: flex;
@@ -295,15 +292,17 @@ a.create-btn {
 }
 
 .my-lists .icon {
-    font-weight: bold;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #e5e5e5;
+    width: 22px;
+    height: 22px;
+    background: #e6e6e6;
     color: #000;
+    font-weight: 700;
+    border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 20px;
+    line-height: 1;
 }
 
 .profile-box {
@@ -401,12 +400,12 @@ a.create-btn {
 }
 
 .popup-backdrop {
-  z-index: 9999;        /* สูงกว่า sidebar แน่นอน */
-  pointer-events: auto;
+    z-index: 9999;
+    /* สูงกว่า sidebar แน่นอน */
+    pointer-events: auto;
 }
 
 .popup-container {
-  pointer-events: auto;
+    pointer-events: auto;
 }
-
 </style>

@@ -25,7 +25,7 @@
             <span class="score-value">{{ movie.rating }}</span>
           </div>
 
-          <button class="add-btn" @click="handleAddToWatchlist">
+          <button class="add-btn" @click="openAddPopup">
             Add to Watchlist
           </button>
 
@@ -44,65 +44,14 @@
           <p class="cast-role">{{ c.role }}</p>
         </div>
       </div>
-    </div>
-
-    <!-- POPUP -->
-    <div v-if="showPopup" class="popup-backdrop">
-      <div class="popup-container">
-
-        <!-- Header -->
-        <div class="popup-header">
-          <span class="popup-label-text">Add movie:</span>
-          <span class="movie-title">{{ movie.title }} ({{ movie.year }})</span>
-          <button class="close-btn" @click="showPopup = false">✖</button>
-        </div>
-
-        <p class="to-watchlist">To watchlist:</p>
-
-        <!-- SCROLL AREA สำหรับลิสท์ -->
-        <div class="watchlist-scroll">
-          <div class="watchlist-option" v-for="list in (auth.user?.watchlists || [])" :key="list.id"
-            @click="addMovieToList(list.id)">
-            <div class="list-icon">
-              {{ list.title.charAt(0).toUpperCase() }}
-            </div>
-            <span class="list-title">{{ list.title }}</span>
-          </div>
-        </div>
-
-        <!-- New List Button -->
-        <button class="new-watchlist" @click="openCreatePopup">
-          <span class="plus-icon">+</span>
-          New watchlist
-        </button>
-
-      </div>
-    </div>
-
-    <!-- POPUP: CREATE NEW WATCHLIST -->
-    <div v-if="showCreatePopup" class="popup-backdrop">
-      <div class="create-popup">
-
-        <h2 class="create-title">Create new watchlist</h2>
-
-        <div class="form-group">
-          <label class="input-label">Name</label>
-          <input type="text" v-model="newListName" class="input-box" />
-        </div>
-
-        <div class="form-group">
-          <label class="input-label">Description</label>
-          <textarea v-model="newListDescription" class="textarea-box"></textarea>
-        </div>
-
-        <button class="cancel-btn" @click="goBackPopup">Cancel</button>
-        <button class="save-btn" @click="saveNewWatchlist">Save</button>
-
-      </div>
-
-    </div>
-
+    </div> 
   </div>
+  <AddToWatchlistPopup
+  :open="showAddPopup"
+  :movie="movie"
+  @close="showAddPopup = false"
+/>
+
 </template>
 
 
@@ -112,16 +61,9 @@ import { useRoute } from "vue-router";
 import { navigateTo } from "#app";
 import { useMainStore } from "~/stores/main";
 import { useAuthStore } from "~/stores/auth";
+import AddToWatchlistPopup from '~/components/watchlist/AddToWatchlistPopup.vue'
 
-// popup states
-const showPopup = ref(false);
-const showCreatePopup = ref(false);
-
-// new watchlist fields
-const newListName = ref("");
-const newListDescription = ref("");
-
-// stores
+const showAddPopup = ref(false)
 const store = useMainStore();
 const route = useRoute();
 const auth = useAuthStore();
@@ -134,69 +76,25 @@ const movie = computed(() =>
   store.movies.find((m) => m.id === Number(route.params.id))
 );
 
+
+onBeforeUnmount(() => {
+  store.clearHistoryTimer();
+});
+
+function openAddPopup() {
+  if (!auth.isAuthenticated) {
+    navigateTo('/profile')
+    return
+  }
+
+  showAddPopup.value = true
+}
 // load history
 onMounted(() => {
   store.loadHistoryFromLocalStorage();
   if (movie.value) store.setCurrentMovie(movie.value);
 });
 
-onBeforeUnmount(() => {
-  store.clearHistoryTimer();
-});
-
-// add movie to list
-function addMovieToList(listId) {
-  auth.addMovieToWatchlist(listId, movie.value);
-  showPopup.value = false;
-}
-
-function handleAddToWatchlist() {
-  if (!auth.isAuthenticated) {
-    navigateTo('/profile')
-    return
-  }
-
-  // logic ปกติ
-  showPopup.value = true
-}
-// save new list
-function saveNewWatchlist() {
-  if (!newListName.value.trim()) {
-    alert("Please enter a name");
-    return;
-  }
-
-  // 1) สร้างลิสใหม่
-  auth.addWatchlist({
-    title: newListName.value,
-    description: newListDescription.value
-  });
-
-  // 2) หาลิสล่าสุดที่เพิ่งสร้าง
-  const newList = auth.user.watchlists[auth.user.watchlists.length - 1];
-
-  // 3) เพิ่มหนังลงลิสใหม่ทันที
-  auth.addMovieToWatchlist(newList.id, movie.value);
-
-  // 4) ล้างฟอร์ม
-  newListName.value = "";
-  newListDescription.value = "";
-
-  // 5) ปิด popup create และกลับไป popup ก่อนหน้า
-  showCreatePopup.value = false;
-  showPopup.value = true;
-}
-
-// open create popup
-function openCreatePopup() {
-  showPopup.value = false;
-  showCreatePopup.value = true;
-}
-
-function goBackPopup() {
-  showCreatePopup.value = false;  // ปิด popup create
-  showPopup.value = true;         // เปิด popup ก่อนหน้า
-}
 
 
 </script>
