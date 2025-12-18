@@ -118,7 +118,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // CREATE WATCHLIST
-  function addWatchlist({ title, description }) {
+  function addWatchlist({ title, description }, selectedMovie: { id: number; title: string; year: number; img: string; rating?: number | undefined; genres?: string | undefined; runtime?: number | undefined; overview?: string | undefined; viewedAt?: string | undefined; isViewed?: boolean | undefined; }) {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     const index = users.findIndex(u => u.id === user.value.id);
     if (index === -1) return;
