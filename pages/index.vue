@@ -3,17 +3,26 @@
 
     <!-- Welcome box -->
     <div class="welcome-box">
-      <h1>Welcome to <span class="highlight">Watchlists</span></h1>
-      <p>Browse movies, add them to watchlists and share them with friends.</p>
-      <p>
-        Just click the
-        <img class="welcome-plus-icon" src="/icons/plus-icon.svg" alt="Add" />
-        to add a movie, the poster to see more details or
-        <img class="check-icon" :src="isChecked ? '/icons/check-icon-green.png' : '/icons/check-icon.png'"
-          @click="isChecked = !isChecked" />
-        to mark the movie as watched.
-      </p>
+      <div class="welcome-title">
+        Welcome to <span class="highlight">Watchlists</span>
+      </div>
 
+      <div class="welcome-desc">
+        Browse movies, add them to watchlists, and share them with friends.
+      </div>
+
+      <div class="welcome-hint">
+        <span>Just click</span>
+
+        <img class="welcome-plus-icon" src="/icons/plus-icon.svg" alt="Add movie" />
+
+        <span>to add a movie, the poster to see more details or</span>
+
+        <img class="check-icon" :src="isChecked ? '/icons/check-icon-green.png' : '/icons/check-icon.png'"
+          @click="isChecked = !isChecked" alt="Watched" />
+
+        <span>to mark the movie as watched.</span>
+      </div>
     </div>
 
     <!-- Search area -->
@@ -29,7 +38,7 @@
 
     <!-- Movie grid -->
     <div class="movie-grid">
-      <MovieCard v-for="m in movies" :key="m.id" v-bind="m" @add-to-list="openPopup(m)" />
+      <MovieCard v-for="movie in movieStore.popularMovies" :key="movie.id" :movie="movie" />
     </div>
 
     <AddToWatchlistPopup :open="showAddPopup" :movie="selectedMovie" @close="showAddPopup = false" />
@@ -39,37 +48,43 @@
 
 
 <script setup>
-import { ref } from "vue";
+/* ===== core ===== */
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-// import MovieCard from "~/components/moviecard.vue";
-import { useMainStore } from "~/stores/main";
-import { useAuthStore } from "~/stores/auth";
-import AddToWatchlistPopup from '~/components/watchlist/AddToWatchlistPopup.vue'
 
+/* ===== stores ===== */
+import { useMovieStore } from "~/stores/movie";
 
-const isChecked = ref(false);
-const showAddPopup = ref(false)
-const selectedMovie = ref(null)
-const store = useMainStore();
-const auth = useAuthStore();
+/* ===== components ===== */
+import AddToWatchlistPopup from "~/components/watchlist/AddToWatchlistPopup.vue";
 
-// movies list
-const movies = store.movies;
+/* ===== store ===== */
+const movieStore = useMovieStore();
 
-// search
-const router = useRouter();
+/* ===== state ===== */
+const showAddPopup = ref(false);
+const selectedMovie = ref(null);
 const searchText = ref("");
 
+/* ===== router ===== */
+const router = useRouter();
+
+/* ===== methods ===== */
 const goSearch = () => {
-  if (!searchText.value.trim()) return;
-  router.push({ path: "/search", query: { query: searchText.value.trim() } });
+  const q = searchText.value.trim();
+  if (!q) return;
+  router.push({ path: "/search", query: { query: q } });
 };
 
 const openPopup = (movie) => {
-  selectedMovie.value = movie
-  showAddPopup.value = true
-}
+  selectedMovie.value = movie;
+  showAddPopup.value = true;
+};
 
+/* ===== lifecycle ===== */
+onMounted(() => {
+  movieStore.initMovies();
+});
 </script>
 
 
@@ -93,25 +108,39 @@ const openPopup = (movie) => {
   margin-bottom: 30px;
 }
 
-.welcome-box h1,
-.highlight {
+/* TITLE (แทน h1) */
+.welcome-title {
   font-size: 40px;
   font-weight: 400;
   margin-bottom: 21px;
 }
 
+/* highlight คุมสีอย่างเดียว */
 .highlight {
   color: #ff4646;
 }
 
-.welcome-box p {
+/* DESCRIPTION */
+.welcome-desc {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-top: 14px;
+}
+
+/* HINT LINE */
+.welcome-hint {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+
   font-size: 20px;
   font-weight: 400;
   line-height: 100%;
-  margin: 14px 0 0;
-  gap: 10px;
+  margin-top: 14px;
 }
+
 
 .welcome-plus-icon {
   width: 24px;
@@ -229,5 +258,4 @@ h2 {
   gap: 60px;
   flex-wrap: wrap;
 }
-
 </style>

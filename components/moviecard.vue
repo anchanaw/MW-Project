@@ -1,8 +1,8 @@
 <template>
   <div class="movie-card">
 
-    <NuxtLink :to="`/movie/${id}`" class="poster" aria-label="View movie details">
-      <img :src="img" :alt="title" class="poster-img" />
+    <NuxtLink :to="`/movie/${movie.id}`" class="poster">
+      <img :src="movie.img" :alt="movie.title" class="poster-img" />
     </NuxtLink>
 
     <button class="plus" @click.stop="handleAdd" aria-label="Add to list">
@@ -10,14 +10,14 @@
     </button>
 
     <div class="rating-bar">
-      <img :src="emojiFor(rating)" class="emoji" />
-      <span class="score">{{ rating }}</span>
+      <img :src="emojiFor(movie.rating)" class="emoji" />
+      <span class="score">{{ movie.rating ?? 'N/A' }}</span>
       <span class="outof">/100</span>
     </div>
 
     <div class="meta">
-      <p class="title" v-html="formatTitle(title)"></p>
-      <p class="year" v-if="year">({{ year }})</p>
+      <p class="title" v-html="formatTitle(movie.title)"></p>
+      <p class="year" v-if="movie.year">({{ movie.year }})</p>
     </div>
 
   </div>
@@ -28,22 +28,21 @@ import { useAuthStore } from '~/stores/auth'
 import { navigateTo } from '#app'
 
 const props = defineProps({
-  id: { type: [String, Number], required: true },
-  title: { type: String, required: true },
-  year: { type: [String, Number], required: false },
-  img: { type: String, required: true },
-  rating: { type: Number, required: false }
+  movie: {
+    type: Object,
+    required: true
+  }
 })
 
-
 const emojiFor = (rating) => {
-  if (rating >= 70) return "/emojis/great-80.png"
-  if (rating >= 40) return "/emojis/normal-35-and-80.png"
-  return "/emojis/awful-35.png"
-}
+  if (typeof rating !== "number") return "/emojis/normal-35-and-80.png";
+  if (rating >= 70) return "/emojis/great-80.png";
+  if (rating >= 40) return "/emojis/normal-35-and-80.png";
+  return "/emojis/awful-35.png";
+};
 
-const formatTitle = (text) => {
-  return text.replace(":", ":<br>");
+const formatTitle = (text = "") => {
+  return text.replace(/\./g, ".<br>");
 };
 
 const emit = defineEmits(['add-to-list']);
@@ -163,5 +162,4 @@ const handleAdd = () => {
   font-weight: 300;
   opacity: 0.8;
 }
-
 </style>
