@@ -13,8 +13,11 @@
         v-for="movie in searchResults"
         :key="movie.id"
         :movie="movie"
+        @add-to-list="openAddPopup(movie)"
       />
     </div>
+    <AddToWatchlistPopup :open="showAddPopup" :movie="selectedMovie" @close="showAddPopup = false" />
+
   </div>
 </template>
 
@@ -22,8 +25,17 @@
 import { storeToRefs } from "pinia";
 import MovieCard from "~/components/MovieCard.vue";
 import { useMainStore } from "~/stores/main";
+import AddToWatchlistPopup from "~/components/watchlist/AddToWatchlistPopup.vue";
+
 
 const { searchResults } = storeToRefs(useMainStore());
+const showAddPopup = ref(false);
+const selectedMovie = ref(null);
+
+const openAddPopup = (movie) => {
+  selectedMovie.value = movie
+  showAddPopup.value = true
+}
 </script>
 
 <style scoped>

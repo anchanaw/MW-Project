@@ -38,7 +38,7 @@
 
     <!-- Movie grid -->
     <div class="movie-grid">
-      <MovieCard v-for="movie in movieStore.popularMovies" :key="movie.id" :movie="movie" />
+      <MovieCard v-for="movie in movieStore.popularMovies" :key="movie.id" :movie="movie" @add-to-list="openAddPopup(movie)"/>
     </div>
 
     <AddToWatchlistPopup :open="showAddPopup" :movie="selectedMovie" @close="showAddPopup = false" />
@@ -54,12 +54,14 @@ import { useRouter } from "vue-router";
 
 /* ===== stores ===== */
 import { useMovieStore } from "~/stores/movie";
+import { navigateTo } from "#app";
 
 /* ===== components ===== */
 import AddToWatchlistPopup from "~/components/watchlist/AddToWatchlistPopup.vue";
 
 /* ===== store ===== */
 const movieStore = useMovieStore();
+const store = useMainStore();
 
 /* ===== state ===== */
 const showAddPopup = ref(false);
@@ -71,15 +73,25 @@ const router = useRouter();
 
 /* ===== methods ===== */
 const goSearch = () => {
-  const q = searchText.value.trim();
+  const q = searchText.value.trim().toLowerCase();
   if (!q) return;
-  router.push({ path: "/search", query: { query: q } });
+
+  const results = movieStore.allMovies.filter(m => {
+    const matchTitle = m.title?.toLowerCase().includes(q);
+    const matchOverview = m.overview?.toLowerCase().includes(q);
+
+    return matchTitle || matchOverview;
+  });
+
+  store.searchResults = results;
+  navigateTo("/search");
 };
 
-const openPopup = (movie) => {
-  selectedMovie.value = movie;
-  showAddPopup.value = true;
-};
+
+const openAddPopup = (movie) => {
+  selectedMovie.value = movie
+  showAddPopup.value = true
+}
 
 /* ===== lifecycle ===== */
 onMounted(() => {

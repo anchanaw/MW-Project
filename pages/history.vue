@@ -31,7 +31,7 @@ const auth = useAuthStore()
 const { history } = storeToRefs(store)
 const route = useRoute()
 
-/* ===== popup state (ตัวเดียวพอ) ===== */
+/* ===== popup state ===== */
 const showAddPopup = ref(false)
 const selectedMovie = ref(null)
 
