@@ -116,11 +116,11 @@ const goSearch = () => {
 };
 
 watch(
-    () => route.fullPath,
-    () => {
-        isSidebarOpen.value = false
-    }
-)
+  () => route.fullPath,
+  () => {
+    keyword.value = "";
+  }
+);
 
 const toggleSidebar = () => {
     isSidebarOpen.value = !isSidebarOpen.value
