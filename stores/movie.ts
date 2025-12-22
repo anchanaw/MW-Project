@@ -68,9 +68,10 @@ export const useMovieStore = defineStore("movie", {
 
       this.loading = true;
       try {
-        const res: any = await fetch("/api/imdb/movies");
+        const res = await fetch("/api/imdb/movies");
+        const data = await res.json();
 
-        this.allMovies = (res.titles || []).map((item: any): Movie => ({
+        this.allMovies = (data.titles || []).map((item: any): Movie => ({
           id: item.id,
           title: item.primaryTitle,
           year: item.startYear ?? null,
@@ -95,46 +96,40 @@ export const useMovieStore = defineStore("movie", {
       }
     },
 
-    /* ===== ดึง cast (มี cache) ===== */
+    /* ===== ดึง cast ===== */
     async fetchCast(movieId: string) {
       if (this.castCache[movieId]) {
         return this.castCache[movieId];
       }
 
       try {
-        const res: any = await $fetch(
-          `/api/imdb/titles/${movieId}/credits`
-        );
+        const res = await fetch(`/api/imdb/titles/${movieId}/cast`);
+        const data = await res.json();
 
-        const credits = Array.isArray(res?.credits)
-          ? res.credits
+        const credits = Array.isArray(data?.credits)
+          ? data.credits
           : [];
 
-        console.log("🎯 RAW credits:", credits);
-
         const cast = credits
-          .filter(
-            (c: any) =>
-              c?.name &&
-              typeof c.name.displayName === "string"
+          .filter((c: any) =>
+            c.category === "actor" || c.category === "actress"
           )
-          .slice(0, 10)
+          .slice(0, 20)
           .map((c: any) => ({
-            id: c.name.id,
-            name: c.name.displayName,
-            role: Array.isArray(c.characters)
-              ? c.characters.join(", ")
-              : "",
-            img: c.name.primaryImage?.url || "/images/no-avatar.png",
+            id: c.name?.id,
+            name: c.name?.displayName,
+            role: c.characters?.[0] || "Unknown role",
+            img: c.name?.primaryImage?.url || "/images/no-avatar.jpg",
           }));
 
-        console.log("🎭 FINAL cast:", cast);
 
         this.castCache[movieId] = cast;
+        console.log("🔥 fetchCast called:", movieId);
+        console.log("RAW credits:", data?.credits);
+
         return cast;
       } catch (err) {
         console.error("fetchCast failed", err);
-        this.castCache[movieId] = [];
         return [];
       }
     },

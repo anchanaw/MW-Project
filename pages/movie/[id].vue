@@ -12,7 +12,11 @@
       <!-- Right Content -->
       <div class="right">
         <h1>{{ movie.title }} ({{ movie.year }})</h1>
-        <p class="genres">{{ movie.genres }}</p>
+        <p class="genres">
+          {{ movie.genres }}
+          <span v-if="formattedRuntime" class="dot">•</span>
+          <span v-if="formattedRuntime">{{ formattedRuntime }}</span>
+        </p>
 
         <div class="overview-section">
           <h2>Overview</h2>
@@ -34,21 +38,37 @@
     </div>
 
     <!-- CAST SECTION -->
-    <div class="detail-page" v-if="!loading && movie">
+    <div class="cast-wrapper" v-if="!loading && movie">
 
-      <!-- CAST SECTION -->
-      <div class="cast-section" v-if="cast.length">
+      <div class="cast-section">
         <h2>Cast</h2>
 
-        <div class="cast-grid">
+        <div v-if="cast.length" class="cast-grid">
           <div class="cast-card" v-for="c in cast" :key="c.id">
-            <img :src="c.img" class="cast-img" />
+            <img class="cast-img" :src="c.img" />
             <p class="cast-name">{{ c.name }}</p>
             <p class="cast-role">{{ c.role }}</p>
           </div>
+
         </div>
+
+        <p v-else class="empty">
+          Cast information is not available for this title.
+        </p>
       </div>
 
+    </div>
+    <!-- RELATED MOVIES -->
+    <div class="related-section" v-if="relatedMovies.length">
+      <h2>Related Movies</h2>
+
+      <div class="related-grid">
+        <div class="related-card" v-for="m in relatedMovies" :key="m.id" @click="navigateTo(`/movie/${m.id}`)">
+          <img :src="m.img" class="related-img" />
+          <p class="related-title">{{ m.title }}</p>
+          <span class="related-year">{{ m.year }}</span>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -61,7 +81,6 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { navigateTo } from "#app";
-
 import { useMovieStore } from "~/stores/movie";
 import { useAuthStore } from "~/stores/auth";
 import AddToWatchlistPopup from "~/components/watchlist/AddToWatchlistPopup.vue";
@@ -83,6 +102,33 @@ const cast = computed(() =>
   movieStore.getCastByMovie(movieId)
 );
 
+const currentGenres = computed(() => {
+  if (!movie.value?.genres) return [];
+  return movie.value.genres.split(",").map(g => g.trim());
+});
+
+const relatedMovies = computed(() => {
+  if (!movie.value) return [];
+
+  return movieStore.allMovies
+    .filter(m =>
+      m.id !== movie.value.id &&               // ไม่เอาเรื่องเดิม
+      currentGenres.value.some(g =>
+        m.genres.includes(g)                   // genre ซ้ำอย่างน้อย 1 ตัว
+      )
+    )
+    .slice(0, 10);
+});
+
+const formattedRuntime = computed(() => {
+  if (!movie.value?.runtime) return "";
+
+  const hours = Math.floor(movie.value.runtime / 60);
+  const minutes = movie.value.runtime % 60;
+
+  return `${hours}h ${minutes}m`;
+});
+
 const openAddPopup = () => {
   if (!auth.isAuthenticated) {
     navigateTo("/profile");
@@ -90,7 +136,7 @@ const openAddPopup = () => {
   }
   showAddPopup.value = true;
 };
- 
+
 onMounted(async () => {
   console.log("📄 movie detail mounted:", movieId);
 
@@ -102,8 +148,9 @@ onMounted(async () => {
     return;
   }
 
-  // โหลด cast (ถ้ามี cache จะไม่ยิงซ้ำ)
+  console.log("▶️ calling fetchCast with:", movieId);
   await movieStore.fetchCast(movieId);
+  console.log("▶️ after fetchCast:", movieStore.castCache);
 
   console.log("🎬 movie:", movie.value);
   console.log("🎭 cast:", cast.value);
@@ -161,6 +208,10 @@ onMounted(async () => {
   opacity: 0.8;
   font-size: 16px;
   margin-bottom: 50px;
+}
+
+.dot {
+  margin: 0 10px;
 }
 
 /* Overview */
@@ -249,22 +300,24 @@ onMounted(async () => {
 
 .cast-grid {
   display: flex;
-  flex-wrap: nowrap;
   gap: 25px;
   overflow-x: auto;
   padding-bottom: 10px;
+  align-items: flex-start;
 }
 
 .cast-card {
+  flex: 0 0 auto;
   width: 150px;
 }
 
 .cast-img {
-  width: 150px;
-  height: 190px;
-  border-radius: 4px 4px 0 0;
+  width: 100%;
+  height: 220px;
   object-fit: cover;
+  border-radius: 10px;
 }
+
 
 .cast-name {
   margin-top: 8px;
@@ -275,5 +328,34 @@ onMounted(async () => {
 .cast-role {
   font-size: 14px;
   opacity: 0.7;
+}
+
+.related-section {
+  margin-top: 98px;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.related-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.related-title {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.related-year {
+  font-size: 12px;
+  opacity: 0.6;
 }
 </style>
