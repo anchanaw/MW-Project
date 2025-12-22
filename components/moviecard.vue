@@ -1,5 +1,5 @@
 <template>
-  <div class="movie-card">
+  <div v-if="movie" class="movie-card">
 
     <NuxtLink :to="`/movie/${movie.id}`" class="poster">
       <img :src="movie.img" :alt="movie.title" class="poster-img" />

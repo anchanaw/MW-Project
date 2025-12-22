@@ -84,7 +84,9 @@ import { navigateTo } from "#app";
 import { useMovieStore } from "~/stores/movie";
 import { useAuthStore } from "~/stores/auth";
 import AddToWatchlistPopup from "~/components/watchlist/AddToWatchlistPopup.vue";
+import { useMainStore } from "~/stores/main";
 
+const mainStore = useMainStore();
 const route = useRoute();
 const movieStore = useMovieStore();
 const auth = useAuthStore();
@@ -93,6 +95,7 @@ const showAddPopup = ref(false);
 const loading = ref(true);
 
 const movieId = String(route.params.id);
+const historyStore = useHistoryStore();
 
 const movie = computed(() =>
   movieStore.allMovies.find(m => m.id === movieId)
@@ -137,6 +140,8 @@ const openAddPopup = () => {
   showAddPopup.value = true;
 };
 
+let watchTimer = null;
+
 onMounted(async () => {
   console.log("📄 movie detail mounted:", movieId);
 
@@ -156,6 +161,14 @@ onMounted(async () => {
   console.log("🎭 cast:", cast.value);
 
   loading.value = false;
+
+  if (movie.value) {
+    mainStore.setCurrentMovie(movie.value);
+  }
+});
+
+onUnmounted(() => {
+  mainStore.clearHistoryTimer();
 });
 </script>
 

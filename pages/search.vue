@@ -1,77 +1,30 @@
 <template>
   <div class="search-page">
-
     <h1 class="search-title">
-      Search Results: movies by <span>{{ query }}</span>
+      Search Results
     </h1>
 
-    <p v-if="loading" class="loading-text">Searching...</p>
+    <p v-if="!searchResults.length" class="loading-text">
+      No results found
+    </p>
 
     <div v-else class="movie-grid">
-      <MovieCard v-for="movie in results" :key="movie.id" :title="movie.title" :img="movie.img" :year="movie.year" :rating="movie.rating"/>
+      <MovieCard
+        v-for="movie in searchResults"
+        :key="movie.id"
+        :movie="movie"
+      />
     </div>
-
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import MovieCard from '~/components/MovieCard.vue';
-import { useMainStore } from '~/stores/main';
+import { storeToRefs } from "pinia";
+import MovieCard from "~/components/MovieCard.vue";
+import { useMainStore } from "~/stores/main";
 
-
-const route = useRoute();
-const query = ref(route.query.query?.toLowerCase() || "");
-
-const loading = ref(true);
-const results = ref([]);
-
-const store = useMainStore();
-const dummyMovies = store.movies;
-
-
-// ฟังก์ชันค้นหา
-const fetchSearch = async () => {
-  loading.value = true;
-
-  await new Promise((r) => setTimeout(r, 300));
-
-  if (!query.value) {
-    results.value = [];
-  } else {
-    results.value = dummyMovies.filter(movie => {
-      // 🔍 ค้นจากชื่อหนัง
-      const matchTitle = movie.title
-        .toLowerCase()
-        .includes(query.value);
-
-      // 🔍 ค้นจากชื่อนักแสดง
-      const matchCast = movie.cast?.some(actor =>
-        actor.name.toLowerCase().includes(query.value)
-      );
-
-      // เจออย่างใดอย่างหนึ่งก็ผ่าน
-      return matchTitle || matchCast;
-    });
-  }
-
-  loading.value = false;
-};
-
-// โหลดครั้งแรก
-onMounted(fetchSearch);
-
-// โหลดใหม่ทุกครั้งที่ query เปลี่ยน
-watch(
-  () => route.query.query,
-  (newVal) => {
-    query.value = newVal?.toLowerCase() || "";
-    fetchSearch();
-  }
-);
+const { searchResults } = storeToRefs(useMainStore());
 </script>
-
 
 <style scoped>
 .search-page {

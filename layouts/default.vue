@@ -89,18 +89,31 @@ import { navigateTo } from '#app'
 import { useRoute } from 'vue-router'
 import { useMainStore } from '~/stores/main'
 import { useAuthStore } from '~/stores/auth'
+import { useMovieStore } from "~/stores/movie";
 
-const keyword = ref('')
+
+const movieStore = useMovieStore();
 const route = useRoute()
 const isSidebarOpen = ref(false)
 
 const store = useMainStore()
 const auth = useAuthStore()
+const keyword = ref("");
 
 const goSearch = () => {
-    if (!keyword.value.trim()) return
-    navigateTo(`/search?query=${encodeURIComponent(keyword.value)}`)
-}
+  const q = keyword.value.trim().toLowerCase();
+  if (!q) return;
+
+  const results = movieStore.allMovies.filter(m => {
+    const matchTitle = m.title?.toLowerCase().includes(q);
+    const matchOverview = m.overview?.toLowerCase().includes(q);
+
+    return matchTitle || matchOverview;
+  });
+
+  store.searchResults = results;
+  navigateTo("/search");
+};
 
 watch(
     () => route.fullPath,
@@ -118,10 +131,13 @@ const logout = () => {
     navigateTo('/profile')
 }
 
-onMounted(() => {
-    store.loadHistoryFromLocalStorage()
-    auth.init()
+onMounted(async () => {
+  store.loadHistoryFromLocalStorage()
+  auth.init()
+
+  await movieStore.initMovies()
 })
+
 </script>
 
 <style scoped>
