@@ -1,17 +1,25 @@
 <template>
   <div class="watchlist-card">
-    
-    <!-- Poster -->
-    <div class="poster-wrapper">
-      <img :src="img" alt="" class="poster" />
 
-      <!-- MARK TOP RIGHT (CLICKABLE) -->
-      <button class="watch-mark" :class="{ watched }" @click.stop="$emit('toggle')" aria-label="Toggle watched">
-        <img :src="watched
+    <!-- Poster (click ไป detail) -->
+    <NuxtLink :to="`/movie/${id}`" class="poster-link">
+      <img :src="img" :alt="title" class="poster" />
+    </NuxtLink>
+
+    <!-- MARK TOP RIGHT -->
+    <button
+      class="watch-mark"
+      :class="{ watched }"
+      @click.stop="$emit('toggle')"
+      aria-label="Toggle watched"
+    >
+      <img
+        :src="watched
           ? '/icons/check-icon-green.png'
-          : '/icons/check-icon.png'" alt="watch-mark" />
-      </button>
-    </div>
+          : '/icons/check-icon.png'"
+        alt="watch-mark"
+      />
+    </button>
 
     <!-- Info -->
     <div class="info">
@@ -24,12 +32,17 @@
       <div class="title" v-html="formatTitle(title)"></div>
       <div class="year">({{ year }})</div>
     </div>
+
   </div>
 </template>
 
+
 <script setup>
 defineProps({
-  id: Number,
+  id: {
+    type: [Number, String],
+    required: true
+  },
   title: String,
   img: String,
   year: [Number, String],
