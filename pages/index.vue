@@ -29,7 +29,7 @@
     <div class="search-area">
       <img src="/icons/search-icon.png" class="search-icon" alt="search">
 
-      <input v-model="searchText" @keyup.enter="goSearch" type="text" placeholder="Search for movies by title" />
+      <input v-model="keyword" @keyup.enter="goSearch" type="text" placeholder="Search for movies by title" />
 
       <button class="search-btn" @click="goSearch">search</button>
     </div>
@@ -66,14 +66,14 @@ const store = useMainStore();
 /* ===== state ===== */
 const showAddPopup = ref(false);
 const selectedMovie = ref(null);
-const searchText = ref("");
+const keyword = ref('');
 
 /* ===== router ===== */
 const router = useRouter();
 
 /* ===== methods ===== */
 const goSearch = () => {
-  const q = searchText.value.trim().toLowerCase();
+  const q = keyword.value.trim().toLowerCase();
   if (!q) return;
 
   const results = movieStore.allMovies.filter(m => {
@@ -84,7 +84,10 @@ const goSearch = () => {
   });
 
   store.searchResults = results;
-  navigateTo("/search");
+  navigateTo({
+        path: '/search',
+        query: { q: keyword.value }
+    });
 };
 
 

@@ -57,8 +57,10 @@ watch(
 )
 
 onMounted(() => {
-  store.loadHistoryFromLocalStorage()
-})
+  if (auth.isAuthenticated) {
+    store.loadHistoryFromLocalStorage(auth.user.id);
+  }
+});
 </script>
 
 

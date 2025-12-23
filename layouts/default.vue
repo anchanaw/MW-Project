@@ -54,12 +54,15 @@
                     </span>
                 </div>
 
-                <!-- จุด + popup -->
+                <!-- popup -->
                 <div class="dots-wrapper">
+
                     <NuxtLink to="/profile" class="dots">
                         <img src="/icons/dot-icon.png" alt="More options" class="dots-icon" />
                     </NuxtLink>
-                    <div class="popup-menu">
+
+                    <!-- popup : แสดงเฉพาะตอนล็อกอินแล้ว -->
+                    <div class="popup-menu" v-if="auth.isAuthenticated">
                         <NuxtLink to="/edit" class="popup-item">
                             Edit
                         </NuxtLink>
@@ -68,14 +71,23 @@
                             Logout
                         </button>
                     </div>
+
+                    <!-- popup : แสดงตอนยังไม่ล็อกอิน -->
+                    <div class="popup-menu" v-else>
+                        <NuxtLink to="/profile" class="popup-item login">
+                            Login
+                        </NuxtLink>
+                    </div>
+
                 </div>
+
             </div>
 
         </aside>
 
         <AddMoviePopup />
 
-        <div class="overlay" v-if="isSidebarOpen && !popup.showPopup" @click="isSidebarOpen = false"></div>
+        <div class="overlay" v-if="isSidebarOpen" @click="isSidebarOpen = false"></div>
 
         <div class="content">
             <slot />
@@ -101,25 +113,29 @@ const auth = useAuthStore()
 const keyword = ref("");
 
 const goSearch = () => {
-  const q = keyword.value.trim().toLowerCase();
-  if (!q) return;
+    const q = keyword.value.trim().toLowerCase();
+    if (!q) return;
 
-  const results = movieStore.allMovies.filter(m => {
-    const matchTitle = m.title?.toLowerCase().includes(q);
-    const matchOverview = m.overview?.toLowerCase().includes(q);
+    const results = movieStore.allMovies.filter(m => {
+        const matchTitle = m.title?.toLowerCase().includes(q);
+        const matchOverview = m.overview?.toLowerCase().includes(q);
 
-    return matchTitle || matchOverview;
-  });
+        return matchTitle || matchOverview;
+    });
 
-  store.searchResults = results;
-  navigateTo("/search");
+    store.searchResults = results;
+    navigateTo({
+        path: '/search',
+        query: { q: keyword.value }
+    });
 };
 
 watch(
-  () => route.fullPath,
-  () => {
-    keyword.value = "";
-  }
+    () => route.fullPath,
+    () => {
+        keyword.value = "";
+        isSidebarOpen.value = false;
+    }
 );
 
 const toggleSidebar = () => {
@@ -132,10 +148,10 @@ const logout = () => {
 }
 
 onMounted(async () => {
-  store.loadHistoryFromLocalStorage()
-  auth.init()
+    store.loadHistoryFromLocalStorage()
+    auth.init()
 
-  await movieStore.initMovies()
+    await movieStore.initMovies()
 })
 
 </script>
@@ -413,6 +429,12 @@ a.create-btn {
 
 .popup-item.logout {
     color: #ff6b6b;
+}
+
+.popup-item.login {
+    text-align: center;
+    font-weight: 600;
+    color: #ff4f4f;
 }
 
 .popup-backdrop {

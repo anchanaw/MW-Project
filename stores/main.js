@@ -46,31 +46,27 @@ export const useMainStore = defineStore("main", {
     // =========================
     // ADD HISTORY AFTER DELAY
     // =========================
-    addToHistoryAfterDelay(movie, delay = 5000) {
-      // clear timer เดิม
+    addToHistoryAfterDelay(movie, userId, delay = 5000) {
+      if (!userId) return;
+
       if (this._historyTimer) {
         clearTimeout(this._historyTimer);
       }
 
       this._historyTimer = setTimeout(() => {
-        // กันซ้ำ
         this.history = this.history.filter(i => i.id !== movie.id);
 
-        // push รายการใหม่
         this.history.unshift({
           ...movie,
           viewedAt: new Date().toISOString(),
           isViewed: true
         });
 
-        // limit
         if (this.history.length > 50) {
           this.history.splice(50);
         }
 
-        // persist
-        this.saveHistoryToLocalStorage();
-
+        this.saveHistoryToLocalStorage(userId);
         this._historyTimer = null;
       }, delay);
     },
@@ -106,20 +102,25 @@ export const useMainStore = defineStore("main", {
     // =========================
     // SAVE → LocalStorage
     // =========================
-    saveHistoryToLocalStorage() {
-      if (process.client) {
-        localStorage.setItem("history", JSON.stringify(this.history));
-      }
+    saveHistoryToLocalStorage(userId) {
+      if (!process.client || !userId) return;
+
+      const key = `history_${userId}`;
+      localStorage.setItem(key, JSON.stringify(this.history));
     },
 
     // =========================
     // LOAD → LocalStorage
     // =========================
-    loadHistoryFromLocalStorage() {
-      if (process.client) {
-        const data = localStorage.getItem("history");
-        this.history = data ? JSON.parse(data) : [];
+    loadHistoryFromLocalStorage(userId) {
+      if (!process.client || !userId) {
+        this.history = [];
+        return;
       }
+
+      const key = `history_${userId}`;
+      const data = localStorage.getItem(key);
+      this.history = data ? JSON.parse(data) : [];
     }
   }
 });

@@ -1,12 +1,12 @@
 <template>
   <div class="search-page">
-    <h1 class="search-title">
-      Search Results
-    </h1>
+    <div class="search-title">
+  Search Results<span v-if="searchQuery">: {{ searchQuery }}</span>
+</div>
 
-    <p v-if="!searchResults.length" class="loading-text">
+    <div v-if="!searchResults.length" class="loading-text">
       No results found
-    </p>
+    </div>
 
     <div v-else class="movie-grid">
       <MovieCard
@@ -26,7 +26,10 @@ import { storeToRefs } from "pinia";
 import MovieCard from "~/components/MovieCard.vue";
 import { useMainStore } from "~/stores/main";
 import AddToWatchlistPopup from "~/components/watchlist/AddToWatchlistPopup.vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
+const searchQuery = computed(() => route.query.q || "");
 
 const { searchResults } = storeToRefs(useMainStore());
 const showAddPopup = ref(false);
@@ -42,10 +45,10 @@ const openAddPopup = (movie) => {
 .search-page {
   padding: 20px;
   color: #fff;
+  font-family: 'Lato', sans-serif;
 }
 
 .search-title {
-  font-family: 'Lato', sans-serif;
   font-size: 32px;
   font-weight: 250;
   letter-spacing: 1px;
@@ -53,7 +56,7 @@ const openAddPopup = (movie) => {
 }
 
 .loading-text {
-  font-size: 16px;
+  font-size: 25px;
   color: #aaa;
   margin-top: 10px;
 }

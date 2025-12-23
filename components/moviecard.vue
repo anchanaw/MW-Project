@@ -61,6 +61,7 @@ const handleAdd = () => {
 <style scoped>
 .movie-card {
   width: 150px;
+  height: 340px;
   border-radius: 4px;
   overflow: visible;
   background: #0f0f0f;
@@ -82,6 +83,7 @@ const handleAdd = () => {
 }
 
 .poster-img {
+  height: 225px;
   width: 100%;
   object-fit: cover;
   border-radius: 4px 4px 0 0;

@@ -163,7 +163,9 @@ onMounted(async () => {
   loading.value = false;
 
   if (movie.value) {
-    mainStore.setCurrentMovie(movie.value);
+    if (auth.isAuthenticated) {
+  mainStore.addToHistoryAfterDelay(movie.value, auth.user.id);
+}
   }
 });
 
