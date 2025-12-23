@@ -178,7 +178,6 @@ onUnmounted(() => {
 .detail-page {
   display: flex;
   flex-direction: column;
-  background: #111;
   color: #fff;
   padding: 50px;
   gap: 40px;

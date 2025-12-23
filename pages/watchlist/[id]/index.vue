@@ -113,8 +113,7 @@ const unwatchedRuntime = computed(() => {
 
 <style scoped>
 .watchlist-page {
-    margin-left: 30px;
-    margin-top: 26px;
+    margin: 26px 62px 0 30px;
     font-family: 'Lato', sans-serif;
 }
 

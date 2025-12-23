@@ -99,7 +99,6 @@ export default {
 
 <style scoped>
 .profile-page {
-  background: #111;
   min-height: 100vh;
   padding: 40px 60px;
   color: white;

@@ -90,7 +90,6 @@ const goSearch = () => {
     });
 };
 
-
 const openAddPopup = (movie) => {
   selectedMovie.value = movie
   showAddPopup.value = true
@@ -170,8 +169,6 @@ onMounted(() => {
   content: url('/icons/plus-icon-hover.svg');
   opacity: 1;
 }
-
-
 
 /* CHECK ICON */
 .check-icon {

@@ -1,6 +1,6 @@
 <template>
   <div class="watchlist-card">
-
+    
     <!-- Poster -->
     <div class="poster-wrapper">
       <img :src="img" alt="" class="poster" />
