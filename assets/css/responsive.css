@@ -15,7 +15,7 @@ img {
   }
 
   .watchlist-page {
-    margin: 25px auto;
+    margin: 25px 35px auto !important;
     max-width: 1400px;
   }
 
@@ -26,10 +26,25 @@ img {
 
   .create-container {
     margin: 25px auto;
-    max-width: 520px;   /* 👈 สำคัญ: form ไม่ควรกว้าง */
+    max-width: 1200px;
   }
 }
 
+@media (max-width: 1439px) {
+  .welcome-box {
+    width: 100% !important;
+    height: auto;
+    /* 👈 เพิ่มพื้นที่กันข้อความทับ */
+  }
+
+  .search-area {
+    width: 100% !important;
+  }
+
+  .movie-grid {
+    justify-content: center;
+  }
+}
 
 /* Tablet */
 @media (max-width: 1024px) {
