@@ -20,56 +20,63 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
+/* ================= COMPONENTS ================= */
 import MovieCard from '~/components/MovieCard.vue'
 import AddToWatchlistPopup from '~/components/watchlist/AddToWatchlistPopup.vue'
 
+/* ================= STORES ================= */
 import { useMainStore } from '~/stores/main'
 import { useAuthStore } from '~/stores/auth'
 
 const store = useMainStore()
 const auth = useAuthStore()
 const { history } = storeToRefs(store)
+
+/* ================= ROUTE ================= */
 const route = useRoute()
 
-/* ===== popup state ===== */
+/* ================= POPUP STATE ================= */
 const showAddPopup = ref(false)
 const selectedMovie = ref(null)
 
-/* ===== open popup ===== */
+/* ================= POPUP ACTION ================= */
 const openAddPopup = (movie) => {
   selectedMovie.value = movie
   showAddPopup.value = true
 }
 
-/* ===== other ===== */
+/* ================= HISTORY ACTION ================= */
 const clearHistory = () => {
   store.clearAllHistory()
 }
 
+/* ================= WATCH ROUTE ================= */
 watch(
   () => route.fullPath,
-  (newVal) => {
-    if (newVal === '/history') {
+  (path) => {
+    if (path === '/history') {
       store.loadHistoryFromLocalStorage()
     }
   },
   { immediate: true }
 )
 
+/* ================= LIFECYCLE ================= */
 onMounted(() => {
   if (auth.isAuthenticated) {
-    store.loadHistoryFromLocalStorage(auth.user.id);
+    store.loadHistoryFromLocalStorage(auth.user.id)
   }
-});
+})
 </script>
 
-
 <style scoped>
+/* ================= PAGE ================= */
 .history-page {
   padding: 30px;
   color: #fff;
 }
 
+/* ================= HEADER ================= */
 .history-header {
   display: flex;
   justify-content: flex-end;
@@ -86,6 +93,7 @@ onMounted(() => {
   text-decoration: underline;
 }
 
+/* ================= MOVIE GRID ================= */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -96,7 +104,7 @@ onMounted(() => {
   border-radius: 6px;
 }
 
-/* BACKDROP */
+/* ================= POPUP BACKDROP ================= */
 .popup-backdrop {
   position: fixed;
   top: 0;
@@ -110,7 +118,7 @@ onMounted(() => {
   z-index: 5000;
 }
 
-/* POPUP CONTAINER */
+/* ================= POPUP CONTAINER ================= */
 .popup-container {
   background: #1d1d1d;
   padding: 30px;

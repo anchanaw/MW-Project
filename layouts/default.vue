@@ -96,50 +96,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+/* ================= IMPORTS ================= */
+import { ref, watch, onMounted } from 'vue'
 import { navigateTo } from '#app'
 import { useRoute } from 'vue-router'
+
 import { useMainStore } from '~/stores/main'
 import { useAuthStore } from '~/stores/auth'
-import { useMovieStore } from "~/stores/movie";
+import { useMovieStore } from '~/stores/movie'
 
-
-const movieStore = useMovieStore();
+/* ================= STATE ================= */
 const route = useRoute()
-const isSidebarOpen = ref(false)
-
 const store = useMainStore()
 const auth = useAuthStore()
-const keyword = ref("");
+const movieStore = useMovieStore()
+
+const isSidebarOpen = ref(false)
+const keyword = ref('')
+
+/* ================= METHODS ================= */
+const toggleSidebar = () => {
+    isSidebarOpen.value = !isSidebarOpen.value
+}
 
 const goSearch = () => {
-    const q = keyword.value.trim().toLowerCase();
-    if (!q) return;
+    const q = keyword.value.trim().toLowerCase()
+    if (!q) return
 
-    const results = movieStore.allMovies.filter(m => {
-        const matchTitle = m.title?.toLowerCase().includes(q);
-        const matchOverview = m.overview?.toLowerCase().includes(q);
+    const results = movieStore.allMovies.filter(movie =>
+        movie.title?.toLowerCase().includes(q)
+    )
 
-        return matchTitle || matchOverview;
-    });
+    store.searchResults = results
 
-    store.searchResults = results;
     navigateTo({
         path: '/search',
         query: { q: keyword.value }
-    });
-};
-
-watch(
-    () => route.fullPath,
-    () => {
-        keyword.value = "";
-        isSidebarOpen.value = false;
-    }
-);
-
-const toggleSidebar = () => {
-    isSidebarOpen.value = !isSidebarOpen.value
+    })
 }
 
 const logout = () => {
@@ -147,13 +140,21 @@ const logout = () => {
     navigateTo('/profile')
 }
 
+/* ================= WATCH ================= */
+watch(
+    () => route.fullPath,
+    () => {
+        keyword.value = ''
+        isSidebarOpen.value = false
+    }
+)
+
+/* ================= LIFECYCLE ================= */
 onMounted(async () => {
     store.loadHistoryFromLocalStorage()
     auth.init()
-
     await movieStore.initMovies()
 })
-
 </script>
 
 <style scoped>

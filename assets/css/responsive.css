@@ -1,3 +1,5 @@
+/* ================= GLOBAL ================= */
+
 img {
   max-width: 100%;
   height: auto;
@@ -7,9 +9,12 @@ img {
   display: none;
 }
 
+/* ================= LARGE DESKTOP ================= */
 @media (min-width: 1441px) {
 
-  .main-container {
+  .main-container,
+  .edit-page,
+  .create-container {
     margin: 25px auto;
     max-width: 1200px;
   }
@@ -18,25 +23,12 @@ img {
     margin: 25px 35px auto !important;
     max-width: 1400px;
   }
-
-  .edit-page {
-    margin: 25px auto;
-    max-width: 1200px;
-  }
-
-  .create-container {
-    margin: 25px auto;
-    max-width: 1200px;
-  }
 }
 
+/* ================= DESKTOP ================= */
 @media (max-width: 1439px) {
-  .welcome-box {
-    width: 100% !important;
-    height: auto;
-    /* 👈 เพิ่มพื้นที่กันข้อความทับ */
-  }
 
+  .welcome-box,
   .search-area {
     width: 100% !important;
   }
@@ -46,9 +38,8 @@ img {
   }
 }
 
-/* Tablet */
+/* ================= TABLET ================= */
 @media (max-width: 1024px) {
-
   body {
     overflow-x: hidden;
   }
@@ -63,10 +54,10 @@ img {
     padding-top: 55px;
   }
 
+  /* Sidebar */
   .sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0 auto 0 0;
     width: 80vw;
     max-width: 320px;
     height: 100vh;
@@ -107,9 +98,17 @@ img {
     cursor: pointer;
   }
 
+  /* Movie card */
   .movie-card {
     width: 100%;
     max-width: 180px;
+  }
+
+  .movie-card:hover,
+  .plus:hover img {
+    filter: none;
+    transform: none;
+    background: none;
   }
 
   .movie-card .plus {
@@ -122,23 +121,11 @@ img {
     height: 40px;
   }
 
-  .movie-card:hover {
-    filter: none;
-  }
-
-  .plus:hover img {
-    transform: none;
-    filter: none;
-    background: none;
-  }
-
   .movie-card .title {
     font-size: 14px;
     line-height: 1.4;
-
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -147,6 +134,7 @@ img {
     font-size: 13px;
   }
 
+  /* Rating */
   .rating-bar {
     padding: 4px;
     gap: 4px;
@@ -165,12 +153,12 @@ img {
     font-size: 9px;
   }
 
+  /* Layout blocks */
   .main-container {
     padding: 40px !important;
   }
 
   .welcome-box {
-    width: 100% !important;
     padding: 16px !important;
     margin-bottom: 20px !important;
   }
@@ -184,17 +172,9 @@ img {
   .welcome-box p {
     font-size: 14px;
     line-height: 1.4;
-    flex-wrap: wrap;
-  }
-
-  .welcome-plus-icon,
-  .check-icon {
-    width: 20px;
-    height: auto;
   }
 
   .search-area {
-    width: 100% !important;
     height: 44px;
     margin-bottom: 20px;
     overflow: hidden !important;
@@ -211,79 +191,26 @@ img {
 
   .movie-grid {
     gap: 16px !important;
-    justify-content: center;
   }
 
-  .popup-container {
+  /* Popup */
+  .popup-container,
+  .create-popup {
     width: 80%;
     max-width: 520px;
     max-height: 80vh;
-
     padding: 24px;
     border-radius: 10px;
-  }
-
-  .popup-header {
-    gap: 10px;
-  }
-
-  .popup-label-text {
-    font-size: 15px;
   }
 
   .movie-title {
     font-size: 18px;
   }
 
-  .to-watchlist {
-    font-size: 15px;
-    margin-bottom: 16px;
-  }
-
-  .watchlist-option {
-    width: 100%;
-    height: auto;
-    padding: 12px 16px;
-  }
-
+  .watchlist-option,
   .new-watchlist {
     width: 100%;
-    height: auto;
-    padding: 12px;
-    font-size: 15px;
-  }
-
-  .create-popup {
-    width: 80% !important;
-    max-width: 650px;
-    height: auto !important;
-    padding: 24px !important;
-    padding-bottom: 24px !important;
-  }
-
-  .create-title {
-    font-size: 18px;
-    margin-bottom: 16px;
-  }
-
-  .input-box,
-  .textarea-box {
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .textarea-box {
-    height: 120px;
-  }
-
-  .cancel-btn {
-    right: 130px !important;
-    bottom: 24px;
-  }
-
-  .save-btn {
-    right: 24px;
-    bottom: 24px;
+    padding: 12px 16px;
   }
 
   .watchlist-page {
@@ -291,9 +218,8 @@ img {
   }
 }
 
-/* Mobile */
+/* ================= MOBILE ================= */
 @media (max-width: 767px) {
-
   .main-container {
     padding: 12px !important;
   }
@@ -304,7 +230,7 @@ img {
   }
 
   .movie-card {
-    max-width: none;
+    width: 100%;
   }
 
   .movie-card .plus {
@@ -338,226 +264,11 @@ img {
     font-size: 20px;
   }
 
-  .search-area {
-    height: 42px;
-  }
-
-  .search-btn {
-    padding: 0 12px !important;
-    font-size: 13px !important;
-  }
-
   .popup-container,
   .create-popup {
-    width: 94%;
-    padding: 16px;
-  }
-
-  .watchlist-page {
-    margin: 10px !important;
-    padding: 0 12px;
-  }
-
-  .watchlist-header {
-    flex-direction: column;
-    align-items: flex-start !important;
-    gap: 12px !important;
-  }
-
-  .watchlist-title {
-    font-size: 24px;
-    line-height: 1.3;
-  }
-
-  .edit-btn img {
-    width: 20px;
-    height: 20px;
-  }
-
-  .watchlist-description {
-    margin-bottom: 32px;
-  }
-
-  .desc-title {
-    font-size: 16px;
-  }
-
-  .desc-text {
-    font-size: 14px;
-  }
-
-  .watchlist-stats {
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .stat-box {
-    width: 100% !important;
-    height: auto;
-    padding: 14px 10px;
-  }
-
-  .stat-box .label {
-    font-size: 13px;
-    margin-bottom: 4px;
-  }
-
-  .stat-box .value {
-    font-size: 22px;
-  }
-
-  .movies-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .movie-card {
-    width: 100%;
-  }
-
-  .edit-page {
-    margin: 20px 12px 0 12px !important;
-  }
-
-  .edit-page {
-    padding: 20px 16px !important;
-  }
-
-  .top-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .top-bar h2 {
-    font-size: 20px;
-  }
-
-  .logout-link {
-    font-size: 13px;
-    padding: 0;
-  }
-
-  .edit-container {
-    width: 100% !important;
-  }
-
-  .avatar-circle {
-    width: 90px;
-    height: 90px;
-  }
-
-  .avatar-btn img {
-    width: 24px;
-  }
-
-  .avatar-btn {
-    font-size: 14px;
-  }
-
-  .remove-btn {
-    font-size: 13px;
-  }
-
-  label {
-    font-size: 14px;
-  }
-
-  input {
-    height: 40px;
-    font-size: 14px;
-  }
-
-  .update-btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 15px;
-    margin-top: 16px;
-  }
-
-  .popup-container {
     width: 92% !important;
     max-width: 360px;
-    max-height: 85vh !important;
     padding: 16px !important;
-    border-radius: 10px !important;
-  }
-
-  .popup-header {
-    flex-wrap: wrap;
-    gap: 8px !important;
-  }
-
-  .movie-title {
-    font-size: 16px;
-  }
-
-  .popup-label-text {
-    font-size: 14px;
-  }
-
-  .to-watchlist {
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-
-  .watchlist-scroll {
-    padding-right: 4px;
-  }
-
-  .watchlist-option {
-    width: 100%;
-    height: auto;
-    padding: 12px;
-    gap: 10px;
-  }
-
-  .list-title {
-    font-size: 14px;
-  }
-
-  .new-watchlist {
-    width: 100%;
-    height: auto;
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  .create-popup {
-    width: 92% !important;
-    max-width: 360px;
-    height: auto !important;
-    padding: 16px !important;
-    padding-bottom: 16px !important;
-  }
-
-  .create-title {
-    font-size: 18px;
-    margin-bottom: 12px;
-  }
-
-  .form-group {
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 12px;
-  }
-
-  .input-label {
-    font-size: 14px;
-  }
-
-  .input-box,
-  .textarea-box {
-    width: 100% !important;
-    margin-left: 0 !important;
-    font-size: 14px;
-  }
-
-  .textarea-box {
-    height: 100px;
   }
 
   .cancel-btn,
@@ -566,148 +277,4 @@ img {
     width: 100% !important;
     margin-top: 12px;
   }
-
-  .save-btn {
-    font-size: 14px;
-    height: auto;
-    padding: 12px;
-  }
-
-  .detail-page {
-    padding: 20px 16px;
-    gap: 30px;
-  }
-
-  .top-section {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .left {
-    display: flex;
-    justify-content: center;
-  }
-
-  .left .poster {
-    width: 180px;
-  }
-
-  .right h1 {
-    font-size: 22px;
-    line-height: 1.3;
-  }
-
-  .genres {
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-
-  .overview-section h2 {
-    font-size: 18px;
-  }
-
-  .overview {
-    font-size: 14px;
-    max-width: 100%;
-  }
-
-  .score-section {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    margin-top: 30px;
-  }
-
-  .score-box {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 12px 16px;
-  }
-
-  .score-title {
-    font-size: 16px;
-  }
-
-  .score-value {
-    font-size: 28px;
-  }
-
-  .add-btn {
-    width: 100%;
-    height: 48px;
-    font-size: 15px;
-  }
-
-  /* cast */
-  .cast-section h2 {
-    font-size: 18px;
-  }
-
-  .cast-card {
-    width: 120px;
-  }
-
-  .cast-img {
-    width: 120px;
-    height: 160px;
-  }
-
-  .cast-name {
-    font-size: 14px;
-  }
-
-  .cast-role {
-    font-size: 13px;
-  }
-
-  /* ================= POPUP ================= */
-
-  .popup-container {
-    width: 90%;
-    max-width: 360px;
-    max-height: 80vh;
-    padding: 20px;
-  }
-
-  .movie-title {
-    font-size: 16px;
-  }
-
-  .watchlist-option,
-  .new-watchlist {
-    width: 100%;
-  }
-
-  .create-popup {
-    width: 90%;
-    max-width: 360px;
-    height: auto;
-    padding: 20px;
-    padding-bottom: 90px;
-  }
-
-  .form-group {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .input-box,
-  .textarea-box {
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .cancel-btn,
-  .save-btn {
-    position: static;
-    margin-top: 12px;
-    width: 100%;
-  }
-
-  .save-btn {
-    margin-top: 6px;
-  }
-
 }

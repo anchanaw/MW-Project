@@ -77,9 +77,7 @@ const newListName = ref('')
 const newListDescription = ref('')
 
 /* ================= METHODS ================= */
-const close = () => {
-    emit('close')
-}
+const close = () => emit('close')
 
 const addMovieToList = (listId) => {
     if (!props.movie) return
@@ -101,27 +99,21 @@ const saveNewWatchlist = () => {
     close()
 }
 
-/* ================= RESET WHEN OPEN ================= */
-watch(
-    () => props.open,
-    (val) => {
-        if (val) {
-            mode.value = 'select'
-            newListName.value = ''
-            newListDescription.value = ''
-        }
+/* ================= RESET ================= */
+watch(() => props.open, (val) => {
+    if (val) {
+        mode.value = 'select'
+        newListName.value = ''
+        newListDescription.value = ''
     }
-)
+})
 </script>
 
 <style scoped>
-/* BACKDROP */
+/* ================= BACKDROP ================= */
 .popup-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: rgba(0, 0, 0, 0.55);
     display: flex;
     justify-content: center;
@@ -130,7 +122,7 @@ watch(
     font-family: 'Lato', sans-serif;
 }
 
-/* POPUP CONTAINER */
+/* ================= POPUP (SELECT) ================= */
 .popup-container {
     background: #1d1d1d;
     padding: 30px;
@@ -139,8 +131,6 @@ watch(
     border-radius: 10px;
     border: 1px solid #444;
     color: white;
-    position: relative;
-    font-family: 'Lato', sans-serif;
 
     display: flex;
     flex-direction: column;
@@ -153,7 +143,7 @@ watch(
     padding-right: 8px;
 }
 
-/* HEADER */
+/* Header */
 .popup-header {
     display: flex;
     align-items: center;
@@ -162,8 +152,8 @@ watch(
 }
 
 .popup-label-text {
-    color: #ddd;
     font-size: 16px;
+    color: #ddd;
 }
 
 .movie-title {
@@ -175,18 +165,18 @@ watch(
     margin-left: auto;
     background: none;
     border: none;
-    color: white;
     font-size: 22px;
+    color: white;
     cursor: pointer;
 }
 
 .to-watchlist {
-    color: #ddd;
     font-size: 16px;
+    color: #ddd;
     margin-bottom: 21px;
 }
 
-/* WATCHLIST ITEM */
+/* Watchlist item */
 .watchlist-option {
     display: flex;
     align-items: center;
@@ -198,25 +188,19 @@ watch(
     border-radius: 6px;
     margin-bottom: 15px;
     cursor: pointer;
-    transition: background 0.15s;
-}
-
-.watchlist-option:hover {
-    border: 1px #ff5555;
 }
 
 .list-icon {
-  width: 22px;            
-  height: 22px;
-  background: #e6e6e6;
-  color: #000;
-  font-weight: 700;
-  border-radius: 8px;       
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;       
-  line-height: 1;
+    width: 22px;
+    height: 22px;
+    background: #e6e6e6;
+    color: #000;
+    font-weight: 700;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
 }
 
 .list-title {
@@ -224,56 +208,39 @@ watch(
     font-weight: 600;
 }
 
-/* NEW WATCHLIST BUTTON */
+/* New watchlist */
 .new-watchlist {
     width: 247px;
     height: 41px;
     background: #ff3b3b;
-    padding: 14px;
+    padding: 12px 16px;
     border-radius: 6px;
     border: none;
     font-weight: 700;
     font-size: 15px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: white;
-    margin-top: auto;
-}
-
-.plus-icon {
-  width: 22px;              
-  height: 22px;
-  background: #fff;
-  color: #000;
-  border-radius: 8px;       
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;        
-  font-weight: 800;
-  line-height: 1;
-
-}
-
-.new-watchlist {
-    background: #ff3b3b;
-    color: #000;
-    /* ตัวหนังสือสีดำ */
-    border: none;
-    border-radius: 6px;
 
     display: flex;
     align-items: center;
     gap: 10px;
 
-    padding: 12px 16px;
-    font-weight: 700;
-    cursor: pointer;
+    margin-top: auto;
 }
 
+.plus-icon {
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    color: #000;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 800;
+}
 
+/* ================= POPUP (CREATE) ================= */
 .create-popup {
     position: relative;
     width: 700px;
@@ -281,9 +248,7 @@ watch(
     background: #161616;
     border: 1px solid #E1E1E1;
     border-radius: 4px;
-    padding: 30px;
-    padding-bottom: 80px;
-    box-sizing: border-box;
+    padding: 30px 30px 80px;
     color: #E1E1E1;
 }
 
@@ -293,15 +258,8 @@ watch(
     margin-bottom: 20px;
 }
 
-.form-area {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
 .form-group {
     display: flex;
-    align-items: flex-start;
     gap: 20px;
     margin-top: 20px;
 }
@@ -311,34 +269,30 @@ watch(
     font-weight: 700;
 }
 
-.input-box {
+.input-box,
+.textarea-box {
     width: 295px;
-    height: 40px;
-    padding: 8px 10px;
     background: #161616;
     border: 1px solid #E1E1E1;
     border-radius: 6px;
     color: #E1E1E1;
+}
+
+.input-box {
+    height: 40px;
+    padding: 8px 10px;
     margin-left: 41px;
 }
 
 .textarea-box {
-    width: 295px;
     height: 140px;
     padding: 10px;
-    background: #161616;
-    border: 1px solid #E1E1E1;
-    border-radius: 6px;
-    color: #E1E1E1;
     resize: none;
 }
 
-.cancel-btn,
-.save-btn {
-    position: absolute;
-}
-
+/* Buttons */
 .cancel-btn {
+    position: absolute;
     right: 150px;
     bottom: 30px;
     background: none;
@@ -350,13 +304,12 @@ watch(
 }
 
 .save-btn {
+    position: absolute;
     right: 10px;
     bottom: 20px;
     width: 110px;
     height: 41px;
     background: #F33F3F;
-    color: black;
-    padding: 8px 28px;
     border-radius: 6px;
     border: none;
     font-size: 16px;

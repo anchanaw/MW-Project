@@ -12,6 +12,7 @@
       <!-- Right Content -->
       <div class="right">
         <h1>{{ movie.title }} ({{ movie.year }})</h1>
+
         <p class="genres">
           {{ movie.genres }}
           <span v-if="formattedRuntime" class="dot">•</span>
@@ -32,14 +33,12 @@
           <button class="add-btn" @click="openAddPopup">
             Add to Watchlist
           </button>
-
         </div>
       </div>
     </div>
 
     <!-- CAST SECTION -->
-    <div class="cast-wrapper" v-if="!loading && movie">
-
+    <div class="cast-wrapper" v-if="!loading">
       <div class="cast-section">
         <h2>Cast</h2>
 
@@ -49,15 +48,14 @@
             <p class="cast-name">{{ c.name }}</p>
             <p class="cast-role">{{ c.role }}</p>
           </div>
-
         </div>
 
         <p v-else class="empty">
           Cast information is not available for this title.
         </p>
       </div>
-
     </div>
+
     <!-- RELATED MOVIES -->
     <div class="related-section" v-if="relatedMovies.length">
       <h2>Related Movies</h2>
@@ -72,31 +70,35 @@
     </div>
 
   </div>
-  <AddToWatchlistPopup :open="showAddPopup" :movie="movie" @close="showAddPopup = false" />
 
+  <AddToWatchlistPopup :open="showAddPopup" :movie="movie" @close="showAddPopup = false" />
 </template>
 
-
 <script setup>
-import { ref, computed, onMounted } from "vue";
+/* ================= IMPORTS ================= */
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { navigateTo } from "#app";
+
 import { useMovieStore } from "~/stores/movie";
 import { useAuthStore } from "~/stores/auth";
-import AddToWatchlistPopup from "~/components/watchlist/AddToWatchlistPopup.vue";
 import { useMainStore } from "~/stores/main";
 
-const mainStore = useMainStore();
+import AddToWatchlistPopup from "~/components/watchlist/AddToWatchlistPopup.vue";
+
+/* ================= STORES & ROUTE ================= */
 const route = useRoute();
 const movieStore = useMovieStore();
 const auth = useAuthStore();
+const mainStore = useMainStore();
 
+/* ================= STATE ================= */
 const showAddPopup = ref(false);
 const loading = ref(true);
 
 const movieId = String(route.params.id);
-const historyStore = useHistoryStore();
 
+/* ================= COMPUTED ================= */
 const movie = computed(() =>
   movieStore.allMovies.find(m => m.id === movieId)
 );
@@ -115,10 +117,8 @@ const relatedMovies = computed(() => {
 
   return movieStore.allMovies
     .filter(m =>
-      m.id !== movie.value.id &&               // ไม่เอาเรื่องเดิม
-      currentGenres.value.some(g =>
-        m.genres.includes(g)                   // genre ซ้ำอย่างน้อย 1 ตัว
-      )
+      m.id !== movie.value.id &&
+      currentGenres.value.some(g => m.genres.includes(g))
     )
     .slice(0, 10);
 });
@@ -132,6 +132,7 @@ const formattedRuntime = computed(() => {
   return `${hours}h ${minutes}m`;
 });
 
+/* ================= METHODS ================= */
 const openAddPopup = () => {
   if (!auth.isAuthenticated) {
     navigateTo("/profile");
@@ -140,32 +141,23 @@ const openAddPopup = () => {
   showAddPopup.value = true;
 };
 
-let watchTimer = null;
-
+/* ================= LIFECYCLE ================= */
 onMounted(async () => {
   console.log("📄 movie detail mounted:", movieId);
 
   await movieStore.initMovies();
 
   if (!movie.value) {
-    console.warn("❌ movie not found in store");
+    console.warn("❌ movie not found");
     loading.value = false;
     return;
   }
 
-  console.log("▶️ calling fetchCast with:", movieId);
   await movieStore.fetchCast(movieId);
-  console.log("▶️ after fetchCast:", movieStore.castCache);
-
-  console.log("🎬 movie:", movie.value);
-  console.log("🎭 cast:", cast.value);
-
   loading.value = false;
 
-  if (movie.value) {
-    if (auth.isAuthenticated) {
-  mainStore.addToHistoryAfterDelay(movie.value, auth.user.id);
-}
+  if (auth.isAuthenticated) {
+    mainStore.addToHistoryAfterDelay(movie.value, auth.user.id);
   }
 });
 
@@ -175,15 +167,17 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* ================= PAGE ================= */
 .detail-page {
   display: flex;
   flex-direction: column;
-  color: #fff;
-  padding: 50px;
   gap: 40px;
+  padding: 50px;
+  color: #fff;
   font-family: 'Lato', sans-serif;
 }
 
+/* ================= TOP SECTION ================= */
 .top-section {
   display: flex;
   gap: 40px;
@@ -194,41 +188,29 @@ onUnmounted(() => {
   border-radius: 10px;
 }
 
-/* Right side */
 .right {
   flex: 1;
 }
 
-
-/* Title */
+/* ================= TITLE ================= */
 .right h1 {
   font-size: 36px;
   font-weight: 700;
   margin-bottom: 10px;
 }
 
-/* CAST SECTION — แถวล่าง */
-.cast-section {
-  margin-top: 10px;
-}
-
-.cast-section h2 {
-  font-size: 22px;
-  margin-bottom: 20px;
-}
-
-/* Genres */
+/* ================= GENRES ================= */
 .genres {
-  opacity: 0.8;
   font-size: 16px;
   margin-bottom: 50px;
+  opacity: 0.8;
 }
 
 .dot {
   margin: 0 10px;
 }
 
-/* Overview */
+/* ================= OVERVIEW ================= */
 .overview-section h2 {
   font-size: 20px;
   font-weight: 700;
@@ -236,14 +218,14 @@ onUnmounted(() => {
 }
 
 .overview {
-  line-height: 1.6;
+  max-width: 650px;
   font-size: 16px;
   font-weight: 400;
-  max-width: 650px;
+  line-height: 1.6;
   opacity: 0.9;
 }
 
-/* Score + Button */
+/* ================= SCORE + BUTTON ================= */
 .score-section {
   display: flex;
   align-items: center;
@@ -254,10 +236,11 @@ onUnmounted(() => {
 .score-box {
   width: 81px;
   height: 95px;
-  padding: 15px 15px;
+  padding: 15px;
   background: #D9D9D91A;
   border: 1px solid #A41B1B;
   border-radius: 8px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -265,36 +248,31 @@ onUnmounted(() => {
 }
 
 .score-title {
-  color: #fff;
+  margin-bottom: 5px;
   font-size: 20px;
   font-weight: 700;
   opacity: 0.85;
-  margin-bottom: 5px;
 }
 
 .score-value {
-  color: #F33F3F;
   font-size: 36px;
   font-weight: 700;
+  color: #F33F3F;
 }
 
-
-.outof {
-  font-size: 14px;
-  opacity: 0.7;
-}
-
-/* Add Button */
+/* ================= ADD BUTTON ================= */
 .add-btn {
   width: 200px;
   height: 63px;
+  padding: 12px 35px;
+
   background: #ff4646;
   color: #111;
   border: none;
-  padding: 12px 35px;
+  border-radius: 6px;
+
   font-size: 16px;
   font-weight: 700;
-  border-radius: 6px;
   cursor: pointer;
 }
 
@@ -302,6 +280,7 @@ onUnmounted(() => {
   background: #ff5d5d;
 }
 
+/* ================= CAST SECTION ================= */
 .cast-section {
   width: 100%;
   margin-top: 20px;
@@ -315,8 +294,8 @@ onUnmounted(() => {
 .cast-grid {
   display: flex;
   gap: 25px;
-  overflow-x: auto;
   padding-bottom: 10px;
+  overflow-x: auto;
   align-items: flex-start;
 }
 
@@ -332,7 +311,6 @@ onUnmounted(() => {
   border-radius: 10px;
 }
 
-
 .cast-name {
   margin-top: 8px;
   font-size: 16px;
@@ -344,6 +322,7 @@ onUnmounted(() => {
   opacity: 0.7;
 }
 
+/* ================= RELATED MOVIES ================= */
 .related-section {
   margin-top: 98px;
 }

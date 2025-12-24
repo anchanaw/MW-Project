@@ -50,16 +50,18 @@
 import { ref } from "vue"
 import { useAuthStore } from "~/stores/auth"
 
+/* ================= STORE ================= */
 const auth = useAuthStore()
 
-// Load current user data
+/* ================= STATE ================= */
 const name = ref(auth.user.name)
 const email = ref(auth.user.email)
 const password = ref(auth.user.password)
+
 const avatarPreview = ref(null)
 const newAvatar = ref(null)
 
-// Upload Avatar
+/* ================= AVATAR ================= */
 const uploadAvatar = (e) => {
   const file = e.target.files[0]
   if (!file) return
@@ -77,7 +79,7 @@ const removeAvatar = () => {
   newAvatar.value = null
 }
 
-// Update Profile
+/* ================= ACTIONS ================= */
 const updateProfile = () => {
   auth.updateProfile({
     name: name.value,
@@ -93,11 +95,10 @@ const logout = () => {
   auth.logout()
   navigateTo("/profile")
 }
-
-
 </script>
 
 <style scoped>
+/* ================= PAGE ================= */
 .edit-page {
   min-height: 100vh;
   padding: 40px 60px;
@@ -105,6 +106,7 @@ const logout = () => {
   font-family: 'Lato', sans-serif;
 }
 
+/* ================= HEADER ================= */
 .top-bar {
   display: flex;
   justify-content: space-between;
@@ -119,7 +121,7 @@ const logout = () => {
   font-size: 14px;
 }
 
-
+/* ================= CONTAINER ================= */
 .edit-container {
   width: 400px;
   margin: auto;
@@ -127,6 +129,7 @@ const logout = () => {
   flex-direction: column;
 }
 
+/* ================= AVATAR ================= */
 .avatar-section {
   text-align: center;
   margin-bottom: 25px;
@@ -167,6 +170,7 @@ const logout = () => {
   cursor: pointer;
 }
 
+/* ================= FORM ================= */
 label {
   margin-top: 10px;
   opacity: 0.9;
@@ -182,6 +186,7 @@ input {
   padding-left: 10px;
 }
 
+/* ================= BUTTON ================= */
 .update-btn {
   background: #ff4646;
   border: none;

@@ -1,9 +1,12 @@
 <template>
   <div v-if="watchlist" class="edit-page">
 
+    <!-- Header -->
     <div class="header-row">
       <h1>Edit your Watchlist</h1>
-      <button class="delete-btn" @click="deleteList">Delete Watchlist</button>
+      <button class="delete-btn" @click="deleteList">
+        Delete Watchlist
+      </button>
     </div>
 
     <!-- Name -->
@@ -17,51 +20,58 @@
     <!-- Movies -->
     <label class="label">Movies</label>
 
-    <div class="movie-row" v-for="movie in movies" :key="movie.id">
+    <div v-for="movie in movies" :key="movie.id" class="movie-row">
       <img :src="movie.img" class="poster" />
-      <span class="movie-title">{{ movie.title }} ({{ movie.year }})</span>
-      <button class="remove-btn" @click="removeMovie(movie.id)">Remove</button>
+      <span class="movie-title">
+        {{ movie.title }} ({{ movie.year }})
+      </span>
+      <button class="remove-btn" @click="removeMovie(movie.id)">
+        Remove
+      </button>
     </div>
 
-    <!-- Save button -->
-    <button class="save-btn" @click="saveChanges">Save</button>
+    <!-- Save -->
+    <button class="save-btn" @click="saveChanges">
+      Save
+    </button>
 
   </div>
 </template>
 
 <script setup>
+/* ================= IMPORTS ================= */
+import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { navigateTo } from "#app";
 import { useAuthStore } from "~/stores/auth";
-import { computed, ref, onMounted } from "vue";
 
+/* ================= STATE ================= */
 const route = useRoute();
 const auth = useAuthStore();
+
 const id = Number(route.params.id);
 
-// โหลด watchlist ที่ต้องการแก้ไข
-const watchlist = computed(() =>
-  auth.user.watchlists.find(w => w.id === id)
-)
-
-// สร้างตัวแปรแก้ไขได้
 const name = ref("");
 const description = ref("");
 const movies = ref([]);
 
-// โหลดข้อมูลเข้า form
-watchlist.value && (() => {
+/* ================= COMPUTED ================= */
+const watchlist = computed(() =>
+  auth.user.watchlists.find(w => w.id === id)
+);
+
+/* ================= INIT ================= */
+if (watchlist.value) {
   name.value = watchlist.value.title;
   description.value = watchlist.value.description;
-  movies.value = [...watchlist.value.movies]; 
-})();
+  movies.value = [...watchlist.value.movies];
+}
 
-// ลบหนังในลิสต์
+/* ================= METHODS ================= */
 function removeMovie(movieId) {
   movies.value = movies.value.filter(m => m.id !== movieId);
 }
 
-// บันทึก
 function saveChanges() {
   auth.updateWatchlist(id, {
     title: name.value,
@@ -72,7 +82,6 @@ function saveChanges() {
   navigateTo(`/watchlist/${id}`);
 }
 
-// ลบลิสต์ทั้งหมด
 function deleteList() {
   auth.deleteWatchlist(id);
   navigateTo("/");
@@ -80,12 +89,14 @@ function deleteList() {
 </script>
 
 <style scoped>
+/* ================= PAGE ================= */
 .edit-page {
   margin: 26px 60px 0 30px;
+  color: #fff;
   font-family: "Lato", sans-serif;
-  color: white;
 }
 
+/* ================= HEADER ================= */
 .header-row {
   display: flex;
   justify-content: space-between;
@@ -98,51 +109,46 @@ function deleteList() {
   font-weight: 400;
 }
 
-.delete-btn {
-  font-size: 16px;
-  font-weight: 700;
-  text-decoration: underline;
-}
-
+/* ================= FORM LABEL ================= */
 .label {
   display: block;
   margin-top: 20px;
   font-size: 18px;
   font-weight: 700;
-  color: #E1E1E1;
+  color: #e1e1e1;
 }
 
-.input-box {
+/* ================= INPUT ================= */
+.input-box,
+.textarea-box {
   width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #555;
-  background: #1b1b1b;
-  color: white;
   margin-top: 6px;
   margin-bottom: 10px;
+  padding: 10px;
+
+  background: #1b1b1b;
+  color: #fff;
+
+  border: 1px solid #555;
+  border-radius: 6px;
 }
 
 .textarea-box {
-  width: 100%;
   height: 120px;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #555;
-  background: #1b1b1b;
-  color: white;
-  margin-bottom: 10px;
+  resize: none;
 }
 
+/* ================= MOVIE ROW ================= */
 .movie-row {
   display: flex;
   align-items: center;
   gap: 12px;
+
   margin-top: 15px;
-  border: 1px solid #555;
   padding: 10px;
+
+  border: 1px solid #555;
   border-radius: 8px;
-  width: 100%;
 }
 
 .poster {
@@ -154,27 +160,32 @@ function deleteList() {
   flex: 1;
 }
 
+/* ================= BUTTONS ================= */
 .remove-btn {
   width: 77px;
   height: 41px;
+
   background: none;
+  color: #e1e1e1;
+
   border: 1px solid #ff3b3b;
-  color: #E1E1E1;
-  font-size: 16px;
   border-radius: 4px;
+
+  font-size: 16px;
   cursor: pointer;
-  justify-items: center;
-  align-items: center;
 }
 
 .save-btn {
   margin-top: 40px;
   width: 247px;
   height: 41px;
+
   padding: 12px 40px;
   background: #ff3b3b;
+
   border: none;
   border-radius: 6px;
+
   font-size: 18px;
   cursor: pointer;
 }
@@ -182,8 +193,11 @@ function deleteList() {
 .delete-btn {
   background: none;
   border: none;
+
   color: #ff3b3b;
   font-size: 16px;
+  font-weight: 700;
+  text-decoration: underline;
   cursor: pointer;
 }
 </style>

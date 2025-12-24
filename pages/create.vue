@@ -1,10 +1,13 @@
 <template>
   <div class="create-container">
-    <h1 class="title">Create a new Watchlist</h1>
+
+    <h1 class="title">
+      Create a new Watchlist
+    </h1>
 
     <div class="form-group">
       <label for="name">Name</label>
-      <input type="text" id="name" v-model="name" class="input-box" />
+      <input id="name" type="text" v-model="name" class="input-box" />
     </div>
 
     <div class="form-group">
@@ -15,72 +18,67 @@
     <button class="create-btn" @click="createWatchlist">
       Create watchlist
     </button>
+
   </div>
 </template>
 
 <script>
-import { useAuthStore } from "../stores/auth";
-import { useRouter } from "vue-router";
+/* ================= IMPORTS ================= */
+import { ref } from "vue"
+import { useRouter } from "vue-router"
 
-export default {
-  data() {
-    return {
-      name: "",
-      description: ""
-    };
-  },
+import { useAuthStore } from "~/stores/auth"
 
-  setup() {
-    const auth = useAuthStore();
-    const router = useRouter();
-    return { auth, router };
-  },
-
-  methods: {
-    createWatchlist() {
-      if (!this.name.trim()) {
-        alert("Please enter a name");
-        return;
-      }
-
-      // เพิ่ม watchlist เข้า user ปัจจุบัน
-      this.auth.addWatchlist({
-        title: this.name,
-        description: this.description
-      });
-
-      alert("Watchlist created!");
-      this.router.push("/profile"); 
-    }
-  }
-};
-
+/* ================= PAGE META ================= */
 definePageMeta({
-  middleware: 'auth'
-});
+  middleware: "auth"
+})
+
+/* ================= STATE ================= */
+const auth = useAuthStore()
+const router = useRouter()
+
+const name = ref("")
+const description = ref("")
+
+/* ================= METHODS ================= */
+const createWatchlist = () => {
+  if (!name.value.trim()) {
+    alert("Please enter a name")
+    return
+  }
+
+  auth.addWatchlist({
+    title: name.value,
+    description: description.value
+  })
+
+  alert("Watchlist created!")
+  router.push("/profile")
+}
 </script>
 
 <style scoped>
+/* ================= CONTAINER ================= */
 .create-container {
   padding: 23px;
   color: #fff;
+  font-family: "Lato", sans-serif;
 }
 
-.title,
-.form-group,
-.create-btn {
-  font-family: 'Lato', sans-serif;
-  letter-spacing: 1px;
-}
-
+/* ================= TITLE ================= */
 .title {
-  display: flex;
   font-size: 32px;
   font-weight: 400;
   margin-bottom: 50px;
+  letter-spacing: 1px;
 }
 
-/* Label */
+/* ================= FORM ================= */
+.form-group {
+  margin-bottom: 20px;
+}
+
 .form-group label {
   display: block;
   margin-bottom: 6px;
@@ -88,15 +86,16 @@ definePageMeta({
   color: #dcdcdc;
 }
 
-/* Input + Textarea */
+/* ================= INPUTS ================= */
 .input-box,
 .textarea-box {
   width: 100%;
-  background: #FFFFFF05;
-  border: 1px solid #E1E1E1;
-  border-radius: 6px;
   padding: 12px;
-  margin-bottom: 20px;
+
+  background: #ffffff05;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+
   color: #fff;
   font-size: 15px;
 }
@@ -112,19 +111,21 @@ definePageMeta({
   resize: none;
 }
 
-/* Button */
+/* ================= BUTTON ================= */
 .create-btn {
-  font-family: 'Lato', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 100%;
   margin-top: 10px;
   padding: 12px 20px;
+
   background: #ff3b3b;
   color: #141414;
+
   border: none;
   border-radius: 6px;
+
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
+
   transition: 0.2s;
 }
 

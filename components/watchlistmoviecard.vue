@@ -7,18 +7,10 @@
     </NuxtLink>
 
     <!-- MARK TOP RIGHT -->
-    <button
-      class="watch-mark"
-      :class="{ watched }"
-      @click.stop="$emit('toggle')"
-      aria-label="Toggle watched"
-    >
-      <img
-        :src="watched
-          ? '/icons/check-icon-green.png'
-          : '/icons/check-icon.png'"
-        alt="watch-mark"
-      />
+    <button class="watch-mark" :class="{ watched }" @click.stop="$emit('toggle')" aria-label="Toggle watched">
+      <img :src="watched
+        ? '/icons/check-icon-green.png'
+        : '/icons/check-icon.png'" alt="watch-mark" />
     </button>
 
     <!-- Info -->
@@ -36,8 +28,8 @@
   </div>
 </template>
 
-
 <script setup>
+/* ================= PROPS ================= */
 defineProps({
   id: {
     type: [Number, String],
@@ -51,32 +43,34 @@ defineProps({
     type: Boolean,
     default: false
   }
-});
+})
 
+/* ================= HELPERS ================= */
 const emojiFor = (rating) => {
-  if (rating >= 70) return "/emojis/great-80.png";
-  if (rating >= 40) return "/emojis/normal-35-and-80.png";
-  return "/emojis/awful-35.png";
-};
+  if (typeof rating !== 'number') return '/emojis/normal-35-and-80.png'
+  if (rating >= 70) return '/emojis/great-80.png'
+  if (rating >= 40) return '/emojis/normal-35-and-80.png'
+  return '/emojis/awful-35.png'
+}
 
-const formatTitle = (text) => {
-  return text.replace(":", ":<br>");
-};
+const formatTitle = (text = '') =>
+  text.replace(':', ':<br>')
 </script>
 
 <style scoped>
+/* ================= CARD ================= */
 .watchlist-card {
+  position: relative;
   width: 150px;
   height: 340px;
-  border-radius: 4px;
-  overflow: visible;
+  margin-top: 70px;
   background: #0f0f0f;
+  border-radius: 4px;
   color: #fff;
   font-family: Inter, Roboto, sans-serif;
-  position: relative;
-  margin-top: 70px;
 }
 
+/* ================= POSTER ================= */
 .poster {
   width: 100%;
   height: 225px;
@@ -84,18 +78,9 @@ const formatTitle = (text) => {
   border-radius: 4px 4px 0 0;
 }
 
-.checkmark {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #5cff5c;
-  font-size: 26px;
-  font-weight: bold;
-}
-
+/* ================= INFO ================= */
 .info {
-  padding: 5px 10px 10px 10px;
-  color: white;
+  padding: 5px 10px 10px;
 }
 
 .score-row {
@@ -104,7 +89,6 @@ const formatTitle = (text) => {
   justify-content: flex-end;
   gap: 6px;
   padding: 5px;
-  color: #fff;
 }
 
 .emoji {
@@ -123,27 +107,25 @@ const formatTitle = (text) => {
 }
 
 .title {
-  margin: 0;
   font-size: 16px;
-  font-weight: 400;
   color: #E1E1E1;
 }
 
 .year {
-  margin: 6px 0 0;
-  color: #E1E1E1;
+  margin-top: 6px;
   font-size: 16px;
   font-weight: 300;
   opacity: 0.8;
+  color: #E1E1E1;
 }
 
+/* ================= WATCH MARK ================= */
 .watch-mark {
   position: absolute;
   top: 10px;
   right: 10px;
   background: transparent;
   border: none;
-  padding: 0;
   cursor: pointer;
   z-index: 2;
 }
@@ -154,21 +136,11 @@ const formatTitle = (text) => {
   transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-/* ดูแล้ว = เขียว */
 .watch-mark.watched img {
   filter: drop-shadow(0 0 6px rgba(120, 255, 120, 0.6));
 }
 
-/* hover เบา ๆ */
 .watch-mark:hover img {
   transform: scale(1.08);
-}
-
-
-.tv-icon {
-  width: 20px;
-  height: 20px;
-  display: block;
-  pointer-events: none;
 }
 </style>

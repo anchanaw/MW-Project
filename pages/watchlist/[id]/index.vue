@@ -1,122 +1,137 @@
 <template>
     <div v-if="!loading && watchlist" class="watchlist-page">
 
-        <!-- Header -->
+        <!-- HEADER -->
         <div class="watchlist-header">
             <h1 class="watchlist-title">
-                {{ watchlist?.title }}
+                {{ watchlist.title }}
             </h1>
 
             <button class="edit-btn" @click="goToEdit">
                 <img src="/icons/edit-icon.png" class="edit-icon" />
             </button>
-
         </div>
 
-        <!-- About Section -->
+        <!-- DESCRIPTION -->
         <div class="watchlist-description">
-            <h3 class="desc-title">About this watchlist</h3>
+            <h3 class="desc-title">
+                About this watchlist
+            </h3>
+
             <p class="desc-text">
-                {{ watchlist?.description || "No description added." }}
+                {{ watchlist.description || "No description added." }}
             </p>
         </div>
 
-        <!-- Stats Section -->
+        <!-- STATS -->
         <div class="watchlist-stats">
+
             <div class="stat-box">
                 <span class="label">ITEMS ON LIST</span>
-                <span class="value">{{ watchlist?.movies?.length || 0 }}
+                <span class="value">
+                    {{ watchlist.movies.length }}
                 </span>
             </div>
 
             <div class="stat-box">
                 <span class="label">UNWATCHED RUNTIME</span>
-                <span class="value">{{ unwatchedRuntime }}</span>
+                <span class="value">
+                    {{ unwatchedRuntime }}
+                </span>
             </div>
 
             <div class="stat-box">
                 <span class="label">AVERAGE SCORE</span>
-                <div class="value">{{ averageScore }}</div>
+                <span class="value">
+                    {{ averageScore }}
+                </span>
             </div>
 
         </div>
 
-        <!-- Movie List -->
+        <!-- MOVIES -->
         <div class="movies-grid">
-            <WatchlistMovieCard v-for="movie in watchlist?.movies ?? []" :key="movie.id" v-bind="movie"
-                @toggle="watchlist && auth.toggleWatched(watchlist.id, movie.id)" />
+            <WatchlistMovieCard v-for="movie in watchlist.movies" :key="movie.id" v-bind="movie"
+                @toggle="auth.toggleWatched(watchlist.id, movie.id)" />
         </div>
 
     </div>
 </template>
 
 <script setup>
-import WatchlistMovieCard from '~/components/WatchlistMovieCard.vue';
-import { computed, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { useAuthStore } from "~/stores/auth";
-import { navigateTo } from "#app";
+import { ref, computed, onMounted } from "vue"
+import { useRoute } from "vue-router"
+import { navigateTo } from "#app"
 
-const route = useRoute();
-const auth = useAuthStore();
+import { useAuthStore } from "~/stores/auth"
+import WatchlistMovieCard from "~/components/WatchlistMovieCard.vue"
 
-const id = Number(route.params.id);
-const loading = ref(true);
+/* ================= STATE ================= */
+const route = useRoute()
+const auth = useAuthStore()
 
-onMounted(() => {
-    auth.init();
-    loading.value = false;
-});
-const goToEdit = () => {
-    console.log("Edit clicked!");
-    navigateTo(`/watchlist/${id}/edit`);
-};
+const id = Number(route.params.id)
+const loading = ref(true)
 
+/* ================= COMPUTED ================= */
 const watchlist = computed(() => {
-    if (!auth.user?.watchlists) return null;
-    return auth.user.watchlists.find(w => w.id === id) || null;
-});
+    if (!auth.user?.watchlists) return null
+    return auth.user.watchlists.find(w => w.id === id) || null
+})
 
 const averageScore = computed(() => {
-  if (!watchlist.value) return 0
+    if (!watchlist.value) return 0
 
-  const ratedMovies = watchlist.value.movies.filter(
-    m => typeof m.rating === 'number' && m.rating > 0
-  )
+    const rated = watchlist.value.movies.filter(
+        m => typeof m.rating === "number" && m.rating > 0
+    )
 
-  if (ratedMovies.length === 0) return 0
+    if (!rated.length) return 0
 
-  const total = ratedMovies.reduce(
-    (sum, m) => sum + m.rating,
-    0
-  )
+    const total = rated.reduce(
+        (sum, m) => sum + m.rating,
+        0
+    )
 
-  return Math.round(total / ratedMovies.length)
+    return Math.round(total / rated.length)
 })
 
 const unwatchedMinutes = computed(() => {
-  if (!watchlist.value) return 0
+    if (!watchlist.value) return 0
 
-  return watchlist.value.movies
-    .filter(movie => movie.watched !== true)
-    .reduce((total, movie) => total + (movie.runtime || 0), 0)
+    return watchlist.value.movies
+        .filter(m => m.watched !== true)
+        .reduce((sum, m) => sum + (m.runtime || 0), 0)
 })
 
 const unwatchedRuntime = computed(() => {
-  const m = unwatchedMinutes.value
-  const h = Math.floor(m / 60)
-  const min = m % 60
-  return `${h}h ${min}m`
+    const m = unwatchedMinutes.value
+    const h = Math.floor(m / 60)
+    const min = m % 60
+    return `${h}h ${min}m`
 })
 
+/* ================= METHODS ================= */
+const goToEdit = () => {
+    navigateTo(`/watchlist/${id}/edit`)
+}
+
+/* ================= LIFECYCLE ================= */
+onMounted(() => {
+    auth.init()
+    loading.value = false
+})
 </script>
 
 <style scoped>
+/* ================= PAGE ================= */
 .watchlist-page {
     margin: 26px 62px 0 30px;
-    font-family: 'Lato', sans-serif;
+    font-family: "Lato", sans-serif;
+    color: #e1e1e1;
 }
 
+/* ================= HEADER ================= */
 .watchlist-header {
     display: flex;
     align-items: center;
@@ -127,32 +142,23 @@ const unwatchedRuntime = computed(() => {
 .watchlist-title {
     font-size: 38px;
     font-weight: 700;
-    color: #E1E1E1;
 }
 
+/* ================= EDIT BUTTON ================= */
 .edit-btn {
-    background: transparent !important;
-    border: none !important;
+    background: none;
+    border: none;
     padding: 0;
-    margin: 0;
     cursor: pointer;
 }
 
 .edit-btn img {
-    background: transparent !important;
     filter: brightness(0) invert(1);
-    /* ให้เป็นสีขาวล้วน */
-    align-items: center;
 }
 
-.edit-btn:hover img {
-    opacity: 1;
-}
-
+/* ================= DESCRIPTION ================= */
 .watchlist-description {
     margin-bottom: 70px;
-    color: #E1E1E1;
-
 }
 
 .desc-title {
@@ -166,7 +172,7 @@ const unwatchedRuntime = computed(() => {
     line-height: 1.4;
 }
 
-
+/* ================= STATS ================= */
 .watchlist-stats {
     display: flex;
     gap: 40px;
@@ -174,16 +180,17 @@ const unwatchedRuntime = computed(() => {
 }
 
 .stat-box {
-    background: #2a2a2a;
+    height: 121px;
     padding: 20px 10px;
-    border-radius: 8px;
-    text-align: center;
+
+    background: #2a2a2a;
     border: 1px solid #ff3b3b;
+    border-radius: 8px;
+
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    height: 121px;
+    justify-content: center;
 }
 
 .stat-box:nth-child(1) {
@@ -199,39 +206,21 @@ const unwatchedRuntime = computed(() => {
 }
 
 .stat-box .label {
-    display: block;
-    color: #bbb;
     font-size: 20px;
+    color: #bbb;
     margin-bottom: 8px;
 }
 
 .stat-box .value {
-    color: #ff3b3b;
     font-size: 38px;
     font-weight: 600;
+    color: #ff3b3b;
 }
 
+/* ================= MOVIES GRID ================= */
 .movies-grid {
     display: flex;
-    gap: 20px;
     flex-wrap: wrap;
-}
-
-.movie-card {
-    width: 160px;
-}
-
-.poster {
-    width: 100%;
-    border-radius: 6px;
-}
-
-.movie-info {
-    margin-top: 6px;
-    color: #fff;
-}
-
-.score {
-    color: #6aff63;
+    gap: 20px;
 }
 </style>

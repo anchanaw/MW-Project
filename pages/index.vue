@@ -46,32 +46,33 @@
   </div>
 </template>
 
-
 <script setup>
-/* ===== core ===== */
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-
-/* ===== stores ===== */
-import { useMovieStore } from "~/stores/movie";
 import { navigateTo } from "#app";
 
-/* ===== components ===== */
+/* ================= STORES ================= */
+import { useMovieStore } from "~/stores/movie";
+import { useMainStore } from "~/stores/main";
+
+/* ================= COMPONENTS ================= */
+import MovieCard from "~/components/MovieCard.vue";
 import AddToWatchlistPopup from "~/components/watchlist/AddToWatchlistPopup.vue";
 
-/* ===== store ===== */
+/* ================= STORE INSTANCES ================= */
 const movieStore = useMovieStore();
 const store = useMainStore();
 
-/* ===== state ===== */
-const showAddPopup = ref(false);
-const selectedMovie = ref(null);
-const keyword = ref('');
-
-/* ===== router ===== */
+/* ================= ROUTER ================= */
 const router = useRouter();
 
-/* ===== methods ===== */
+/* ================= STATE ================= */
+const showAddPopup = ref(false);
+const selectedMovie = ref(null);
+const keyword = ref("");
+const isChecked = ref(false);
+
+/* ================= METHODS ================= */
 const goSearch = () => {
   const q = keyword.value.trim().toLowerCase();
   if (!q) return;
@@ -79,30 +80,30 @@ const goSearch = () => {
   const results = movieStore.allMovies.filter(m => {
     const matchTitle = m.title?.toLowerCase().includes(q);
     const matchOverview = m.overview?.toLowerCase().includes(q);
-
     return matchTitle || matchOverview;
   });
 
   store.searchResults = results;
+
   navigateTo({
-        path: '/search',
-        query: { q: keyword.value }
-    });
+    path: "/search",
+    query: { q: keyword.value }
+  });
 };
 
 const openAddPopup = (movie) => {
-  selectedMovie.value = movie
-  showAddPopup.value = true
-}
+  selectedMovie.value = movie;
+  showAddPopup.value = true;
+};
 
-/* ===== lifecycle ===== */
+/* ================= LIFECYCLE ================= */
 onMounted(() => {
   movieStore.initMovies();
 });
 </script>
 
-
 <style scoped>
+/* ================= PAGE ================= */
 .main-container {
   flex: 1;
   color: #E1E1E1;
@@ -111,6 +112,7 @@ onMounted(() => {
   font-family: 'Lato', sans-serif;
 }
 
+/* ================= WELCOME BOX ================= */
 .welcome-box {
   display: flex;
   flex-direction: column;
@@ -122,68 +124,50 @@ onMounted(() => {
   margin-bottom: 30px;
 }
 
-/* TITLE (แทน h1) */
 .welcome-title {
   font-size: 40px;
   font-weight: 400;
   margin-bottom: 21px;
 }
 
-/* highlight คุมสีอย่างเดียว */
 .highlight {
   color: #ff4646;
 }
 
-/* DESCRIPTION */
 .welcome-desc {
   font-size: 20px;
-  font-weight: 400;
   line-height: 1.4;
   margin-top: 14px;
 }
 
-/* HINT LINE */
+/* ================= HINT ================= */
 .welcome-hint {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-
   font-size: 20px;
-  font-weight: 400;
-  line-height: 100%;
   margin-top: 14px;
 }
-
 
 .welcome-plus-icon {
   width: 24px;
   height: 35px;
-  display: inline-block;
   cursor: pointer;
-  transition: opacity 0.15s ease;
 }
 
-/* ตอน hover: เปลี่ยนรูปเป็นอีกไฟล์ */
 .welcome-plus-icon:hover {
   content: url('/icons/plus-icon-hover.svg');
-  opacity: 1;
 }
 
-/* CHECK ICON */
 .check-icon {
   width: 28px;
   height: 25px;
-  vertical-align: middle;
   cursor: pointer;
   margin-left: 6px;
 }
 
-.check-icon.active {
-  content: url('/icons/check-icon-green.png');
-}
-
-/* Search section */
+/* ================= SEARCH ================= */
 .search-area {
   position: relative;
   display: flex;
@@ -194,47 +178,28 @@ onMounted(() => {
   background: #1b1b1b;
   border: 1px solid #D9D9D94D;
   border-radius: 8px;
-
-  transition: background 0.2s ease, border 0.2s ease;
 }
 
 .search-area:focus-within {
   background: #FFFFFF1A;
-  border: 1px solid #444;
+  border-color: #444;
 }
 
-/* input inside the box */
 .search-area input {
   flex: 1;
-  height: 100%;
   padding: 0 12px 0 50px;
   background: transparent;
   border: none;
-  outline: none;
   color: white;
-  font-size: 15px;
-  -webkit-appearance: none;
-  appearance: none;
 }
 
-/* placeholder */
-.search-area input::placeholder {
-  color: #777;
-}
-
-/* search icon inside input */
 .search-icon {
   position: absolute;
   left: 14px;
   width: 20px;
-  height: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
   opacity: 0.7;
 }
 
-/* search button */
 .search-btn {
   position: absolute;
   right: -2px;
@@ -243,28 +208,18 @@ onMounted(() => {
   background: #ff4646;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
   font-weight: 600;
-  color: #000;
+  cursor: pointer;
 }
 
-
-.search-btn:hover {
-  background: #ff5c5c;
-}
-
-/* Popular movies */
+/* ================= MOVIES ================= */
 h2 {
-  font-family: 'Lato', sans-serif;
   margin-bottom: 35px;
   font-size: 32px;
   font-weight: 400;
-  line-height: 100%;
   letter-spacing: 1.5px;
 }
 
-/* Grid 5 movie cards */
 .movie-grid {
   display: flex;
   gap: 60px;

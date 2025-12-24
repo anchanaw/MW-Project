@@ -1,11 +1,14 @@
 <template>
   <div class="profile-page">
 
-    <!-- GUEST MODE -->
+    <!-- ================= GUEST MODE ================= -->
     <div v-if="!auth.isAuthenticated">
       <div class="header-text">
         <h2>Hello!</h2>
-        <p>Please log in or create an account<br>to use the features of this app</p>
+        <p>
+          Please log in or create an account<br />
+          to use the features of this app
+        </p>
       </div>
 
       <div class="login-section">
@@ -17,7 +20,9 @@
           <label>Password *</label>
           <input v-model="password" type="password" />
 
-          <button class="login-btn" @click="loginUser">Login</button>
+          <button class="login-btn" @click="loginUser">
+            Login
+          </button>
 
           <p class="create-link">
             or <NuxtLink to="/register">create an account</NuxtLink>
@@ -27,8 +32,7 @@
       </div>
     </div>
 
-
-    <!-- LOGGED-IN MODE -->
+    <!-- ================= LOGGED-IN MODE ================= -->
     <div v-else class="profile-user">
       <div class="profile-center">
 
@@ -36,7 +40,9 @@
           <img :src="auth.user.avatar || '/icons/user-icon.png'" />
         </div>
 
-        <h2 class="profile-name">Hello, {{ auth.user.name }} 👋</h2>
+        <h2 class="profile-name">
+          Hello, {{ auth.user.name }} 👋
+        </h2>
 
         <p class="profile-email">
           You are logged in as <strong>{{ auth.user.email }}</strong>
@@ -54,14 +60,18 @@
 
       </div>
     </div>
+
   </div>
 </template>
 
 <script>
 import { useAuthStore } from "../stores/auth";
+
+/* ================= ROUTER ================= */
 import { useRouter } from "vue-router";
 
 export default {
+  /* ================= DATA ================= */
   data() {
     return {
       email: "",
@@ -69,6 +79,7 @@ export default {
     };
   },
 
+  /* ================= SETUP ================= */
   setup() {
     const auth = useAuthStore();
     const router = useRouter();
@@ -81,9 +92,13 @@ export default {
     };
   },
 
+  /* ================= METHODS ================= */
   methods: {
     async loginUser() {
-      await this.auth.loginWithCredentials(this.email, this.password);
+      await this.auth.loginWithCredentials(
+        this.email,
+        this.password
+      );
     },
 
     logoutUser() {
@@ -98,14 +113,15 @@ export default {
 </script>
 
 <style scoped>
+/* ================= PAGE ================= */
 .profile-page {
   min-height: 100vh;
   padding: 40px 60px;
   color: white;
-  position: relative;
   font-family: 'Lato', sans-serif;
 }
 
+/* ================= GUEST HEADER ================= */
 .header-text {
   max-width: 450px;
   margin-bottom: 103px;
@@ -117,21 +133,18 @@ export default {
   font-weight: 300;
   line-height: 1.35;
   margin: 0;
-  padding: 0;
   opacity: 0.9;
 }
 
+/* ================= LOGIN ================= */
 .login-section {
-  width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 40px;
-  font-family: 'Lato', sans-serif;
 }
 
 .login-box {
   width: 351px;
-  height: 45px;
   display: flex;
   flex-direction: column;
 }
@@ -142,20 +155,17 @@ label {
 }
 
 input {
-  width: 100%;
   background: #FFFFFF05;
   border: 1px solid #E1E1E1;
   padding: 10px;
   border-radius: 6px;
   color: #fff;
-  font-size: 15px;
   margin-bottom: 18px;
 }
 
 .login-btn {
   width: 247px;
   height: 41px;
-  padding: 12px;
   background: #ff4646;
   border: none;
   border-radius: 6px;
@@ -163,9 +173,7 @@ input {
   font-weight: bold;
   color: #111;
   cursor: pointer;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 52px;
+  margin: 52px auto 0;
 }
 
 .login-btn:hover {
@@ -182,14 +190,8 @@ input {
   color: #ff5d5d;
 }
 
-.logged-section {
-  margin-top: 80px;
-}
-
-/* -------------------- USER MODE -------------------- */
-
+/* ================= USER MODE ================= */
 .profile-user {
-  width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 60px;
@@ -205,7 +207,7 @@ input {
   border-radius: 50%;
   overflow: hidden;
   background: #ddd;
-  margin: 0 auto 18px auto;
+  margin: 0 auto 18px;
 }
 
 .profile-avatar img {
@@ -225,45 +227,39 @@ input {
   opacity: 0.8;
   margin-bottom: 30px;
 }
+
 .profile-actions {
   display: flex;
-  gap: 14px;           
+  gap: 14px;
   margin-top: 20px;
 }
 
+/* ================= BUTTONS ================= */
 .edit-btn {
   flex: 1;
-}
-
-.logout-btn {
-  flex: 1;
-}
-
-.logout-btn {
-  background: #ff4646;
-  padding: 10px 20px;
-  color: #111;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 15px;
-  font-weight: bold;
-}
-
-.logout-btn:hover {
-  background: #ff5d5d;
-} 
-
-.edit-btn {
   background: #444;
   color: white;
-  padding: 10px 20px;
+  padding: 10px;
   border-radius: 6px;
-  margin-top: 14px;
   cursor: pointer;
 }
 
 .edit-btn:hover {
   background: #666;
+}
+
+.logout-btn {
+  flex: 1;
+  background: #ff4646;
+  color: #111;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #ff5d5d;
 }
 </style>
