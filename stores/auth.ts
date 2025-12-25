@@ -119,27 +119,29 @@ export const useAuthStore = defineStore('auth', () => {
 
   // LOGIN
   async function loginWithCredentials(
-    email: string,
-    password: string
-  ): Promise<void> {
-    const users: (User & { password?: string })[] =
-      JSON.parse(localStorage.getItem("users") || '[]')
+  email: string,
+  password: string
+): Promise<boolean> {
+  const users: (User & { password?: string })[] =
+    JSON.parse(localStorage.getItem("users") || "[]")
 
-    const found = users.find(u => u.email === email)
+  const found = users.find(u => u.email === email)
 
-    if (!found) return alert("Email not found")
-    if (found.password !== password) return alert("Incorrect password")
+  if (!found) return false
+  if (found.password !== password) return false
 
-    const session = {
-      id: found.id as number,
-      token: "TOKEN_" + found.id
-    }
-    localStorage.setItem("auth_user", JSON.stringify(session))
-
-    Object.assign(user.value, found)
-    token.value = session.token
-    isAuthenticated.value = true
+  const session = {
+    id: found.id as number,
+    token: "TOKEN_" + found.id
   }
+  localStorage.setItem("auth_user", JSON.stringify(session))
+
+  Object.assign(user.value, found)
+  token.value = session.token
+  isAuthenticated.value = true
+
+  return true
+}
 
   // LOGOUT
   function logout(): void {

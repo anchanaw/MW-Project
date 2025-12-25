@@ -18,7 +18,7 @@
           <input v-model="email" type="email" />
 
           <label>Password *</label>
-          <input v-model="password" type="password" />
+          <a-input-password v-model:value="password" />
 
           <button class="login-btn" @click="loginUser">
             Login
@@ -53,9 +53,14 @@
             Edit Profile
           </button>
 
-          <button class="logout-btn" @click="logoutUser">
-            Logout
-          </button>
+          <a-popconfirm title="Logout?" description="You will need to login again." ok-text="Logout"
+            cancel-text="Cancel" placement="bottomRight" :ok-button-props="{ danger: true }"
+            :cancel-button-props="{ type: 'text' }" @confirm="logoutUser">
+            <button class="logout-btn">
+              Logout
+            </button>
+          </a-popconfirm>
+
         </div>
 
       </div>
@@ -66,6 +71,7 @@
 
 <script>
 import { useAuthStore } from "../stores/auth";
+import { message } from "ant-design-vue";
 
 /* ================= ROUTER ================= */
 import { useRouter } from "vue-router";
@@ -76,6 +82,8 @@ export default {
     return {
       email: "",
       password: "",
+      isLoggingIn: false
+
     };
   },
 
@@ -95,15 +103,23 @@ export default {
   /* ================= METHODS ================= */
   methods: {
     async loginUser() {
-      await this.auth.loginWithCredentials(
+      const success = await this.auth.loginWithCredentials(
         this.email,
         this.password
       );
+
+      if (success) {
+        message.success("Login successful");
+      } else {
+        message.error("Invalid email or password");
+      }
     },
 
     logoutUser() {
       this.auth.logout();
-    },
+      message.info("Logged out");
+    }
+    ,
 
     goEdit() {
       this.router.push("/edit");
@@ -161,6 +177,22 @@ input {
   border-radius: 6px;
   color: #fff;
   margin-bottom: 18px;
+}
+
+:deep(.ant-input-affix-wrapper) {
+  background: #FFFFFF05;
+  border: 1px solid #E1E1E1;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+:deep(.ant-input) {
+  background: transparent;
+  color: #fff;
+}
+
+:deep(.ant-input-password-icon) {
+  color: #ccc !important;
 }
 
 .login-btn {

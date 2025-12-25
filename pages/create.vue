@@ -7,12 +7,12 @@
 
     <div class="form-group">
       <label for="name">Name</label>
-      <input id="name" type="text" v-model="name" class="input-box" />
+      <a-input v-model:value="name" class="input-box" />
     </div>
 
     <div class="form-group">
       <label for="description">Description</label>
-      <textarea id="description" v-model="description" class="textarea-box"></textarea>
+      <a-textarea v-model:value="description" class="textarea-box"></a-textarea>
     </div>
 
     <button class="create-btn" @click="createWatchlist">
@@ -22,12 +22,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
 /* ================= IMPORTS ================= */
 import { ref } from "vue"
 import { useRouter } from "vue-router"
 
 import { useAuthStore } from "~/stores/auth"
+import { message } from "ant-design-vue"
 
 /* ================= PAGE META ================= */
 definePageMeta({
@@ -44,7 +45,7 @@ const description = ref("")
 /* ================= METHODS ================= */
 const createWatchlist = () => {
   if (!name.value.trim()) {
-    alert("Please enter a name")
+    message.warning("Please enter a name")
     return
   }
 
@@ -53,9 +54,10 @@ const createWatchlist = () => {
     description: description.value
   })
 
-  alert("Watchlist created!")
-  router.push("/profile")
+  message.success("Watchlist created!")
+  router.push("/")
 }
+
 </script>
 
 <style scoped>

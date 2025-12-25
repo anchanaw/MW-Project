@@ -38,23 +38,25 @@
     </div>
 
     <!-- CAST SECTION -->
-    <div class="cast-wrapper" v-if="!loading">
-      <div class="cast-section">
-        <h2>Cast</h2>
+    <a-spin :spinning="loading">
+      <div class="cast-wrapper">
+        <div class="cast-section">
+          <h2>Cast</h2>
 
-        <div v-if="cast.length" class="cast-grid">
-          <div class="cast-card" v-for="c in cast" :key="c.id">
-            <img class="cast-img" :src="c.img" />
-            <p class="cast-name">{{ c.name }}</p>
-            <p class="cast-role">{{ c.role }}</p>
+          <div v-if="cast.length" class="cast-grid">
+            <div class="cast-card" v-for="c in cast" :key="c.id">
+              <img class="cast-img" :src="c.img" />
+              <p class="cast-name">{{ c.name }}</p>
+              <p class="cast-role">{{ c.role }}</p>
+            </div>
           </div>
-        </div>
 
-        <p v-else class="empty">
-          Cast information is not available for this title.
-        </p>
+          <p v-else class="empty">
+            Cast information is not available for this title.
+          </p>
+        </div>
       </div>
-    </div>
+    </a-spin>
 
     <!-- RELATED MOVIES -->
     <div class="related-section" v-if="relatedMovies.length">
@@ -79,6 +81,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { navigateTo } from "#app";
+import { message } from "ant-design-vue";
 
 import { useMovieStore } from "~/stores/movie";
 import { useAuthStore } from "~/stores/auth";
@@ -281,6 +284,10 @@ onUnmounted(() => {
 }
 
 /* ================= CAST SECTION ================= */
+:deep(.ant-spin) {
+  margin-top: 20px;
+}
+
 .cast-section {
   width: 100%;
   margin-top: 20px;

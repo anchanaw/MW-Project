@@ -4,9 +4,13 @@
     <!-- Header -->
     <div class="top-bar">
       <h2>Edit profile</h2>
-      <button class="logout-link" @click="logout">
-        Logout
-      </button>
+      <a-popconfirm title="Logout?" description="You will need to login again." placement="bottomRight" ok-text="Logout"
+        cancel-text="Cancel" :ok-button-props="{ danger: true }" :cancel-button-props="{ type: 'text' }"
+        @confirm="logout">
+        <button class="logout-link">
+          Logout
+        </button>
+      </a-popconfirm>
     </div>
 
     <div class="edit-container">
@@ -38,9 +42,10 @@
       <label>Password *</label>
       <input v-model="password" type="password" />
 
-      <button class="update-btn" @click="updateProfile">
-        Update Profile
+      <button class="update-btn" :disabled="isUpdating" @click="updateProfile">
+        {{ isUpdating ? "Updating..." : "Update Profile" }}
       </button>
+
 
     </div>
   </div>
@@ -49,6 +54,7 @@
 <script setup>
 import { ref } from "vue"
 import { useAuthStore } from "~/stores/auth"
+import { message } from "ant-design-vue"
 
 /* ================= STORE ================= */
 const auth = useAuthStore()
@@ -57,6 +63,7 @@ const auth = useAuthStore()
 const name = ref(auth.user.name)
 const email = ref(auth.user.email)
 const password = ref(auth.user.password)
+const isUpdating = ref(false)
 
 const avatarPreview = ref(null)
 const newAvatar = ref(null)
@@ -80,21 +87,29 @@ const removeAvatar = () => {
 }
 
 /* ================= ACTIONS ================= */
-const updateProfile = () => {
-  auth.updateProfile({
+const updateProfile = async () => {
+  if (isUpdating.value) return
+
+  isUpdating.value = true
+
+  await auth.updateProfile({
     name: name.value,
     email: email.value,
     password: password.value || auth.user.password,
     avatar: newAvatar.value ?? auth.user.avatar
   })
 
+  message.success("Profile updated")
+  isUpdating.value = false
   navigateTo("/profile")
 }
 
 const logout = () => {
   auth.logout()
+  message.info("Logged out")
   navigateTo("/profile")
 }
+
 </script>
 
 <style scoped>

@@ -50,8 +50,8 @@
             <button class="cancel-btn" @click="mode = 'select'">
                 Cancel
             </button>
-            <button class="save-btn" @click="saveNewWatchlist">
-                Save
+            <button class="save-btn" :disabled="isSaving" @click="saveNewWatchlist">
+                {{ isSaving ? 'Saving...' : 'Save' }}
             </button>
 
         </div>
@@ -61,6 +61,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useAuthStore } from '~/stores/auth'
+import { message } from "ant-design-vue";
 
 /* ================= PROPS ================= */
 const props = defineProps({
@@ -79,16 +80,28 @@ const newListDescription = ref('')
 /* ================= METHODS ================= */
 const close = () => emit('close')
 
-const addMovieToList = (listId) => {
-    if (!props.movie) return
-    auth.addMovieToWatchlist(listId, props.movie)
+const addMovieToList = async (listId) => {
+    if (!props.movie || isSaving.value) return
+
+    isSaving.value = true
+    await auth.addMovieToWatchlist(listId, props.movie)
+
+    message.success("Movie added to watchlist")
+    isSaving.value = false
     close()
 }
 
-const saveNewWatchlist = () => {
-    if (!newListName.value.trim() || !props.movie) return
+const saveNewWatchlist = async () => {
+    if (!newListName.value.trim() || !props.movie) {
+        message.warning("Please enter a watchlist name")
+        return
+    }
 
-    auth.addWatchlist(
+    if (isSaving.value) return
+
+    isSaving.value = true
+
+    await auth.addWatchlist(
         {
             title: newListName.value,
             description: newListDescription.value
@@ -96,6 +109,8 @@ const saveNewWatchlist = () => {
         props.movie
     )
 
+    message.success("Watchlist created and movie added")
+    isSaving.value = false
     close()
 }
 
