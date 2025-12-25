@@ -25,20 +25,24 @@
       </div>
     </div>
 
-    <!-- Search area -->
     <div class="search-area">
       <img src="/icons/search-icon.png" class="search-icon" alt="search">
 
-      <input v-model="keyword" @keyup.enter="goSearch" type="text" placeholder="Search for movies by title" />
+      <a-input v-model:value="keyword" placeholder="Search for movies by title" @pressEnter="goSearch"
+        class="search-input" />
 
-      <button class="search-btn" @click="goSearch">search</button>
+      <a-button type="primary" class="search-btn" @click="goSearch">
+        Search
+      </a-button>
     </div>
+
 
     <h2>Popular movies right now</h2>
 
     <!-- Movie grid -->
     <div class="movie-grid">
-      <MovieCard v-for="movie in movieStore.popularMovies" :key="movie.id" :movie="movie" @add-to-list="openAddPopup(movie)"/>
+      <MovieCard v-for="movie in movieStore.popularMovies" :key="movie.id" :movie="movie"
+        @add-to-list="openAddPopup(movie)" />
     </div>
 
     <AddToWatchlistPopup :open="showAddPopup" :movie="selectedMovie" @close="showAddPopup = false" />

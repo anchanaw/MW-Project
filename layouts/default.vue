@@ -14,7 +14,6 @@
                 <span class="search-icon" @click="goSearch"></span>
             </div>
 
-
             <nav class="menu">
                 <NuxtLink to="/" class="menu-btn">
                     <img src="/icons/home-icon.png" alt="home-icon">
@@ -55,31 +54,47 @@
                 </div>
 
                 <!-- popup -->
-                <div class="dots-wrapper">
+                <!-- popup -->
+<div class="dots-wrapper">
+  <a-config-provider
+    :theme="{
+      token: {
+        colorBgElevated: '#1d1d1d',
+        colorText: '#ffffff',
+        controlItemBgHover: '#333333',
+        controlItemBgActive: '#333333'
+      }
+    }"
+  >
+    <a-dropdown >
+      <a class="dots">
+        <img src="/icons/dot-icon.png" alt="More options" class="dots-icon" />
+      </a>
 
-                    <NuxtLink to="/profile" class="dots">
-                        <img src="/icons/dot-icon.png" alt="More options" class="dots-icon" />
-                    </NuxtLink>
+      <template #overlay>
+        <a-menu>
+          <a-menu-item v-if="auth.isAuthenticated">
+            <NuxtLink to="/edit">Edit</NuxtLink>
+          </a-menu-item>
 
-                    <!-- popup : แสดงเฉพาะตอนล็อกอินแล้ว -->
-                    <div class="popup-menu" v-if="auth.isAuthenticated">
-                        <NuxtLink to="/edit" class="popup-item">
-                            Edit
-                        </NuxtLink>
+          <a-menu-item
+            v-if="auth.isAuthenticated"
+            danger
+            @click="logout"
+          >
+            Logout
+          </a-menu-item>
 
-                        <button class="popup-item logout" @click="logout">
-                            Logout
-                        </button>
-                    </div>
+          <a-menu-item v-else>
+            <NuxtLink to="/profile">Login</NuxtLink>
+          </a-menu-item>
+        </a-menu>
+      </template>
+    </a-dropdown>
+  </a-config-provider>
+</div>
 
-                    <!-- popup : แสดงตอนยังไม่ล็อกอิน -->
-                    <div class="popup-menu" v-else>
-                        <NuxtLink to="/profile" class="popup-item login">
-                            Login
-                        </NuxtLink>
-                    </div>
 
-                </div>
 
             </div>
 
@@ -380,71 +395,20 @@ a.create-btn {
 }
 
 .dots-wrapper {
+    display: inline-block;
     position: relative;
+}
+
+.dots {
+    display: inline-block;
+    cursor: pointer;
     padding: 10px;
 }
 
 .dots-icon {
-    display: flex;
+    display: block;
     width: 16px;
     height: 4px;
-    cursor: pointer;
 }
 
-/* popup ซ่อนก่อน */
-.popup-menu {
-    position: absolute;
-    right: 0;
-    bottom: 28px;
-
-    background: #1d1d1d;
-    border: 1px solid #444;
-    border-radius: 6px;
-    min-width: 120px;
-
-    display: none;
-    flex-direction: column;
-    z-index: 100;
-}
-
-/* hover แล้วโชว์ */
-.dots-wrapper:hover .popup-menu {
-    display: flex;
-}
-
-.popup-item {
-    padding: 10px 14px;
-    white-space: nowrap;
-    color: white;
-    text-decoration: none;
-    background: none;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.popup-item:hover {
-    background: #333;
-}
-
-.popup-item.logout {
-    color: #ff6b6b;
-}
-
-.popup-item.login {
-    text-align: center;
-    font-weight: 600;
-    color: #ff4f4f;
-}
-
-.popup-backdrop {
-    z-index: 9999;
-    /* สูงกว่า sidebar แน่นอน */
-    pointer-events: auto;
-}
-
-.popup-container {
-    pointer-events: auto;
-}
 </style>
