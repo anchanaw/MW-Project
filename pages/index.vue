@@ -26,16 +26,15 @@
     </div>
 
     <div class="search-area">
-      <img src="/icons/search-icon.png" class="search-icon" alt="search">
+      <img src="/icons/search-icon.png" class="search-icon" alt="search" />
 
-      <a-input v-model:value="keyword" placeholder="Search for movies by title" @pressEnter="goSearch"
+      <a-input v-model:value="keyword" placeholder="Search for movies by title" @pressEnter="goSearch" allow-clear
         class="search-input" />
 
       <a-button type="primary" class="search-btn" @click="goSearch">
         Search
       </a-button>
     </div>
-
 
     <h2>Popular movies right now</h2>
 
@@ -189,21 +188,37 @@ onMounted(() => {
   border-color: #444;
 }
 
-.search-area input {
-  flex: 1;
-  padding: 0 12px 0 50px;
-  background: transparent;
-  border: none;
-  color: white;
-}
-
 .search-icon {
   position: absolute;
   left: 14px;
   width: 20px;
   opacity: 0.7;
+  pointer-events: none;
 }
 
+:deep(.search-area .ant-input) {
+  background: transparent;
+  color: #ffffff;
+  padding: 0 12px 0 50px;
+  border: none;
+  font-size: 14px;
+}
+
+:deep(.search-area .ant-input::placeholder) {
+  color: #888;
+  opacity: 1;
+}
+
+:deep(.search-area .ant-input:focus) {
+  box-shadow: none;
+}
+
+:deep(.search-area .ant-input-affix-wrapper) {
+  background: transparent;
+  border: none;
+}
+
+/* ===== Search button ===== */
 .search-btn {
   position: absolute;
   right: -2px;
@@ -212,9 +227,12 @@ onMounted(() => {
   background: #ff4646;
   border: none;
   border-radius: 6px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+  color: #000000;
 }
+
 
 /* ================= MOVIES ================= */
 h2 {

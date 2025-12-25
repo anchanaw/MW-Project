@@ -5,10 +5,15 @@
       <button class="clear-btn" @click="clearHistory">Clear history</button>
     </div>
 
-    <div class="movie-grid">
-      <MovieCard v-for="movie in history" :key="movie.id" :movie="movie" :class="{ viewed: movie.isViewed }"
-        @add-to-list="openAddPopup(movie)" />
-    </div>
+    <a-spin :spinning="isLoading">
+      <a-empty v-if="!isLoading && history.length === 0" description="No watched movies yet" />
+
+      <div v-else-if="!isLoading" class="movie-grid">
+        <MovieCard v-for="movie in history" :key="movie.id" :movie="movie" :class="{ viewed: movie.isViewed }"
+          @add-to-list="openAddPopup(movie)" />
+      </div>
+    </a-spin>
+
 
     <AddToWatchlistPopup :open="showAddPopup" :movie="selectedMovie" @close="showAddPopup = false" />
 
@@ -34,6 +39,7 @@ const { history } = storeToRefs(store)
 
 /* ================= ROUTE ================= */
 const route = useRoute()
+const isLoading = ref(true)
 
 /* ================= POPUP STATE ================= */
 const showAddPopup = ref(false)
@@ -47,8 +53,13 @@ const openAddPopup = (movie) => {
 
 /* ================= HISTORY ACTION ================= */
 const clearHistory = () => {
-  store.clearAllHistory()
-}
+  if (auth.isAuthenticated) {
+    store.clearAllHistory(auth.user.id);
+  } else {
+    store.clearAllHistory();
+  }
+};
+
 
 /* ================= WATCH ROUTE ================= */
 watch(
@@ -62,11 +73,18 @@ watch(
 )
 
 /* ================= LIFECYCLE ================= */
-onMounted(() => {
+onMounted(async () => {
+  isLoading.value = true
+
   if (auth.isAuthenticated) {
-    store.loadHistoryFromLocalStorage(auth.user.id)
+    await store.loadHistoryFromLocalStorage(auth.user.id)
+  } else {
+    await store.loadHistoryFromLocalStorage()
   }
+
+  isLoading.value = false
 })
+
 </script>
 
 <style scoped>

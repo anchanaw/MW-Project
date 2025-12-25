@@ -92,12 +92,14 @@ export const useMainStore = defineStore("main", {
     // =========================
     // CLEAR ALL HISTORY
     // =========================
-    clearAllHistory() {
-      this.history = [];
-      if (process.client) {
-        localStorage.removeItem("history");
-      }
-    },
+    clearAllHistory(userId) {
+  this.history = [];
+
+  if (process.client) {
+    const key = userId ? `history_${userId}` : 'history_guest';
+    localStorage.removeItem(key);
+  }
+},
 
     // =========================
     // SAVE → LocalStorage
