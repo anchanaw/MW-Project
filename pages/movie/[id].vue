@@ -4,7 +4,7 @@
     <!-- TOP Section -->
     <div class="top-section">
 
-      <a-row :gutter="40" :wrap="false">
+      <a-row :gutter="40">
         <a-col :xs="24" :md="8">
           <!-- Poster -->
           <div class="left">
@@ -188,7 +188,8 @@ onUnmounted(() => {
 
 /* ================= TOP SECTION ================= */
 .left {
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
 }
 
 .left .poster {
