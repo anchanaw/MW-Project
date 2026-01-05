@@ -4,37 +4,43 @@
     <!-- TOP Section -->
     <div class="top-section">
 
-      <!-- Poster -->
-      <div class="left">
-        <img :src="movie.img" alt="Movie Poster" class="poster" />
-      </div>
-
-      <!-- Right Content -->
-      <div class="right">
-        <h1>{{ movie.title }} ({{ movie.year }})</h1>
-
-        <p class="genres">
-          {{ movie.genres }}
-          <span v-if="formattedRuntime" class="dot">•</span>
-          <span v-if="formattedRuntime">{{ formattedRuntime }}</span>
-        </p>
-
-        <div class="overview-section">
-          <h2>Overview</h2>
-          <p class="overview">{{ movie.overview }}</p>
-        </div>
-
-        <div class="score-section">
-          <div class="score-box">
-            <span class="score-title">Score</span>
-            <span class="score-value">{{ movie.rating }}</span>
+      <a-row :gutter="40" :wrap="false">
+        <a-col :xs="24" :md="8">
+          <!-- Poster -->
+          <div class="left">
+            <img :src="movie.img" alt="Movie Poster" class="poster" />
           </div>
+        </a-col>
 
-          <button class="add-btn" @click="openAddPopup">
-            Add to Watchlist
-          </button>
-        </div>
-      </div>
+        <a-col :xs="24" :md="16">
+          <!-- Right Content -->
+          <div class="right">
+            <h1>{{ movie.title }} ({{ movie.year }})</h1>
+
+            <p class="genres">
+              {{ movie.genres }}
+              <span v-if="formattedRuntime" class="dot">•</span>
+              <span v-if="formattedRuntime">{{ formattedRuntime }}</span>
+            </p>
+
+            <div class="overview-section">
+              <h2>Overview</h2>
+              <p class="overview">{{ movie.overview }}</p>
+            </div>
+
+            <div class="score-section">
+              <div class="score-box">
+                <span class="score-title">Score</span>
+                <span class="score-value">{{ movie.rating }}</span>
+              </div>
+
+              <button class="add-btn" @click="openAddPopup">
+                Add to Watchlist
+              </button>
+            </div>
+          </div>
+        </a-col>
+      </a-row>
     </div>
 
     <!-- CAST SECTION -->
@@ -181,14 +187,14 @@ onUnmounted(() => {
 }
 
 /* ================= TOP SECTION ================= */
-.top-section {
-  display: flex;
-  gap: 40px;
+.left {
+  width: 300px;
 }
 
 .left .poster {
-  width: 260px;
-  border-radius: 10px;
+  width: 100%;
+  height: 444px;
+  object-fit: cover;
 }
 
 .right {
