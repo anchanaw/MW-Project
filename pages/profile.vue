@@ -195,6 +195,27 @@ input {
   color: #ccc !important;
 }
 
+/* ตัด hover ของ Ant Design */
+::v-deep(.ant-input-affix-wrapper:hover) {
+  border-color: #E1E1E1 !important;
+  box-shadow: none !important;
+}
+
+/* ตอน focus ไม่เอาสีฟ้า */
+::v-deep(.ant-input-affix-wrapper-focused) {
+  border-color: #E1E1E1 !important;
+  box-shadow: none !important;
+}
+
+/* effect ตอนกด: ขยายขึ้นนิดเดียว */
+::v-deep(.ant-input-affix-wrapper) {
+  transition: transform 0.15s ease;
+}
+
+::v-deep(.ant-input-affix-wrapper-focused) {
+  transform: scale(1.01);
+}
+
 .login-btn {
   width: 247px;
   height: 41px;

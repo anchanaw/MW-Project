@@ -9,10 +9,16 @@
                 <img src="/icons/watchlists-icon.png" alt="Watchlists" class="title-image" />
 
             </NuxtLink>
-            <div class="search-box">
-                <input type="text" placeholder="Search" v-model="keyword" @keyup.enter="goSearch" />
-                <span class="search-icon" @click="goSearch"></span>
-            </div>
+            <a-row align="middle" :gutter="8" class="search-box">
+                <a-col flex="auto">
+                    <input type="text" placeholder="Search" v-model="keyword" @keyup.enter="goSearch" />
+                </a-col>
+
+                <a-col>
+                    <span class="search-icon" @click="goSearch"></span>
+                </a-col>
+            </a-row>
+
 
             <nav class="menu">
                 <NuxtLink to="/" class="menu-btn">
@@ -42,61 +48,53 @@
                 </div>
             </div>
 
-            <div class="profile-box">
-                <div class="left">
-                    <div class="avatar">
-                        <img :src="auth.user?.avatar || '/icons/user-icon.png'" alt="avatar" />
+            <a-row justify="space-between" align="middle" class="profile-box">
+                <a-col>
+                    <div class="left">
+                        <div class="avatar">
+                            <img :src="auth.user?.avatar || '/icons/user-icon.png'" />
+                        </div>
+                        <span class="name">
+                            {{ auth.isAuthenticated ? auth.user.name : "GUEST" }}
+                        </span>
                     </div>
+                </a-col>
 
-                    <span class="name">
-                        {{ auth.isAuthenticated ? auth.user.name : "GUEST" }}
-                    </span>
-                </div>
+                <a-col>
+                    <div class="dots-wrapper">
+                        <a-config-provider :theme="{
+                            token: {
+                                colorBgElevated: '#1d1d1d',
+                                colorText: '#ffffff',
+                                controlItemBgHover: '#333333',
+                                controlItemBgActive: '#333333'
+                            }
+                        }">
+                            <a-dropdown>
+                                <a class="dots">
+                                    <img src="/icons/dot-icon.png" alt="More options" class="dots-icon" />
+                                </a>
 
-                <!-- popup -->
-                <!-- popup -->
-<div class="dots-wrapper">
-  <a-config-provider
-    :theme="{
-      token: {
-        colorBgElevated: '#1d1d1d',
-        colorText: '#ffffff',
-        controlItemBgHover: '#333333',
-        controlItemBgActive: '#333333'
-      }
-    }"
-  >
-    <a-dropdown >
-      <a class="dots">
-        <img src="/icons/dot-icon.png" alt="More options" class="dots-icon" />
-      </a>
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item v-if="auth.isAuthenticated">
+                                            <NuxtLink to="/edit">Edit</NuxtLink>
+                                        </a-menu-item>
 
-      <template #overlay>
-        <a-menu>
-          <a-menu-item v-if="auth.isAuthenticated">
-            <NuxtLink to="/edit">Edit</NuxtLink>
-          </a-menu-item>
+                                        <a-menu-item v-if="auth.isAuthenticated" danger @click="logout">
+                                            Logout
+                                        </a-menu-item>
 
-          <a-menu-item
-            v-if="auth.isAuthenticated"
-            danger
-            @click="logout"
-          >
-            Logout
-          </a-menu-item>
-
-          <a-menu-item v-else>
-            <NuxtLink to="/profile">Login</NuxtLink>
-          </a-menu-item>
-        </a-menu>
-      </template>
-    </a-dropdown>
-  </a-config-provider>
-</div>
-
-
-
-            </div>
+                                        <a-menu-item v-else>
+                                            <NuxtLink to="/profile">Login</NuxtLink>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                        </a-config-provider>
+                    </div>
+                </a-col>
+            </a-row>
 
         </aside>
 
@@ -410,5 +408,4 @@ a.create-btn {
     width: 16px;
     height: 4px;
 }
-
 </style>

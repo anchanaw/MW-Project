@@ -40,7 +40,7 @@
       <input v-model="email" type="email" />
 
       <label>Password *</label>
-      <input v-model="password" type="password" />
+      <a-input-password v-model:value="password" class="clean-password" />
 
       <button class="update-btn" :disabled="isUpdating" @click="updateProfile">
         {{ isUpdating ? "Updating..." : "Update Profile" }}
@@ -199,6 +199,41 @@ input {
   border: 1px solid #E1E1E1;
   color: #fff;
   padding-left: 10px;
+}
+
+/* Ant Input Password */
+::v-deep(.clean-password.ant-input-affix-wrapper) {
+  height: 42px;
+  background-color: #FFFFFF05;
+  border: 1px solid #E1E1E1;
+  border-radius: 6px;
+  color: #fff;
+  padding-left: 10px;
+  margin-bottom: 12px;
+  transition: transform 0.15s ease;
+}
+
+::v-deep(.clean-password input) {
+  background: transparent;
+  color: white;
+}
+
+::v-deep(.clean-password:hover),
+::v-deep(.clean-password.ant-input-affix-wrapper-focused) {
+  border-color: #E1E1E1 !important;
+  box-shadow: none !important;
+}
+
+::v-deep(.clean-password.ant-input-affix-wrapper-focused) {
+  transform: scale(1.01);
+}
+
+::v-deep(.clean-password .ant-input-password-icon) {
+  color: #aaa;
+}
+
+::v-deep(.clean-password .ant-input-password-icon:hover) {
+  color: #fff;
 }
 
 /* ================= BUTTON ================= */

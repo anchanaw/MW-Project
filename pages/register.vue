@@ -36,7 +36,7 @@
         <input v-model="email" type="email" />
 
         <label>Password *</label>
-        <input v-model="password" type="password" />
+        <a-input-password v-model:value="password" />
 
         <button class="create-btn" @click="submitRegister">
           Create Account
@@ -54,6 +54,7 @@ import { useAuthStore } from "../stores/auth";
 
 /* ================= ROUTER ================= */
 import { useRouter } from "vue-router";
+import { message } from "ant-design-vue";
 
 export default {
   /* ================= DATA ================= */
@@ -91,7 +92,7 @@ export default {
 
     async submitRegister() {
       if (!this.name || !this.email || !this.password) {
-        alert("Please fill all fields");
+        message.warning("Please fill all fields");
         return;
       }
 
@@ -99,9 +100,10 @@ export default {
         JSON.parse(localStorage.getItem("users")) || [];
 
       if (users.some(u => u.email === this.email)) {
-        alert("Email already exists");
+        message.error("Email already exists");
         return;
       }
+
 
       await this.auth.register({
         name: this.name,
@@ -110,8 +112,9 @@ export default {
         avatar: this.avatar,
       });
 
-      alert("Register success!");
+      message.success("Register success!");
       this.router.push("/profile");
+
     },
   },
 };
@@ -225,6 +228,42 @@ input {
   color: #fff;
   font-size: 15px;
   margin-bottom: 18px;
+}
+
+/* AntD password input */
+:deep(.ant-input-affix-wrapper) {
+  width: 350px;
+  height: 45px;
+  background: #FFFFFF05;
+  border: 1px solid #E1E1E1;
+  border-radius: 6px;
+}
+
+:deep(.ant-input) {
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+}
+
+:deep(.ant-input-password-icon) {
+  color: #ffffff !important;
+}
+
+:deep(.ant-input-password:hover) {
+  border-color: #E1E1E1 !important;
+}
+/* base transition */
+:deep(.ant-input-affix-wrapper) {
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* ตอน focus */
+:deep(.ant-input-affix-wrapper-focused) {
+  transform: scale(1.01);
+  border-color: #ffffff!important;
 }
 
 /* ================= BUTTON ================= */
