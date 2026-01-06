@@ -20,15 +20,29 @@
     <!-- Movies -->
     <label class="label">Movies</label>
 
-    <div v-for="movie in movies" :key="movie.id" class="movie-row">
-      <img :src="movie.img" class="poster" />
-      <span class="movie-title">
-        {{ movie.title }} ({{ movie.year }})
-      </span>
-      <button class="remove-btn" @click="removeMovie(movie.id)">
-        Remove
-      </button>
-    </div>
+    <a-list :data-source="movies" item-layout="horizontal">
+      <template #renderItem="{ item }">
+        <a-list-item class="movie-row">
+
+          <a-list-item-meta>
+            <template #avatar>
+              <img :src="item.img" class="poster" />
+            </template>
+
+            <template #title>
+              {{ item.title }} ({{ item.year }})
+            </template>
+          </a-list-item-meta>
+
+          <template #actions>
+            <a-button danger type="text" @click="removeMovie(item.id)">
+              Remove
+            </a-button>
+          </template>
+
+        </a-list-item>
+      </template>
+    </a-list>
 
     <!-- Save -->
     <button class="save-btn" @click="saveChanges">
@@ -147,7 +161,7 @@ function deleteList() {
   margin-top: 15px;
   padding: 10px;
 
-  border: 1px solid #555;
+  border: 1px solid #E1E1E1;
   border-radius: 8px;
 }
 

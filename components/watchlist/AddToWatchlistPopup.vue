@@ -76,6 +76,7 @@ const auth = useAuthStore()
 const mode = ref('select') // select | create
 const newListName = ref('')
 const newListDescription = ref('')
+const isSaving = ref(false)
 
 /* ================= METHODS ================= */
 const close = () => emit('close')
