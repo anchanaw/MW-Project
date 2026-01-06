@@ -79,8 +79,7 @@ const goSearch = () => {
 
   const results = movieStore.allMovies.filter(m => {
     const matchTitle = m.title?.toLowerCase().includes(q);
-    const matchOverview = m.overview?.toLowerCase().includes(q);
-    return matchTitle || matchOverview;
+    return matchTitle;
   });
 
   store.searchResults = results;
