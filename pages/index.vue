@@ -180,17 +180,17 @@ onMounted(() => {
   border-radius: 8px;
 }
 
-.search-area:focus-within {
-  background: #FFFFFF1A;
-  border-color: #444;
-}
-
 .search-area input {
   flex: 1;
   padding: 0 12px 0 50px;
   background: transparent;
   border: none;
   color: white;
+}
+
+.search-area input:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .search-icon {
