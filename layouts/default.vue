@@ -1,111 +1,113 @@
 <template>
-    <div class="layout">
+    <a-layout class="layout">
+
+        <!-- Toggle button (mobile) -->
         <button v-if="!isSidebarOpen" class="sidebar-toggle" @click="toggleSidebar">
             ☰
         </button>
 
-        <aside class="sidebar" :class="{ open: isSidebarOpen }">
-            <NuxtLink to="/">
-                <img src="/icons/watchlists-icon.png" alt="Watchlists" class="title-image" />
+        <!-- Sidebar -->
+        <a-layout-sider width="321" class="sidebar" :class="{ open: isSidebarOpen }">
+            <div class="sidebar-inner">
 
-            </NuxtLink>
-            <a-row align="middle" :gutter="8" class="search-box">
-                <a-col flex="auto">
-                    <input type="text" placeholder="Search" v-model="keyword" @keyup.enter="goSearch" />
-                </a-col>
-
-                <a-col>
-                    <span class="search-icon" @click="goSearch"></span>
-                </a-col>
-            </a-row>
-
-
-            <nav class="menu">
-                <NuxtLink to="/" class="menu-btn">
-                    <img src="/icons/home-icon.png" alt="home-icon">
-                    <span>Home</span>
+                <NuxtLink to="/">
+                    <img src="/icons/watchlists-icon.png" alt="Watchlists" class="title-image" />
                 </NuxtLink>
-                <NuxtLink to="/history" class="menu-btn">
-                    <img src="/icons/history-icon.png" alt="history-icon">
-                    <span>History</span>
-                </NuxtLink>
-            </nav>
 
-            <NuxtLink to="/create" class="create-btn">
-                + Create watchlist
-            </NuxtLink>
+                <a-row align="middle" :gutter="8" class="search-box">
+                    <a-col flex="auto">
+                        <input type="text" placeholder="Search" v-model="keyword" @keyup.enter="goSearch" />
+                    </a-col>
+                    <a-col>
+                        <span class="search-icon" @click="goSearch"></span>
+                    </a-col>
+                </a-row>
 
-            <div class="line"></div>
-            <div class="my-lists">
-                <h3>My Lists</h3>
-
-                <div v-if="auth.user?.watchlists && auth.user.watchlists.length > 0">
-                    <NuxtLink v-for="list in auth.user.watchlists" :key="list.id" :to="`/watchlist/${list.id}`"
-                        class="list-item">
-                        <span class="icon">{{ list.title.charAt(0).toUpperCase() }}</span>
-                        <span class="list-title">{{ list.title }}</span>
+                <nav class="menu">
+                    <NuxtLink to="/" class="menu-btn">
+                        <img src="/icons/home-icon.png" />
+                        <span>Home</span>
                     </NuxtLink>
+                    <NuxtLink to="/history" class="menu-btn">
+                        <img src="/icons/history-icon.png" />
+                        <span>History</span>
+                    </NuxtLink>
+                </nav>
+
+                <NuxtLink to="/create" class="create-btn">
+                    + Create watchlist
+                </NuxtLink>
+
+                <div class="line"></div>
+
+                <div class="my-lists">
+                    <h3>My Lists</h3>
+                    <div v-if="auth.user?.watchlists?.length">
+                        <NuxtLink v-for="list in auth.user.watchlists" :key="list.id" :to="`/watchlist/${list.id}`"
+                            class="list-item">
+                            <span class="icon">
+                                {{ list.title.charAt(0).toUpperCase() }}
+                            </span>
+                            <span class="list-title">{{ list.title }}</span>
+                        </NuxtLink>
+                    </div>
                 </div>
-            </div>
 
-            <a-row justify="space-between" align="middle" class="profile-box">
-                <a-col>
-                    <div class="left">
-                        <div class="avatar">
-                            <img :src="auth.user?.avatar || '/icons/user-icon.png'" />
+                <a-row justify="space-between" align="middle" class="profile-box">
+                    <a-col>
+                        <div class="left">
+                            <div class="avatar">
+                                <img :src="auth.user?.avatar || '/icons/user-icon.png'" />
+                            </div>
+                            <span class="name">
+                                {{ auth.isAuthenticated ? auth.user.name : 'GUEST' }}
+                            </span>
                         </div>
-                        <span class="name">
-                            {{ auth.isAuthenticated ? auth.user.name : "GUEST" }}
-                        </span>
-                    </div>
-                </a-col>
+                    </a-col>
 
-                <a-col>
-                    <div class="dots-wrapper">
-                        <a-config-provider :theme="{
-                            token: {
-                                colorBgElevated: '#1d1d1d',
-                                colorText: '#ffffff',
-                                controlItemBgHover: '#333333',
-                                controlItemBgActive: '#333333'
-                            }
-                        }">
-                            <a-dropdown>
-                                <a class="dots">
-                                    <img src="/icons/dot-icon.png" alt="More options" class="dots-icon" />
-                                </a>
+                    <a-col>
+                        <div class="dots-wrapper">
+                            <a-config-provider :theme="{
+                                token: {
+                                    colorBgElevated: '#1d1d1d',
+                                    colorText: '#ffffff'
+                                }
+                            }">
+                                <a-dropdown>
+                                    <a class="dots">
+                                        <img src="/icons/dot-icon.png" class="dots-icon" />
+                                    </a>
+                                    <template #overlay>
+                                        <a-menu>
+                                            <a-menu-item v-if="auth.isAuthenticated">
+                                                <NuxtLink to="/edit">Edit</NuxtLink>
+                                            </a-menu-item>
+                                            <a-menu-item v-if="auth.isAuthenticated" danger @click="logout">
+                                                Logout
+                                            </a-menu-item>
+                                            <a-menu-item v-else>
+                                                <NuxtLink to="/profile">Login</NuxtLink>
+                                            </a-menu-item>
+                                        </a-menu>
+                                    </template>
+                                </a-dropdown>
+                            </a-config-provider>
+                        </div>
+                    </a-col>
+                </a-row>
+            </div>    
+        </a-layout-sider>
 
-                                <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item v-if="auth.isAuthenticated">
-                                            <NuxtLink to="/edit">Edit</NuxtLink>
-                                        </a-menu-item>
-
-                                        <a-menu-item v-if="auth.isAuthenticated" danger @click="logout">
-                                            Logout
-                                        </a-menu-item>
-
-                                        <a-menu-item v-else>
-                                            <NuxtLink to="/profile">Login</NuxtLink>
-                                        </a-menu-item>
-                                    </a-menu>
-                                </template>
-                            </a-dropdown>
-                        </a-config-provider>
-                    </div>
-                </a-col>
-            </a-row>
-
-        </aside>
+        <!-- Page Content -->
+        <a-layout-content class="content">
+            <slot />
+        </a-layout-content>
 
         <AddMoviePopup />
 
         <div class="overlay" v-if="isSidebarOpen" @click="isSidebarOpen = false"></div>
 
-        <div class="content">
-            <slot />
-        </div>
-    </div>
+    </a-layout>
 </template>
 
 <script setup>
@@ -183,9 +185,13 @@ onMounted(async () => {
     overflow-y: auto;
     background: #FFFFFF1A;
 }
+.sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 
 .sidebar {
-    width: 321px;
     background: #000;
     color: #fff;
     padding: 30px;
