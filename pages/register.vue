@@ -29,18 +29,29 @@
         </div>
 
         <!-- Form Fields -->
-        <label>Name *</label>
-        <input v-model="name" type="text" />
+        <a-form layout="vertical" @finish="submitRegister">
+          <a-form-item label="Name" name="name" :rules="[{ required: true, message: 'Please enter your name' }]">
+            <a-input v-model:value="name" />
+          </a-form-item>
 
-        <label>Email *</label>
-        <input v-model="email" type="email" />
+          <a-form-item label="Email" name="email" :rules="[
+            { required: true, message: 'Please enter your email' },
+            { type: 'email', message: 'Invalid email format' }
+          ]">
+            <a-input v-model:value="email" />
+          </a-form-item>
 
-        <label>Password *</label>
-        <a-input-password v-model:value="password" />
+          <a-form-item label="Password" name="password"
+            :rules="[{ required: true, message: 'Please enter your password' }]">
+            <a-input-password v-model:value="password" />
+          </a-form-item>
 
-        <button class="create-btn" @click="submitRegister">
-          Create Account
-        </button>
+          <a-form-item class="submit-row">
+            <button class="create-btn" type="submit">
+              Create Account
+            </button>
+          </a-form-item>
+        </a-form>
 
       </div>
     </div>
@@ -91,19 +102,12 @@ export default {
     },
 
     async submitRegister() {
-      if (!this.name || !this.email || !this.password) {
-        message.warning("Please fill all fields");
-        return;
-      }
-
-      const users =
-        JSON.parse(localStorage.getItem("users")) || [];
+      const users = JSON.parse(localStorage.getItem("users")) || [];
 
       if (users.some(u => u.email === this.email)) {
         message.error("Email already exists");
         return;
       }
-
 
       await this.auth.register({
         name: this.name,
@@ -114,7 +118,6 @@ export default {
 
       message.success("Register success!");
       this.router.push("/profile");
-
     },
   },
 };
@@ -156,6 +159,7 @@ export default {
   width: 380px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 /* ================= AVATAR ================= */
@@ -210,6 +214,10 @@ export default {
 }
 
 /* ================= INPUTS ================= */
+:deep(.form-container > .ant-form) {
+  width: 100%;
+}
+
 label {
   font-size: 20px;
   font-family: 'Lato', sans-serif;
@@ -230,7 +238,12 @@ input {
   margin-bottom: 18px;
 }
 
-/* AntD password input */
+:deep(.ant-form-item) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 :deep(.ant-input-affix-wrapper) {
   width: 350px;
   height: 45px;
@@ -252,6 +265,7 @@ input {
 :deep(.ant-input-password:hover) {
   border-color: #E1E1E1 !important;
 }
+
 /* base transition */
 :deep(.ant-input-affix-wrapper) {
   transition:
@@ -263,10 +277,15 @@ input {
 /* ตอน focus */
 :deep(.ant-input-affix-wrapper-focused) {
   transform: scale(1.01);
-  border-color: #ffffff!important;
+  border-color: #ffffff !important;
 }
 
 /* ================= BUTTON ================= */
+:deep(.submit-row .ant-form-item-control-input-content) {
+  display: flex;
+  justify-content: center;
+}
+
 .create-btn {
   width: 247px;
   height: 41px;

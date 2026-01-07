@@ -33,18 +33,46 @@
       </div>
 
       <!-- Form -->
-      <label>Name *</label>
-      <input v-model="name" type="text" />
+      <a-form
+  layout="vertical"
+  class="edit-form"
+  @finish="updateProfile"
+>
 
-      <label>Email *</label>
-      <input v-model="email" type="email" />
+  <a-form-item
+    label="Name *"
+    name="name"
+    :rules="[{ required: true, message: 'Please enter your name' }]"
+  >
+    <a-input v-model:value="name" />
+  </a-form-item>
 
-      <label>Password *</label>
-      <a-input-password v-model:value="password" class="clean-password" />
+  <a-form-item
+    label="Email *"
+    name="email"
+    :rules="[
+      { required: true, message: 'Please enter your email' },
+      { type: 'email', message: 'Invalid email format' }
+    ]"
+  >
+    <a-input v-model:value="email" />
+  </a-form-item>
 
-      <button class="update-btn" :disabled="isUpdating" @click="updateProfile">
-        {{ isUpdating ? "Updating..." : "Update Profile" }}
-      </button>
+  <a-form-item label="Password">
+    <a-input-password
+      v-model:value="password"
+      class="clean-password"
+      placeholder="Leave blank to keep current password"
+    />
+  </a-form-item>
+
+  <a-form-item class="submit-row">
+    <button class="update-btn" type="submit" :disabled="isUpdating">
+      {{ isUpdating ? 'Updating...' : 'Update Profile' }}
+    </button>
+  </a-form-item>
+
+</a-form>
 
 
     </div>
@@ -90,18 +118,31 @@ const removeAvatar = () => {
 const updateProfile = async () => {
   if (isUpdating.value) return
 
+  if (!auth.user) {
+    message.error("User data not ready")
+    return
+  }
+
   isUpdating.value = true
 
-  await auth.updateProfile({
-    name: name.value,
-    email: email.value,
-    password: password.value || auth.user.password,
-    avatar: newAvatar.value ?? auth.user.avatar
-  })
+  try {
+    await auth.updateProfile({
+      name: name.value,
+      email: email.value,
+      password: password.value || auth.user.password,
+      avatar: newAvatar.value ?? auth.user.avatar
+    })
 
-  message.success("Profile updated")
-  isUpdating.value = false
-  navigateTo("/profile")
+    message.success("Profile updated")
+    navigateTo("/profile")
+
+  } catch (err) {
+    console.error(err)
+    message.error("Failed to update profile")
+
+  } finally {
+    isUpdating.value = false
+  }
 }
 
 const logout = () => {
@@ -110,6 +151,12 @@ const logout = () => {
   navigateTo("/profile")
 }
 
+onMounted(() => {
+  if (auth.user) {
+    name.value = auth.user.name
+    email.value = auth.user.email
+  }
+})
 </script>
 
 <style scoped>
@@ -199,6 +246,17 @@ input {
   border: 1px solid #E1E1E1;
   color: #fff;
   padding-left: 10px;
+}
+
+/* ให้ Ant Form กว้างเท่ากล่อง */
+:deep(.edit-container > .ant-form) {
+  width: 100%;
+}
+
+/* center ปุ่ม submit */
+:deep(.submit-row .ant-form-item-control-input-content) {
+  display: flex;
+  justify-content: center;
 }
 
 /* Ant Input Password */

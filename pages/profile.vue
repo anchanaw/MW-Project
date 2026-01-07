@@ -14,15 +14,25 @@
       <div class="login-section">
         <div class="login-box">
 
-          <label>Email *</label>
-          <input v-model="email" type="email" />
+          <a-form layout="vertical" class="login-form" :model="{ email, password }" @finish="loginUser">
+            <a-form-item label="Email *" name="email" :rules="[
+              { required: true, message: 'Please enter your email' },
+              { type: 'email', message: 'Invalid email format' }
+            ]">
+              <a-input v-model:value="email" />
+            </a-form-item>
 
-          <label>Password *</label>
-          <a-input-password v-model:value="password" />
+            <a-form-item label="Password *" name="password"
+              :rules="[{ required: true, message: 'Please enter your password' }]">
+              <a-input-password v-model:value="password" />
+            </a-form-item>
 
-          <button class="login-btn" @click="loginUser">
-            Login
-          </button>
+            <a-form-item class="submit-row">
+              <button class="login-btn" type="submit">
+                Login
+              </button>
+            </a-form-item>
+          </a-form>
 
           <p class="create-link">
             or <NuxtLink to="/register">create an account</NuxtLink>
@@ -214,6 +224,11 @@ input {
 
 ::v-deep(.ant-input-affix-wrapper-focused) {
   transform: scale(1.01);
+}
+
+:deep(.submit-row .ant-form-item-control-input-content) {
+  display: flex;
+  justify-content: center;
 }
 
 .login-btn {
