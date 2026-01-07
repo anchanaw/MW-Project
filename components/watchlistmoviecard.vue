@@ -7,11 +7,19 @@
     </NuxtLink>
 
     <!-- MARK TOP RIGHT -->
-    <button class="watch-mark" :class="{ watched }" @click.stop="$emit('toggle')" aria-label="Toggle watched">
-      <img :src="watched
-        ? '/icons/check-icon-green.png'
-        : '/icons/check-icon.png'" alt="watch-mark" />
-    </button>
+    <a-popconfirm v-if="!watched" title="ดูหนังเรื่องนี้จบแล้วใช่ไหม?" ok-text="ดูแล้ว" cancel-text="ยัง"
+      overlayClassName="watch-popconfirm" @confirm="$emit('toggle')">
+      <button class="watch-mark" aria-label="Mark as watched">
+        <img src="/icons/check-icon.png" alt="not watched" />
+      </button>
+    </a-popconfirm>
+
+    <a-popconfirm v-else title="ต้องการยกเลิกการทำเครื่องหมายว่าดูแล้วหรือไม่?" ok-text="ยกเลิก" cancel-text="ไม่"
+      overlayClassName="watch-popconfirm" @confirm="$emit('toggle')">
+      <button class="watch-mark watched" aria-label="Unmark watched">
+        <img src="/icons/check-icon-green.png" alt="watched" />
+      </button>
+    </a-popconfirm>
 
     <!-- Info -->
     <div class="info">
@@ -142,5 +150,38 @@ const formatTitle = (text = '') =>
 
 .watch-mark:hover img {
   transform: scale(1.08);
+}
+
+:deep(.ant-popover.watch-popconfirm) {
+  border: 2px solid red;
+}
+</style>
+
+<style>
+.ant-popover.watch-popconfirm {
+  border-radius: 10px;
+}
+
+.ant-popover.watch-popconfirm .ant-popover-inner {
+  background-color: #1d1d1d;
+  border: 1px solid #444;
+  border-radius: 10px;
+}
+
+.ant-popover.watch-popconfirm .ant-popconfirm-message,
+.ant-popover.watch-popconfirm .ant-popconfirm-title {
+  color: #fff;
+  font-size: 14px;
+}
+
+.ant-popover.watch-popconfirm .ant-btn-primary {
+  background-color: #2ecc71;
+  border-color: #2ecc71;
+}
+
+.ant-popover.watch-popconfirm .ant-btn-default {
+  background-color: transparent;
+  color: #aaa;
+  border-color: #555;
 }
 </style>
