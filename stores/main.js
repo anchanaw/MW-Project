@@ -2,50 +2,11 @@ import { defineStore } from "pinia";
 
 export const useMainStore = defineStore("main", {
   state: () => ({
-    movies: [
-      {
-        id: 1,
-    title: 'Top Gun: Maverick',
-    year: 2022,
-    img: '/movies/topgun-poster.jpg',
-    rating: 83,
-    genres: "Action, Drama",
-    runtime: 131,
-    overview:
-      "After more than thirty years of service as one of the Navy’s top aviators, and dodging the advancement in rank that would ground him, Pete “Maverick” Mitchell finds himself training a detachment of TOP GUN graduates for a specialized mission the likes of which no living pilot has ever seen.",
-    cast: [
-      {
-        id: 1,
-        name: "Tom Cruise With a Long Name",
-        role: "Capt. Pete 'Maverick' Mitchell",
-        img: "/cast/tom-cruise.jpg"
-          }
-        ]
-      },
-      {
-        id: 2,
-        title: 'Fantastic Beasts: The Secrets of Dumbledore',
-        year: 2022,
-        img: '/movies/fantastic-poster.jpg',
-        rating: 68,
-        genres: "Adventure, Fantasy",
-        runtime: 142,
-        overview:
-          "Professor Albus Dumbledore knows the powerful Dark wizard Gellert Grindelwald is moving to seize control of the wizarding world. Unable to stop him alone, he entrusts Magizoologist Newt Scamander to lead a team of wizards, witches and one brave Muggle baker on a dangerous mission, where they encounter old and new beasts and clash with Grindelwald’s growing legion of followers.",
-        cast: [
-          {
-            id: 1,
-            name: "Mads Dittmann Mikkelsen",
-            role: "Gellert Grindelwald",
-            img: "/cast/mads-mikkelsen-cannes.jpg"}
-        ]
-      }
-    ],
-
     watchlists: [],
     searchResults: [],
     history: [],
     currentMovie: null,
+    _historyTimer: null,
   }),
 
   actions: {
@@ -85,31 +46,27 @@ export const useMainStore = defineStore("main", {
     // =========================
     // ADD HISTORY AFTER DELAY
     // =========================
-    addToHistoryAfterDelay(movie, delay = 5000) {
-      // clear timer เดิม
+    addToHistoryAfterDelay(movie, userId, delay = 5000) {
+      if (!userId) return;
+
       if (this._historyTimer) {
         clearTimeout(this._historyTimer);
       }
 
       this._historyTimer = setTimeout(() => {
-        // กันซ้ำ
         this.history = this.history.filter(i => i.id !== movie.id);
 
-        // push รายการใหม่
         this.history.unshift({
           ...movie,
           viewedAt: new Date().toISOString(),
           isViewed: true
         });
 
-        // limit
         if (this.history.length > 50) {
           this.history.splice(50);
         }
 
-        // persist
-        this.saveHistoryToLocalStorage();
-
+        this.saveHistoryToLocalStorage(userId);
         this._historyTimer = null;
       }, delay);
     },
@@ -145,22 +102,25 @@ export const useMainStore = defineStore("main", {
     // =========================
     // SAVE → LocalStorage
     // =========================
-    saveHistoryToLocalStorage() {
-      if (process.client) {
-        localStorage.setItem("history", JSON.stringify(this.history));
-      }
+    saveHistoryToLocalStorage(userId) {
+      if (!process.client || !userId) return;
+
+      const key = `history_${userId}`;
+      localStorage.setItem(key, JSON.stringify(this.history));
     },
 
     // =========================
     // LOAD → LocalStorage
     // =========================
-    loadHistoryFromLocalStorage() {
-      if (process.client) {
-        const data = localStorage.getItem("history");
-        if (data) {
-          this.history = JSON.parse(data);
-        }
+    loadHistoryFromLocalStorage(userId) {
+      if (!process.client || !userId) {
+        this.history = [];
+        return;
       }
+
+      const key = `history_${userId}`;
+      const data = localStorage.getItem(key);
+      this.history = data ? JSON.parse(data) : [];
     }
   }
 });

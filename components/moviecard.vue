@@ -1,8 +1,8 @@
 <template>
-  <div class="movie-card">
+  <div v-if="movie" class="movie-card">
 
-    <NuxtLink :to="`/movie/${id}`" class="poster" aria-label="View movie details">
-      <img :src="img" :alt="title" class="poster-img" />
+    <NuxtLink :to="`/movie/${movie.id}`" class="poster">
+      <img :src="movie.img" :alt="movie.title" class="poster-img" />
     </NuxtLink>
 
     <button class="plus" @click.stop="handleAdd" aria-label="Add to list">
@@ -10,15 +10,16 @@
     </button>
 
     <div class="rating-bar">
-      <img :src="emojiFor(rating)" class="emoji" />
-      <span class="score">{{ rating }}</span>
+      <img :src="emojiFor(movie.rating)" class="emoji" />
+      <span class="score">{{ movie.rating ?? 'N/A' }}</span>
       <span class="outof">/100</span>
     </div>
 
     <div class="meta">
-      <p class="title" v-html="formatTitle(title)"></p>
-      <p class="year" v-if="year">({{ year }})</p>
+      <p class="title" v-html="formatTitle(movie.title)"></p>
+      <p class="year" v-if="movie.year">({{ movie.year }})</p>
     </div>
+
   </div>
 </template>
 
@@ -26,52 +27,59 @@
 import { useAuthStore } from '~/stores/auth'
 import { navigateTo } from '#app'
 
-defineProps({
-  id: { type: [String, Number], required: true },
-  title: { type: String, required: true },
-  year: { type: [String, Number], required: false },
-  img: { type: String, required: true },
-  rating: { type: Number, required: false }
-});
+/* ================= PROPS ================= */
+const props = defineProps({
+  movie: {
+    type: Object,
+    required: true
+  }
+})
 
+/* ================= EMITS ================= */
+const emit = defineEmits(['add-to-list'])
+
+/* ================= STORE ================= */
+const auth = useAuthStore()
+
+/* ================= HELPERS ================= */
 const emojiFor = (rating) => {
-  if (rating >= 70) return "/emojis/great-80.png"
-  if (rating >= 40) return "/emojis/normal-35-and-80.png"
-  return "/emojis/awful-35.png"
+  if (typeof rating !== 'number') return '/emojis/normal-35-and-80.png'
+  if (rating >= 70) return '/emojis/great-80.png'
+  if (rating >= 40) return '/emojis/normal-35-and-80.png'
+  return '/emojis/awful-35.png'
 }
 
-const formatTitle = (text) => {
-  return text.replace(":", ":<br>");
-};
+const formatTitle = (text = '') =>
+  text.replace(/\./g, '.<br>')
 
-const emit = defineEmits(['add-to-list']);
-const auth = useAuthStore();
+/* ================= ACTION ================= */
 const handleAdd = () => {
   if (!auth.isAuthenticated) {
-    navigateTo('/profile');
-    return;
+    navigateTo('/profile')
+    return
   }
 
-  emit('add-to-list');
-};
+  emit('add-to-list')
+}
 </script>
 
 <style scoped>
+/* ================= CARD ================= */
 .movie-card {
+  position: relative;
   width: 150px;
-  border-radius: 4px;
-  overflow: visible;
+  height: 340px;
   background: #0f0f0f;
+  border-radius: 4px;
   color: #fff;
   font-family: Inter, Roboto, sans-serif;
-  position: relative;
 }
 
 .movie-card:hover {
   filter: brightness(0.7);
-
 }
 
+/* ================= POSTER ================= */
 .poster {
   display: block;
   position: relative;
@@ -81,10 +89,12 @@ const handleAdd = () => {
 
 .poster-img {
   width: 100%;
+  height: 225px;
   object-fit: cover;
   border-radius: 4px 4px 0 0;
 }
 
+/* ================= ADD BUTTON ================= */
 .plus {
   position: absolute;
   top: 0;
@@ -107,20 +117,14 @@ const handleAdd = () => {
   filter: brightness(5.5) saturate(2) contrast(2);
 }
 
-.rating-bar,
-.score,
-.outof {
-  font-family: 'Lato', sans-serif;
-
-}
-
+/* ================= RATING ================= */
 .rating-bar {
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
   gap: 6px;
   padding: 5px;
-  color: #fff;
+  font-family: 'Lato', sans-serif;
 }
 
 .rating-bar .emoji {
@@ -128,19 +132,18 @@ const handleAdd = () => {
   height: 19px;
 }
 
-
 .score {
-  color: #E1E1E1;
   font-size: 16px;
-  font-weight: 400;
+  color: #E1E1E1;
 }
 
 .outof {
-  color: #E1E1E1;
+  margin-top: 3px;
   font-size: 10px;
-  font-weight: 400;
+  color: #E1E1E1;
 }
 
+/* ================= META ================= */
 .meta {
   padding: 8px 4px 0;
 }
@@ -148,15 +151,14 @@ const handleAdd = () => {
 .title {
   margin: 0;
   font-size: 16px;
-  font-weight: 400;
   color: #E1E1E1;
 }
 
 .year {
-  margin: 6px 0 0;
-  color: #E1E1E1;
+  margin-top: 6px;
   font-size: 16px;
   font-weight: 300;
   opacity: 0.8;
+  color: #E1E1E1;
 }
 </style>

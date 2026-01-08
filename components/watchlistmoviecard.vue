@@ -1,18 +1,17 @@
 <template>
   <div class="watchlist-card">
 
-    <!-- Poster -->
-    <div class="poster-wrapper">
-      <img :src="img" alt="" class="poster" />
+    <!-- Poster (click ไป detail) -->
+    <NuxtLink :to="`/movie/${id}`" class="poster-link">
+      <img :src="img" :alt="title" class="poster" />
+    </NuxtLink>
 
-      <div v-if="rating >= 60" class="checkmark">✔</div>
-
-      <button class="watch-toggle" :class="{ watched }" @click.stop="$emit('toggle')" aria-label="Toggle watched">
-        <img :src="watched
-          ? '/icons/watched-icon.png'
-          : '/icons/unwatched-icon.png'" class="tv-icon" alt="watch-status" />
-      </button>
-    </div>
+    <!-- MARK TOP RIGHT -->
+    <button class="watch-mark" :class="{ watched }" @click.stop="$emit('toggle')" aria-label="Toggle watched">
+      <img :src="watched
+        ? '/icons/check-icon-green.png'
+        : '/icons/check-icon.png'" alt="watch-mark" />
+    </button>
 
     <!-- Info -->
     <div class="info">
@@ -25,12 +24,17 @@
       <div class="title" v-html="formatTitle(title)"></div>
       <div class="year">({{ year }})</div>
     </div>
+
   </div>
 </template>
 
 <script setup>
+/* ================= PROPS ================= */
 defineProps({
-  id: Number,
+  id: {
+    type: [Number, String],
+    required: true
+  },
   title: String,
   img: String,
   year: [Number, String],
@@ -39,48 +43,44 @@ defineProps({
     type: Boolean,
     default: false
   }
-});
+})
 
+/* ================= HELPERS ================= */
 const emojiFor = (rating) => {
-  if (rating >= 70) return "/emojis/great-80.png";
-  if (rating >= 40) return "/emojis/normal-35-and-80.png";
-  return "/emojis/awful-35.png";
-};
+  if (typeof rating !== 'number') return '/emojis/normal-35-and-80.png'
+  if (rating >= 70) return '/emojis/great-80.png'
+  if (rating >= 40) return '/emojis/normal-35-and-80.png'
+  return '/emojis/awful-35.png'
+}
 
-const formatTitle = (text) => {
-  return text.replace(":", ":<br>");
-};
+const formatTitle = (text = '') =>
+  text.replace(':', ':<br>')
 </script>
 
 <style scoped>
+/* ================= CARD ================= */
 .watchlist-card {
+  position: relative;
   width: 150px;
-  border-radius: 4px;
-  overflow: visible;
+  height: 340px;
+  margin-top: 70px;
   background: #0f0f0f;
+  border-radius: 4px;
   color: #fff;
   font-family: Inter, Roboto, sans-serif;
-  position: relative;
 }
 
+/* ================= POSTER ================= */
 .poster {
   width: 100%;
+  height: 225px;
   object-fit: cover;
   border-radius: 4px 4px 0 0;
 }
 
-.checkmark {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #5cff5c;
-  font-size: 26px;
-  font-weight: bold;
-}
-
+/* ================= INFO ================= */
 .info {
-  padding: 5px 10px 10px 10px;
-  color: white;
+  padding: 5px 10px 10px;
 }
 
 .score-row {
@@ -89,7 +89,6 @@ const formatTitle = (text) => {
   justify-content: flex-end;
   gap: 6px;
   padding: 5px;
-  color: #fff;
 }
 
 .emoji {
@@ -108,44 +107,40 @@ const formatTitle = (text) => {
 }
 
 .title {
-  margin: 0;
   font-size: 16px;
-  font-weight: 400;
   color: #E1E1E1;
 }
 
 .year {
-  margin: 6px 0 0;
-  color: #E1E1E1;
+  margin-top: 6px;
   font-size: 16px;
   font-weight: 300;
   opacity: 0.8;
+  color: #E1E1E1;
 }
 
-.watch-toggle {
+/* ================= WATCH MARK ================= */
+.watch-mark {
   position: absolute;
-  bottom: 10px;
+  top: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  padding: 6px;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  transition: all .2s ease;
+  z-index: 2;
 }
 
-.watch-toggle:hover {
-  background: rgba(0, 0, 0, 0.85);
+.watch-mark img {
+  width: 26px;
+  height: 26px;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.watch-toggle.watched {
-  box-shadow: 0 0 10px rgba(140, 255, 140, .45);
+.watch-mark.watched img {
+  filter: drop-shadow(0 0 6px rgba(120, 255, 120, 0.6));
 }
 
-.tv-icon {
-  width: 20px;
-  height: 20px;
-  display: block;
-  pointer-events: none;
+.watch-mark:hover img {
+  transform: scale(1.08);
 }
 </style>

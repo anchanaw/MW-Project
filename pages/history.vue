@@ -6,59 +6,77 @@
     </div>
 
     <div class="movie-grid">
-      <MovieCard
-        v-for="movie in history"
-        :key="movie.id"
-        v-bind="movie"
-        :class="{ viewed: movie.isViewed }"
-      />
+      <MovieCard v-for="movie in history" :key="movie.id" :movie="movie" :class="{ viewed: movie.isViewed }"
+        @add-to-list="openAddPopup(movie)" />
     </div>
+
+    <AddToWatchlistPopup :open="showAddPopup" :movie="selectedMovie" @close="showAddPopup = false" />
 
   </div>
 </template>
 
 <script setup>
-import MovieCard from '~/components/moviecard.vue'
-import { useMainStore } from '~/stores/main'
-import { storeToRefs } from 'pinia'
-import { onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+
+/* ================= COMPONENTS ================= */
+import MovieCard from '~/components/MovieCard.vue'
+import AddToWatchlistPopup from '~/components/watchlist/AddToWatchlistPopup.vue'
+
+/* ================= STORES ================= */
+import { useMainStore } from '~/stores/main'
+import { useAuthStore } from '~/stores/auth'
 
 const store = useMainStore()
+const auth = useAuthStore()
 const { history } = storeToRefs(store)
+
+/* ================= ROUTE ================= */
 const route = useRoute()
 
-// โหลด history ทุกครั้งที่เข้าหน้านี้
-onMounted(() => {
-  store.loadHistoryFromLocalStorage()
-})
+/* ================= POPUP STATE ================= */
+const showAddPopup = ref(false)
+const selectedMovie = ref(null)
 
-// โหลดซ้ำเมื่อเปลี่ยน route มาที่ /history
+/* ================= POPUP ACTION ================= */
+const openAddPopup = (movie) => {
+  selectedMovie.value = movie
+  showAddPopup.value = true
+}
+
+/* ================= HISTORY ACTION ================= */
+const clearHistory = () => {
+  store.clearAllHistory()
+}
+
+/* ================= WATCH ROUTE ================= */
 watch(
   () => route.fullPath,
-  (newVal) => {
-    if (newVal === '/history') {
+  (path) => {
+    if (path === '/history') {
       store.loadHistoryFromLocalStorage()
     }
   },
   { immediate: true }
 )
 
-const clearHistory = () => {
-  store.clearAllHistory()
-}
-
-definePageMeta({
-  middleware: "auth"
+/* ================= LIFECYCLE ================= */
+onMounted(() => {
+  if (auth.isAuthenticated) {
+    store.loadHistoryFromLocalStorage(auth.user.id)
+  }
 })
 </script>
 
 <style scoped>
+/* ================= PAGE ================= */
 .history-page {
   padding: 30px;
   color: #fff;
 }
 
+/* ================= HEADER ================= */
 .history-header {
   display: flex;
   justify-content: flex-end;
@@ -75,6 +93,7 @@ definePageMeta({
   text-decoration: underline;
 }
 
+/* ================= MOVIE GRID ================= */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -82,7 +101,43 @@ definePageMeta({
 }
 
 .viewed {
-  border: 2px solid #ff4f4f;
   border-radius: 6px;
+}
+
+/* ================= POPUP BACKDROP ================= */
+.popup-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+/* ================= POPUP CONTAINER ================= */
+.popup-container {
+  background: #1d1d1d;
+  padding: 30px;
+  width: 700px;
+  max-height: 300px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  color: white;
+  position: relative;
+  font-family: 'Lato', sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.watchlist-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 </style>

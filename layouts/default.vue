@@ -6,7 +6,8 @@
 
         <aside class="sidebar" :class="{ open: isSidebarOpen }">
             <NuxtLink to="/">
-                <h1 class="title">Watchlists</h1>
+                <img src="/icons/watchlists-icon.png" alt="Watchlists" class="title-image" />
+
             </NuxtLink>
             <div class="search-box">
                 <input type="text" placeholder="Search" v-model="keyword" @keyup.enter="goSearch" />
@@ -41,26 +42,50 @@
                     </NuxtLink>
                 </div>
             </div>
-            <NuxtLink to="/profile" class="profile-link">
-                <div class="profile-box">
-                    <div class="left">
 
-                        <div class="avatar">
-                            <img :src="auth.user?.avatar || '/icons/user-icon.png'" alt="avatar" />
-                        </div>
-
-                        <span class="name">
-                            {{ auth.isAuthenticated ? auth.user.name : "GUEST" }}
-                        </span>
+            <div class="profile-box">
+                <div class="left">
+                    <div class="avatar">
+                        <img :src="auth.user?.avatar || '/icons/user-icon.png'" alt="avatar" />
                     </div>
 
-                    <div class="dots">
-                        <span></span><span></span><span></span>
-                    </div>
+                    <span class="name">
+                        {{ auth.isAuthenticated ? auth.user.name : "GUEST" }}
+                    </span>
                 </div>
-            </NuxtLink>
+
+                <!-- popup -->
+                <div class="dots-wrapper">
+
+                    <NuxtLink to="/profile" class="dots">
+                        <img src="/icons/dot-icon.png" alt="More options" class="dots-icon" />
+                    </NuxtLink>
+
+                    <!-- popup : แสดงเฉพาะตอนล็อกอินแล้ว -->
+                    <div class="popup-menu" v-if="auth.isAuthenticated">
+                        <NuxtLink to="/edit" class="popup-item">
+                            Edit
+                        </NuxtLink>
+
+                        <button class="popup-item logout" @click="logout">
+                            Logout
+                        </button>
+                    </div>
+
+                    <!-- popup : แสดงตอนยังไม่ล็อกอิน -->
+                    <div class="popup-menu" v-else>
+                        <NuxtLink to="/profile" class="popup-item login">
+                            Login
+                        </NuxtLink>
+                    </div>
+
+                </div>
+
+            </div>
 
         </aside>
+
+        <AddMoviePopup />
 
         <div class="overlay" v-if="isSidebarOpen" @click="isSidebarOpen = false"></div>
 
@@ -71,39 +96,65 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { navigateTo } from "#app";
-import { useMainStore } from "~/stores/main";
-import { useAuthStore } from "~/stores/auth";
-import { useRoute } from 'vue-router';
+/* ================= IMPORTS ================= */
+import { ref, watch, onMounted } from 'vue'
+import { navigateTo } from '#app'
+import { useRoute } from 'vue-router'
 
-const keyword = ref("");
+import { useMainStore } from '~/stores/main'
+import { useAuthStore } from '~/stores/auth'
+import { useMovieStore } from '~/stores/movie'
+
+/* ================= STATE ================= */
+const route = useRoute()
+const store = useMainStore()
+const auth = useAuthStore()
+const movieStore = useMovieStore()
+
+const isSidebarOpen = ref(false)
+const keyword = ref('')
+
+/* ================= METHODS ================= */
+const toggleSidebar = () => {
+    isSidebarOpen.value = !isSidebarOpen.value
+}
 
 const goSearch = () => {
-    if (!keyword.value.trim()) return;
-    navigateTo(`/search?query=${encodeURIComponent(keyword.value)}`);
-};
+    const q = keyword.value.trim().toLowerCase()
+    if (!q) return
 
-const store = useMainStore();
-onMounted(() => store.loadHistoryFromLocalStorage());
+    const results = movieStore.allMovies.filter(movie =>
+        movie.title?.toLowerCase().includes(q)
+    )
 
-// Auth store
-const auth = useAuthStore();
-onMounted(() => auth.init());
-const isSidebarOpen = ref(false);
+    store.searchResults = results
 
-const route = useRoute();
+    navigateTo({
+        path: '/search',
+        query: { q: keyword.value }
+    })
+}
 
+const logout = () => {
+    auth.logout()
+    navigateTo('/profile')
+}
+
+/* ================= WATCH ================= */
 watch(
     () => route.fullPath,
     () => {
-        isSidebarOpen.value = false;
+        keyword.value = ''
+        isSidebarOpen.value = false
     }
-);
+)
 
-const toggleSidebar = () => {
-    isSidebarOpen.value = !isSidebarOpen.value;
-};
+/* ================= LIFECYCLE ================= */
+onMounted(async () => {
+    store.loadHistoryFromLocalStorage()
+    auth.init()
+    await movieStore.initMovies()
+})
 </script>
 
 <style scoped>
@@ -128,18 +179,19 @@ const toggleSidebar = () => {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: 'Lato', sans-serif;
+
 }
 
-.title {
-    color: #ff3b3b;
-    font-family: Archivo, sans-serif;
-    line-height: 100%;
-    font-size: 40px;
-    font-weight: bold;
+.title-image {
+    width: 212px;
+    height: auto;
+    display: block;
     margin-bottom: 20px;
-    padding-left: 12px;
     cursor: pointer;
+    padding-left: 12px;
 }
+
 
 a {
     text-decoration: none;
@@ -185,7 +237,6 @@ h1.title {
     gap: 10px;
     align-items: center;
     cursor: pointer;
-    font-family: 'Lato', sans-serif;
     font-size: 16px;
     font-weight: 400;
     line-height: 100%;
@@ -258,6 +309,7 @@ a.create-btn {
 }
 
 .my-lists .list-item {
+    height: 41px;
     color: #ffffff;
     text-decoration: none;
     display: flex;
@@ -273,15 +325,17 @@ a.create-btn {
 }
 
 .my-lists .icon {
-    font-weight: bold;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #e5e5e5;
+    width: 22px;
+    height: 22px;
+    background: #e6e6e6;
     color: #000;
+    font-weight: 700;
+    border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 20px;
+    line-height: 1;
 }
 
 .profile-box {
@@ -290,11 +344,9 @@ a.create-btn {
     border: 1px solid #b1b1b1;
     border-radius: 8px;
     padding: 0 15px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     background: #000;
 }
 
@@ -311,12 +363,12 @@ a.create-btn {
 }
 
 .avatar img {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  top: 3px;
-  border-radius: 50%;   
-  object-fit: cover;    
+    position: relative;
+    width: 32px;
+    height: 32px;
+    top: 3px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 
@@ -327,15 +379,72 @@ a.create-btn {
     color: #ffffff;
 }
 
-.dots {
-    display: flex;
-    gap: 3px;
+.dots-wrapper {
+    position: relative;
+    padding: 10px;
 }
 
-.dots span {
-    width: 5px;
-    height: 5px;
-    background: #e3e3e3;
-    border-radius: 50%;
+.dots-icon {
+    display: flex;
+    width: 16px;
+    height: 4px;
+    cursor: pointer;
+}
+
+/* popup ซ่อนก่อน */
+.popup-menu {
+    position: absolute;
+    right: 0;
+    bottom: 28px;
+
+    background: #1d1d1d;
+    border: 1px solid #444;
+    border-radius: 6px;
+    min-width: 120px;
+
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+
+/* hover แล้วโชว์ */
+.dots-wrapper:hover .popup-menu {
+    display: flex;
+}
+
+.popup-item {
+    padding: 10px 14px;
+    white-space: nowrap;
+    color: white;
+    text-decoration: none;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.popup-item:hover {
+    background: #333;
+}
+
+.popup-item.logout {
+    color: #ff6b6b;
+}
+
+.popup-item.login {
+    text-align: center;
+    font-weight: 600;
+    color: #ff4f4f;
+}
+
+.popup-backdrop {
+    z-index: 9999;
+    /* สูงกว่า sidebar แน่นอน */
+    pointer-events: auto;
+}
+
+.popup-container {
+    pointer-events: auto;
 }
 </style>
