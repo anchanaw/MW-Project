@@ -202,17 +202,18 @@ export const useAuthStore = defineStore("auth", () => {
       description: data.description || "",
       movies: selectedMovie
         ? [{
-            id: selectedMovie.id,
-            title: selectedMovie.title,
-            year: selectedMovie.year,
-            img: selectedMovie.img,
-            rating: selectedMovie.rating ?? 0,
-            runtime: selectedMovie.runtime ?? 0,
-            watched: false
-          }]
+          id: selectedMovie.id,
+          title: selectedMovie.title,
+          year: selectedMovie.year,
+          img: selectedMovie.img,
+          rating: selectedMovie.rating ?? 0,
+          runtime: selectedMovie.runtime ?? 0,
+          watched: false
+        }]
         : []
     }
 
+    users[index].watchlists ||= []
     users[index].watchlists.push(newWatchlist)
     localStorage.setItem("users", JSON.stringify(users))
     user.value = { ...users[index] }

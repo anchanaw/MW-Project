@@ -66,36 +66,40 @@
                     </a-col>
 
                     <a-col>
-                        <div class="dots-wrapper">
-                            <a-config-provider :theme="{
-                                token: {
-                                    colorBgElevated: '#1d1d1d',
-                                    colorText: '#ffffff'
-                                }
-                            }">
-                                <a-dropdown>
-                                    <a class="dots">
-                                        <img src="/icons/dot-icon.png" class="dots-icon" />
-                                    </a>
-                                    <template #overlay>
-                                        <a-menu>
-                                            <a-menu-item v-if="auth.isAuthenticated">
-                                                <NuxtLink to="/edit">Edit</NuxtLink>
-                                            </a-menu-item>
-                                            <a-menu-item v-if="auth.isAuthenticated" danger @click="logout">
-                                                Logout
-                                            </a-menu-item>
-                                            <a-menu-item v-else>
-                                                <NuxtLink to="/profile">Login</NuxtLink>
-                                            </a-menu-item>
-                                        </a-menu>
-                                    </template>
-                                </a-dropdown>
-                            </a-config-provider>
-                        </div>
+                        <a-config-provider :theme="{
+                            token: {
+                                colorBgElevated: '#1d1d1d',
+                                colorText: '#ffffff'
+                            }
+                        }">
+                            <!-- dropdown = hover เท่านั้น -->
+                            <a-dropdown trigger="hover">
+                                <!-- trigger -->
+                                <div class="dots-wrapper" @click.stop="goProfile">
+                                    <img src="/icons/dot-icon.png" class="dots-icon" />
+                                </div>
+
+                                <!-- dropdown menu -->
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item v-if="auth.isAuthenticated">
+                                            <NuxtLink to="/edit">Edit</NuxtLink>
+                                        </a-menu-item>
+
+                                        <a-menu-item v-if="auth.isAuthenticated" danger @click="logout">
+                                            Logout
+                                        </a-menu-item>
+
+                                        <a-menu-item v-else>
+                                            <NuxtLink to="/profile">Login</NuxtLink>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                        </a-config-provider>
                     </a-col>
                 </a-row>
-            </div>    
+            </div>
         </a-layout-sider>
 
         <!-- Page Content -->
@@ -133,6 +137,11 @@ const keyword = ref('')
 const toggleSidebar = () => {
     isSidebarOpen.value = !isSidebarOpen.value
 }
+
+const goProfile = () => {
+  navigateTo('/profile')
+}
+
 
 const goSearch = () => {
     const q = keyword.value.trim().toLowerCase()
@@ -184,10 +193,11 @@ onMounted(async () => {
     overflow-y: auto;
     background: #FFFFFF1A;
 }
+
 .sidebar-inner {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .sidebar {
@@ -398,9 +408,13 @@ a.create-btn {
 }
 
 .dots-wrapper {
-    display: inline-block;
-    position: relative;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;      
+  justify-content: center;  
 }
+
 
 .dots {
     display: inline-block;

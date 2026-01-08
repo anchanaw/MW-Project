@@ -48,14 +48,11 @@
           <a-input-password v-model:value="formState.password" class="clean-password" />
         </a-form-item>
 
-        <button
-  class="update-btn"
-  :disabled="isUpdating || !auth.user"
-  @click.prevent="updateProfile"
->
-  {{ isUpdating ? "Updating..." : "Update Profile" }}
-</button>
-
+        <div class="button-center">
+          <button class="update-btn" :disabled="isUpdating || !auth.user" @click.prevent="updateProfile">
+            {{ isUpdating ? "Updating..." : "Update Profile" }}
+          </button>
+        </div>
       </a-form>
 
     </div>
@@ -165,6 +162,7 @@ const logout = () => {
   color: #ff5d5d;
   cursor: pointer;
   font-size: 14px;
+  text-decoration: underline;
 }
 
 /* ================= CONTAINER ================= */
@@ -280,6 +278,8 @@ input {
 
 /* ================= BUTTON ================= */
 .update-btn {
+  width: 247px;
+  height: 41px;
   background: #ff4646;
   border: none;
   padding: 10px;
@@ -289,4 +289,10 @@ input {
   cursor: pointer;
   margin-top: 20px;
 }
+
+.button-center {
+  display: flex;
+  justify-content: center;
+}
+
 </style>
