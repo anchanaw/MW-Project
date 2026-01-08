@@ -1,15 +1,14 @@
 <template>
-  <div class="edit-page">
+  <div v-if="auth.user" class="edit-page">
 
     <!-- Header -->
     <div class="top-bar">
       <h2>Edit profile</h2>
+
       <a-popconfirm title="Logout?" description="You will need to login again." placement="bottomRight" ok-text="Logout"
         cancel-text="Cancel" :ok-button-props="{ danger: true }" :cancel-button-props="{ type: 'text' }"
         @confirm="logout">
-        <button class="logout-link">
-          Logout
-        </button>
+        <button class="logout-link">Logout</button>
       </a-popconfirm>
     </div>
 
@@ -18,13 +17,13 @@
       <!-- Avatar -->
       <div class="avatar-section">
         <div class="avatar-circle">
-          <img :src="avatarPreview || auth.user.avatar" />
+          <img :src="avatarPreview || auth.user?.avatar" />
         </div>
 
         <label class="avatar-btn">
           <img src="/icons/camera-icon.png" />
           Change avatar
-          <input type="file" accept="image/*" @change="uploadAvatar" hidden>
+          <input type="file" accept="image/*" @change="uploadAvatar" hidden />
         </label>
 
         <button v-if="avatarPreview" class="remove-btn" @click="removeAvatar">
@@ -32,71 +31,95 @@
         </button>
       </div>
 
-      <!-- Form -->
-      <a-form
-  layout="vertical"
-  class="edit-form"
-  @finish="updateProfile"
+      <!-- Ant Form -->
+      <a-form layout="vertical" @finish="updateProfile">
+        <label>Name *</label>
+        <a-form-item>
+          <a-input v-model:value="formState.name" />
+        </a-form-item>
+
+        <label>Email *</label>
+        <a-form-item>
+          <a-input v-model:value="formState.email" />
+        </a-form-item>
+
+        <label>Password *</label>
+        <a-form-item>
+          <a-input-password v-model:value="formState.password" class="clean-password" />
+        </a-form-item>
+
+        <button
+  class="update-btn"
+  :disabled="isUpdating || !auth.user"
+  @click.prevent="updateProfile"
 >
+  {{ isUpdating ? "Updating..." : "Update Profile" }}
+</button>
 
-  <a-form-item
-    label="Name *"
-    name="name"
-    :rules="[{ required: true, message: 'Please enter your name' }]"
-  >
-    <a-input v-model:value="name" />
-  </a-form-item>
-
-  <a-form-item
-    label="Email *"
-    name="email"
-    :rules="[
-      { required: true, message: 'Please enter your email' },
-      { type: 'email', message: 'Invalid email format' }
-    ]"
-  >
-    <a-input v-model:value="email" />
-  </a-form-item>
-
-  <a-form-item label="Password">
-    <a-input-password
-      v-model:value="password"
-      class="clean-password"
-      placeholder="Leave blank to keep current password"
-    />
-  </a-form-item>
-
-  <a-form-item class="submit-row">
-    <button class="update-btn" type="submit" :disabled="isUpdating">
-      {{ isUpdating ? 'Updating...' : 'Update Profile' }}
-    </button>
-  </a-form-item>
-
-</a-form>
-
+      </a-form>
 
     </div>
+  </div>
+
+  <div v-else class="edit-page">
+    Loading...
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue"
-import { useAuthStore } from "~/stores/auth"
+import { ref, watch } from "vue"
 import { message } from "ant-design-vue"
+import { useAuthStore } from "~/stores/auth"
 
-/* ================= STORE ================= */
 const auth = useAuthStore()
 
-/* ================= STATE ================= */
-const name = ref(auth.user.name)
-const email = ref(auth.user.email)
-const password = ref(auth.user.password)
 const isUpdating = ref(false)
-
 const avatarPreview = ref(null)
 const newAvatar = ref(null)
 
-/* ================= AVATAR ================= */
+// ฟอร์ม state ธรรมดา
+const formState = ref({
+  name: "",
+  email: "",
+  password: ""
+})
+
+// sync ค่า user → form
+watch(
+  () => auth.user,
+  (user) => {
+    if (user) {
+      formState.value.name = user.name
+      formState.value.email = user.email
+      formState.value.password = ""
+    }
+  },
+  { immediate: true }
+)
+
+const updateProfile = async () => {
+  if (!auth.user || isUpdating.value) return
+  isUpdating.value = true
+
+  try {
+    const payload = {
+      name: formState.value.name,
+      email: formState.value.email,
+      avatar: newAvatar.value ?? auth.user.avatar
+    }
+
+    if (formState.value.password.trim()) {
+      payload.password = formState.value.password
+    }
+
+    await auth.updateProfile(payload)
+    message.success("Profile updated")
+    navigateTo("/profile")
+  } finally {
+    isUpdating.value = false
+  }
+}
+
 const uploadAvatar = (e) => {
   const file = e.target.files[0]
   if (!file) return
@@ -114,49 +137,10 @@ const removeAvatar = () => {
   newAvatar.value = null
 }
 
-/* ================= ACTIONS ================= */
-const updateProfile = async () => {
-  if (isUpdating.value) return
-
-  if (!auth.user) {
-    message.error("User data not ready")
-    return
-  }
-
-  isUpdating.value = true
-
-  try {
-    await auth.updateProfile({
-      name: name.value,
-      email: email.value,
-      password: password.value || auth.user.password,
-      avatar: newAvatar.value ?? auth.user.avatar
-    })
-
-    message.success("Profile updated")
-    navigateTo("/profile")
-
-  } catch (err) {
-    console.error(err)
-    message.error("Failed to update profile")
-
-  } finally {
-    isUpdating.value = false
-  }
-}
-
 const logout = () => {
   auth.logout()
-  message.info("Logged out")
   navigateTo("/profile")
 }
-
-onMounted(() => {
-  if (auth.user) {
-    name.value = auth.user.name
-    email.value = auth.user.email
-  }
-})
 </script>
 
 <style scoped>

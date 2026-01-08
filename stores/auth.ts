@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { defineStore } from "pinia"
+import { ref } from "vue"
 
-/* ===== types (เพิ่มอย่างเดียว) ===== */
+/* ===== types ===== */
 
 interface Movie {
   id: number
@@ -25,7 +25,7 @@ interface Watchlist {
 }
 
 interface User {
-  id: number | null
+  id: number
   name: string
   email: string
   password?: string
@@ -42,32 +42,33 @@ interface RegisterData {
 
 /* ================================ */
 
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore("auth", () => {
 
-  const user = ref<User>({
-    id: null,
-    name: "",
-    email: "",
-    avatar: null,
-    watchlists: []
-  })
+  /* ================= STATE ================= */
+
+  // ✅ สำคัญมาก: user เริ่มเป็น null
+  const user = ref<User | null>(null)
 
   const token = ref<string | null>(null)
   const isAuthenticated = ref<boolean>(false)
   const isReady = ref<boolean>(false)
 
-  // โหลด session ตอนเปิดเว็บ
+  /* ================= INIT ================= */
+
   function init(): void {
-    const session: { id: number } | null =
-      JSON.parse(localStorage.getItem("auth_user") || 'null')
+    if (!process.client) return
+
+    const session: { id: number; token?: string } | null =
+      JSON.parse(localStorage.getItem("auth_user") || "null")
 
     const users: User[] =
-      JSON.parse(localStorage.getItem("users") || '[]')
+      JSON.parse(localStorage.getItem("users") || "[]")
 
     if (session) {
       const found = users.find(u => u.id === session.id)
 
       if (found) {
+        // normalize watched flag
         found.watchlists?.forEach(list => {
           list.movies?.forEach(movie => {
             if (movie.watched === undefined) {
@@ -76,7 +77,8 @@ export const useAuthStore = defineStore('auth', () => {
           })
         })
 
-        Object.assign(user.value, found)
+        user.value = { ...found }
+        token.value = session.token || null
         isAuthenticated.value = true
       }
     }
@@ -84,10 +86,11 @@ export const useAuthStore = defineStore('auth', () => {
     isReady.value = true
   }
 
-  // REGISTER
+  /* ================= REGISTER ================= */
+
   async function register(data: RegisterData): Promise<void> {
-    let users: User[] =
-      JSON.parse(localStorage.getItem("users") || '[]')
+    const users: User[] =
+      JSON.parse(localStorage.getItem("users") || "[]")
 
     if (users.some(u => u.email === data.email)) {
       alert("Email already exists")
@@ -112,115 +115,119 @@ export const useAuthStore = defineStore('auth', () => {
     }
     localStorage.setItem("auth_user", JSON.stringify(session))
 
-    Object.assign(user.value, newUser)
+    user.value = { ...newUser }
     token.value = session.token
     isAuthenticated.value = true
   }
 
-  // LOGIN
+  /* ================= LOGIN ================= */
+
   async function loginWithCredentials(
-  email: string,
-  password: string
-): Promise<boolean> {
-  const users: (User & { password?: string })[] =
-    JSON.parse(localStorage.getItem("users") || "[]")
+    email: string,
+    password: string
+  ): Promise<boolean> {
 
-  const found = users.find(u => u.email === email)
+    const users: (User & { password?: string })[] =
+      JSON.parse(localStorage.getItem("users") || "[]")
 
-  if (!found) return false
-  if (found.password !== password) return false
+    const found = users.find(u => u.email === email)
+    if (!found) return false
+    if (found.password !== password) return false
 
-  const session = {
-    id: found.id as number,
-    token: "TOKEN_" + found.id
+    const session = {
+      id: found.id,
+      token: "TOKEN_" + found.id
+    }
+    localStorage.setItem("auth_user", JSON.stringify(session))
+
+    user.value = { ...found }
+    token.value = session.token
+    isAuthenticated.value = true
+
+    return true
   }
-  localStorage.setItem("auth_user", JSON.stringify(session))
 
-  Object.assign(user.value, found)
-  token.value = session.token
-  isAuthenticated.value = true
+  /* ================= LOGOUT ================= */
 
-  return true
-}
-
-  // LOGOUT
   function logout(): void {
     localStorage.removeItem("auth_user")
-
-    Object.assign(user.value, {
-      id: null,
-      name: "",
-      email: "",
-      avatar: null,
-      watchlists: []
-    })
-
+    user.value = null
     token.value = null
     isAuthenticated.value = false
   }
 
-  function getUnwatchedMinutes(): number {
-    return user.value.watchlists
-      .flatMap(list => list.movies || [])
-      .filter(movie => movie.watched !== true)
-      .reduce((total, movie) => total + (movie.runtime || 0), 0)
+  /* ================= PROFILE ================= */
+
+  function updateProfile(updatedData: Partial<User>): void {
+    if (!user.value) return
+
+    const users: User[] =
+      JSON.parse(localStorage.getItem("users") || "[]")
+
+    const index = users.findIndex(u => u.id === user.value!.id)
+    if (index === -1) return
+
+    users[index] = {
+      ...users[index],
+      ...updatedData
+    }
+
+    localStorage.setItem("users", JSON.stringify(users))
+
+    // ✅ sync ทั้ง store และ session
+    user.value = { ...users[index] }
+    localStorage.setItem(
+      "auth_user",
+      JSON.stringify({ id: users[index].id, token: token.value })
+    )
   }
 
-  // CREATE WATCHLIST
+  /* ================= WATCHLIST ================= */
+
   function addWatchlist(
-  data: { title: string; description?: string },
-  selectedMovie?: Movie
-): void {
-  const users: User[] =
-    JSON.parse(localStorage.getItem("users") || "[]")
+    data: { title: string; description?: string },
+    selectedMovie?: Movie
+  ): void {
+    if (!user.value) return
 
-  const index = users.findIndex(u => u.id === user.value.id)
-  if (index === -1) return
+    const users: User[] =
+      JSON.parse(localStorage.getItem("users") || "[]")
 
-  const newWatchlist: Watchlist = {
-    id: Date.now(),
-    title: data.title.trim(),
-    description: data.description || "",
-    movies: selectedMovie
-      ? [{
-          id: selectedMovie.id,
-          title: selectedMovie.title,
-          year: selectedMovie.year,
-          img: selectedMovie.img,
-          rating: selectedMovie.rating ?? 0,
-          runtime: selectedMovie.runtime ?? 0,
-          watched: false
-        }]
-      : []
+    const index = users.findIndex(u => u.id === user.value!.id)
+    if (index === -1) return
+
+    const newWatchlist: Watchlist = {
+      id: Date.now(),
+      title: data.title.trim(),
+      description: data.description || "",
+      movies: selectedMovie
+        ? [{
+            id: selectedMovie.id,
+            title: selectedMovie.title,
+            year: selectedMovie.year,
+            img: selectedMovie.img,
+            rating: selectedMovie.rating ?? 0,
+            runtime: selectedMovie.runtime ?? 0,
+            watched: false
+          }]
+        : []
+    }
+
+    users[index].watchlists.push(newWatchlist)
+    localStorage.setItem("users", JSON.stringify(users))
+    user.value = { ...users[index] }
   }
 
-  users[index].watchlists.push(newWatchlist)
-  localStorage.setItem("users", JSON.stringify(users))
-
-  // ✅ reactive 100%
-  user.value = { ...users[index] }
-}
-
-  function formatRuntime(minutes: number): string {
-    const h = Math.floor(minutes / 60)
-    const m = minutes % 60
-    return `${h}h ${m}m`
-  }
-
-  function getUnwatchedRuntime(): string {
-    const minutes = getUnwatchedMinutes()
-    return formatRuntime(minutes)
-  }
-
-  // ADD MOVIE TO LIST
   function addMovieToWatchlist(
     listId: number,
     movie: Movie
   ): void {
-    const users: User[] =
-      JSON.parse(localStorage.getItem("users") || '[]')
+    if (!user.value) return
 
-    const index = users.findIndex(u => u.id === user.value.id)
+    const users: User[] =
+      JSON.parse(localStorage.getItem("users") || "[]")
+
+    const index = users.findIndex(u => u.id === user.value!.id)
     if (index === -1) return
 
     const list = users[index].watchlists.find(w => w.id === listId)
@@ -240,17 +247,16 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = { ...users[index] }
   }
 
-  function toggleWatched(
-    listId: number,
-    movieId: number
-  ): void {
+  function toggleWatched(listId: number, movieId: number): void {
+    if (!user.value) return
+
     const users: User[] =
-      JSON.parse(localStorage.getItem("users") || '[]')
+      JSON.parse(localStorage.getItem("users") || "[]")
 
-    const userIndex = users.findIndex(u => u.id === user.value.id)
-    if (userIndex === -1) return
+    const index = users.findIndex(u => u.id === user.value!.id)
+    if (index === -1) return
 
-    const list = users[userIndex].watchlists.find(w => w.id === listId)
+    const list = users[index].watchlists.find(w => w.id === listId)
     if (!list) return
 
     const movie = list.movies.find(m => m.id === movieId)
@@ -258,17 +264,16 @@ export const useAuthStore = defineStore('auth', () => {
 
     movie.watched = !movie.watched
     localStorage.setItem("users", JSON.stringify(users))
-    Object.assign(user.value, users[userIndex])
+    user.value = { ...users[index] }
   }
 
-  function updateWatchlist(
-    listId: number,
-    updated: Watchlist
-  ): void {
-    const users: User[] =
-      JSON.parse(localStorage.getItem("users") || '[]')
+  function updateWatchlist(listId: number, updated: Watchlist): void {
+    if (!user.value) return
 
-    const index = users.findIndex(u => u.id === user.value.id)
+    const users: User[] =
+      JSON.parse(localStorage.getItem("users") || "[]")
+
+    const index = users.findIndex(u => u.id === user.value!.id)
     if (index === -1) return
 
     const list = users[index].watchlists.find(w => w.id === listId)
@@ -283,10 +288,12 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function deleteWatchlist(listId: number): void {
-    const users: User[] =
-      JSON.parse(localStorage.getItem("users") || '[]')
+    if (!user.value) return
 
-    const index = users.findIndex(u => u.id === user.value.id)
+    const users: User[] =
+      JSON.parse(localStorage.getItem("users") || "[]")
+
+    const index = users.findIndex(u => u.id === user.value!.id)
     if (index === -1) return
 
     users[index].watchlists =
@@ -296,21 +303,28 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = { ...users[index] }
   }
 
-  function updateProfile(updatedData: Partial<User>): void {
-    const users: User[] =
-      JSON.parse(localStorage.getItem("users") || '[]')
+  /* ================= UTILS ================= */
 
-    const index = users.findIndex(u => u.id === user.value.id)
-    if (index === -1) return
+  function getUnwatchedMinutes(): number {
+    if (!user.value) return 0
 
-    users[index] = {
-      ...users[index],
-      ...updatedData
-    }
-
-    localStorage.setItem("users", JSON.stringify(users))
-    user.value = { ...users[index] }
+    return user.value.watchlists
+      .flatMap(list => list.movies || [])
+      .filter(movie => movie.watched !== true)
+      .reduce((total, movie) => total + (movie.runtime || 0), 0)
   }
+
+  function formatRuntime(minutes: number): string {
+    const h = Math.floor(minutes / 60)
+    const m = minutes % 60
+    return `${h}h ${m}m`
+  }
+
+  function getUnwatchedRuntime(): string {
+    return formatRuntime(getUnwatchedMinutes())
+  }
+
+  /* ================= EXPORT ================= */
 
   return {
     user,
@@ -326,10 +340,9 @@ export const useAuthStore = defineStore('auth', () => {
     addMovieToWatchlist,
     updateWatchlist,
     deleteWatchlist,
+    toggleWatched,
     getUnwatchedMinutes,
     getUnwatchedRuntime,
-    formatRuntime,
-    toggleWatched
+    formatRuntime
   }
-
 })

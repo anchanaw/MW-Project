@@ -54,7 +54,7 @@ const openAddPopup = (movie) => {
 /* ================= HISTORY ACTION ================= */
 const clearHistory = () => {
   if (auth.isAuthenticated) {
-    store.clearAllHistory(auth.user.id);
+    store.clearAllHistory(auth.user?.id);
   } else {
     store.clearAllHistory();
   }
@@ -77,7 +77,7 @@ onMounted(async () => {
   isLoading.value = true
 
   if (auth.isAuthenticated) {
-    await store.loadHistoryFromLocalStorage(auth.user.id)
+    await store.loadHistoryFromLocalStorage(auth.user?.id)
   } else {
     await store.loadHistoryFromLocalStorage()
   }

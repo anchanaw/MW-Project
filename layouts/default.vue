@@ -43,7 +43,7 @@
                 <div class="my-lists">
                     <h3>My Lists</h3>
                     <div v-if="auth.user?.watchlists?.length">
-                        <NuxtLink v-for="list in auth.user.watchlists" :key="list.id" :to="`/watchlist/${list.id}`"
+                        <NuxtLink v-for="list in auth.user?.watchlists" :key="list.id" :to="`/watchlist/${list.id}`"
                             class="list-item">
                             <span class="icon">
                                 {{ list.title.charAt(0).toUpperCase() }}
@@ -60,7 +60,7 @@
                                 <img :src="auth.user?.avatar || '/icons/user-icon.png'" />
                             </div>
                             <span class="name">
-                                {{ auth.isAuthenticated ? auth.user.name : 'GUEST' }}
+                                {{ auth.isAuthenticated ? auth.user?.name : 'GUEST' }}
                             </span>
                         </div>
                     </a-col>
@@ -167,7 +167,6 @@ watch(
 /* ================= LIFECYCLE ================= */
 onMounted(async () => {
     store.loadHistoryFromLocalStorage()
-    auth.init()
     await movieStore.initMovies()
 })
 </script>

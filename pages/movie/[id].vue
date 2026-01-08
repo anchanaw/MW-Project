@@ -166,7 +166,7 @@ onMounted(async () => {
   loading.value = false;
 
   if (auth.isAuthenticated) {
-    mainStore.addToHistoryAfterDelay(movie.value, auth.user.id);
+    mainStore.addToHistoryAfterDelay(movie.value, auth.user?.id);
   }
 });
 

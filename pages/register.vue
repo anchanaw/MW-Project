@@ -29,7 +29,7 @@
         </div>
 
         <!-- Form Fields -->
-        <a-form layout="vertical" @finish="submitRegister">
+        <a-form layout="vertical" :model="{ name, email, password }" @finish="submitRegister">
           <a-form-item label="Name" name="name" :rules="[{ required: true, message: 'Please enter your name' }]">
             <a-input v-model:value="name" />
           </a-form-item>
@@ -109,12 +109,17 @@ export default {
         return;
       }
 
-      await this.auth.register({
+      const newUser = {
         name: this.name,
         email: this.email,
         password: this.password,
         avatar: this.avatar,
-      });
+      };
+
+      users.push(newUser);
+      localStorage.setItem("users", JSON.stringify(users));
+
+      await this.auth.register(newUser);
 
       message.success("Register success!");
       this.router.push("/profile");

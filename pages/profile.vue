@@ -47,15 +47,15 @@
       <div class="profile-center">
 
         <div class="profile-avatar">
-          <img :src="auth.user.avatar || '/icons/user-icon.png'" />
+          <img :src="auth.user?.avatar || '/icons/user-icon.png'" />
         </div>
 
         <h2 class="profile-name">
-          Hello, {{ auth.user.name }} 👋
+          Hello, {{ auth.user?.name }} 👋
         </h2>
 
         <p class="profile-email">
-          You are logged in as <strong>{{ auth.user.email }}</strong>
+          You are logged in as <strong>{{ auth.user?.email }}</strong>
         </p>
 
         <div class="profile-actions">

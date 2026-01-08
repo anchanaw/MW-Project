@@ -71,7 +71,7 @@ const movies = ref([]);
 
 /* ================= COMPUTED ================= */
 const watchlist = computed(() =>
-  auth.user.watchlists.find(w => w.id === id)
+  auth.user?.watchlists.find(w => w.id === id)
 );
 
 /* ================= INIT ================= */

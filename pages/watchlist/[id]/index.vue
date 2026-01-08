@@ -76,7 +76,7 @@ const loading = ref(true)
 /* ================= COMPUTED ================= */
 const watchlist = computed(() => {
     if (!auth.user?.watchlists) return null
-    return auth.user.watchlists.find(w => w.id === id) || null
+    return auth.user?.watchlists.find(w => w.id === id) || null
 })
 
 const averageScore = computed(() => {
