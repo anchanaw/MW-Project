@@ -187,6 +187,10 @@ input {
   margin-bottom: 18px;
 }
 
+:deep(.ant-form-item-label > label.ant-form-item-required::before) {
+  display: none !important;
+}
+
 :deep(.ant-input-affix-wrapper) {
   background: #FFFFFF05;
   border: 1px solid #E1E1E1;
@@ -203,25 +207,8 @@ input {
   color: #ccc !important;
 }
 
-/* ตัด hover ของ Ant Design */
-::v-deep(.ant-input-affix-wrapper:hover) {
-  border-color: #E1E1E1 !important;
-  box-shadow: none !important;
-}
-
-/* ตอน focus ไม่เอาสีฟ้า */
-::v-deep(.ant-input-affix-wrapper-focused) {
-  border-color: #E1E1E1 !important;
-  box-shadow: none !important;
-}
-
-/* effect ตอนกด: ขยายขึ้นนิดเดียว */
 ::v-deep(.ant-input-affix-wrapper) {
   transition: transform 0.15s ease;
-}
-
-::v-deep(.ant-input-affix-wrapper-focused) {
-  transform: scale(1.01);
 }
 
 :deep(.submit-row .ant-form-item-control-input-content) {

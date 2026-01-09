@@ -4,9 +4,14 @@
     <!-- Header -->
     <div class="header-row">
       <h1>Edit your Watchlist</h1>
-      <button class="delete-btn" @click="deleteList">
-        Delete Watchlist
-      </button>
+      <a-popconfirm title="Delete this watchlist?" description="This action cannot be undone." ok-text="Delete"
+        cancel-text="Cancel" placement="bottomRight" :ok-button-props="{ danger: true }"
+        :cancel-button-props="{ type: 'text' }" @confirm="deleteList">
+        <button class="delete-btn">
+          Delete Watchlist
+        </button>
+      </a-popconfirm>
+
     </div>
 
     <!-- Name -->
@@ -132,42 +137,97 @@ function deleteList() {
   color: #e1e1e1;
 }
 
-/* ================= INPUT ================= */
+/* ================= INPUT (Name / Description) ================= */
 .input-box,
 .textarea-box {
   width: 100%;
   margin-top: 6px;
   margin-bottom: 10px;
-  padding: 10px;
+  padding: 12px 16px;
 
-  background: #1b1b1b;
+  background: linear-gradient(#1b1b1b, #161616);
   color: #fff;
 
-  border: 1px solid #555;
+  border: 1px solid #e1e1e1;
   border-radius: 6px;
+
+  font-size: 15px;
+  box-sizing: border-box;
 }
 
+.input-box:focus,
+.textarea-box:focus {
+  outline: none;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* textarea */
 .textarea-box {
   height: 120px;
   resize: none;
 }
 
-/* ================= MOVIE ROW ================= */
+/* ===== Ant List ===== */
+:deep(.ant-list-item) {
+  border: 1px solid #e1e1e1 !important;
+  border-radius: 6px;
+  padding: 12px 16px !important;
+  margin-bottom: 12px;
+  background: linear-gradient(#1b1b1b, #161616);
+  box-sizing: border-box;
+}
+
+/* ===== Movie row ===== */
 .movie-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-
-  margin-top: 15px;
-  padding: 10px;
-
-  border: 1px solid #E1E1E1;
-  border-radius: 8px;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(#1b1b1b, #161616);
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 
+ล:deep(.ant-list-item) {
+  border: none !important;
+  padding: 0 !important;
+}
+
+:deep(.ant-list-item + .ant-list-item) {
+  border-top: 1px solid #e1e1e1 !important;
+}
+
+/* ===== Meta layout ===== */
+:deep(.ant-list-item-meta) {
+  align-items: center;
+}
+
+:deep(.ant-list-item-meta-title) {
+  color: #eaeaea;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ===== Poster ===== */
 .poster {
-  width: 55px;
-  border-radius: 6px;
+  width: 48px;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* ===== Remove button ===== */
+:deep(.ant-btn-dangerous) {
+  border: 1px solid #ff4d4f;
+  color: #ff4d4f;
+  background: transparent;
+  border-radius: 4px;
+  height: 32px;
+  padding: 0 14px;
+}
+
+:deep(.ant-btn-dangerous:hover) {
+  background: rgba(255, 77, 79, 0.12);
 }
 
 .movie-title {
@@ -201,6 +261,7 @@ function deleteList() {
   border-radius: 6px;
 
   font-size: 18px;
+  font-weight: 700;
   cursor: pointer;
 }
 

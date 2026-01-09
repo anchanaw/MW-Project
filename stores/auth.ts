@@ -142,7 +142,6 @@ export const useAuthStore = defineStore('auth', () => {
     )
 
     if (!found) {
-      alert("Email or password is incorrect")
       return false
     }
 

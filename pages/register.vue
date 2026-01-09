@@ -30,18 +30,18 @@
 
         <!-- Form Fields -->
         <a-form layout="vertical" :model="{ name, email, password }" @finish="submitRegister">
-          <a-form-item label="Name" name="name" :rules="[{ required: true, message: 'Please enter your name' }]">
+          <a-form-item label="Name *" name="name" :rules="[{ required: true, message: 'Please enter your name' }]">
             <a-input v-model:value="name" />
           </a-form-item>
 
-          <a-form-item label="Email" name="email" :rules="[
+          <a-form-item label="Email *" name="email" :rules="[
             { required: true, message: 'Please enter your email' },
             { type: 'email', message: 'Invalid email format' }
           ]">
             <a-input v-model:value="email" />
           </a-form-item>
 
-          <a-form-item label="Password" name="password"
+          <a-form-item label="Password *" name="password"
             :rules="[{ required: true, message: 'Please enter your password' }]">
             <a-input-password v-model:value="password" />
           </a-form-item>
@@ -211,6 +211,10 @@ export default {
   width: 100%;
 }
 
+:deep(.ant-form-item-label > label.ant-form-item-required::before) {
+  display: none !important;
+}
+
 label {
   font-size: 20px;
   font-family: 'Lato', sans-serif;
@@ -228,7 +232,6 @@ input {
   border-radius: 6px;
   color: #fff;
   font-size: 15px;
-  margin-bottom: 18px;
 }
 
 :deep(.ant-form-item) {
@@ -255,23 +258,6 @@ input {
   color: #ffffff !important;
 }
 
-:deep(.ant-input-password:hover) {
-  border-color: #E1E1E1 !important;
-}
-
-/* base transition */
-:deep(.ant-input-affix-wrapper) {
-  transition:
-    transform 0.15s ease,
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-/* ตอน focus */
-:deep(.ant-input-affix-wrapper-focused) {
-  transform: scale(1.01);
-  border-color: #ffffff !important;
-}
 
 /* ================= BUTTON ================= */
 :deep(.submit-row .ant-form-item-control-input-content) {
