@@ -102,24 +102,12 @@ export default {
     },
 
     async submitRegister() {
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-
-      if (users.some(u => u.email === this.email)) {
-        message.error("Email already exists");
-        return;
-      }
-
-      const newUser = {
+      await this.auth.register({
         name: this.name,
         email: this.email,
         password: this.password,
         avatar: this.avatar,
-      };
-
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-
-      await this.auth.register(newUser);
+      });
 
       message.success("Register success!");
       this.router.push("/profile");

@@ -118,7 +118,6 @@ const goToEdit = () => {
 
 /* ================= LIFECYCLE ================= */
 onMounted(() => {
-    auth.init()
     loading.value = false
 })
 </script>

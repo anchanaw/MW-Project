@@ -21,9 +21,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
 
 /* ================= COMPONENTS ================= */
 import MovieCard from '~/components/MovieCard.vue'
@@ -53,38 +53,22 @@ const openAddPopup = (movie) => {
 
 /* ================= HISTORY ACTION ================= */
 const clearHistory = () => {
-  if (auth.isAuthenticated) {
-    store.clearAllHistory(auth.user?.id);
-  } else {
-    store.clearAllHistory();
-  }
-};
+  if (!auth.user?.id) return
+  store.clearAllHistory(auth.user.id)
+}
 
-
-/* ================= WATCH ROUTE ================= */
+/* ================= LIFECYCLE ================= */
 watch(
-  () => route.fullPath,
-  (path) => {
-    if (path === '/history') {
-      store.loadHistoryFromLocalStorage()
-    }
+  () => auth.user?.id,
+  async (userId) => {
+    if (!userId) return
+
+    isLoading.value = true
+    await store.loadHistoryFromLocalStorage(userId)
+    isLoading.value = false
   },
   { immediate: true }
 )
-
-/* ================= LIFECYCLE ================= */
-onMounted(async () => {
-  isLoading.value = true
-
-  if (auth.isAuthenticated) {
-    await store.loadHistoryFromLocalStorage(auth.user?.id)
-  } else {
-    await store.loadHistoryFromLocalStorage()
-  }
-
-  isLoading.value = false
-})
-
 </script>
 
 <style scoped>

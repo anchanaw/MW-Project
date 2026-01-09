@@ -102,8 +102,6 @@ export default {
     const auth = useAuthStore();
     const router = useRouter();
 
-    auth.init();
-
     return {
       auth,
       router,

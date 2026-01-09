@@ -44,7 +44,7 @@
     </div>
 
     <!-- CAST SECTION -->
-    <a-spin :spinning="loading">
+    <a-spin :spinning="loading && cast.length === 0">
       <div class="cast-wrapper">
         <div class="cast-section">
           <h2>Cast</h2>
@@ -87,7 +87,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { navigateTo } from "#app";
-import { message } from "ant-design-vue";
+import { watch } from 'vue'
 
 import { useMovieStore } from "~/stores/movie";
 import { useAuthStore } from "~/stores/auth";
@@ -104,16 +104,16 @@ const mainStore = useMainStore();
 /* ================= STATE ================= */
 const showAddPopup = ref(false);
 const loading = ref(true);
-
-const movieId = String(route.params.id);
+const historyStarted = ref(false)
+const movieId = computed(() => String(route.params.id))
 
 /* ================= COMPUTED ================= */
 const movie = computed(() =>
-  movieStore.allMovies.find(m => m.id === movieId)
-);
+  movieStore.allMovies.find(m => String(m.id) === movieId.value)
+)
 
 const cast = computed(() =>
-  movieStore.getCastByMovie(movieId)
+  movieStore.getCastByMovie(movieId.value)
 );
 
 const currentGenres = computed(() => {
@@ -151,24 +151,44 @@ const openAddPopup = () => {
 };
 
 /* ================= LIFECYCLE ================= */
-onMounted(async () => {
-  console.log("📄 movie detail mounted:", movieId);
+watch(
+  () => ({
+    ready: auth.isReady,
+    auth: auth.isAuthenticated,
+    userId: auth.user?.id,
+    hasMovie: !!movie.value
+  }),
+  (state) => {
+    if (
+      !state.ready ||
+      !state.auth ||
+      !state.userId ||
+      !state.hasMovie
+    ) return
 
-  await movieStore.initMovies();
+    if (historyStarted.value) return
+
+    historyStarted.value = true
+
+    mainStore.addToHistoryAfterDelay(
+      movie.value,
+      state.userId
+    )
+  },
+  { immediate: true }
+)
+
+onMounted(async () => {
+  await movieStore.initMovies()
 
   if (!movie.value) {
-    console.warn("❌ movie not found");
-    loading.value = false;
-    return;
+    console.warn("❌ movie not found", route.params.id)
+    return
   }
 
-  await movieStore.fetchCast(movieId);
-  loading.value = false;
+  await movieStore.fetchCast(movieId.value)
 
-  if (auth.isAuthenticated) {
-    mainStore.addToHistoryAfterDelay(movie.value, auth.user?.id);
-  }
-});
+})
 
 onUnmounted(() => {
   mainStore.clearHistoryTimer();

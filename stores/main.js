@@ -4,71 +4,48 @@ export const useMainStore = defineStore("main", {
   state: () => ({
     watchlists: [],
     searchResults: [],
+
     history: [],
     currentMovie: null,
+
     _historyTimer: null,
   }),
 
   actions: {
     // =========================
-    // SET CURRENT MOVIE
+    // ADD HISTORY (DELAYED)
     // =========================
-    setCurrentMovie(movie) {
-      this.currentMovie = movie;
+    addToHistoryAfterDelay(movie, userId) {
+      if (!movie || !userId) return;
 
-      // เริ่มจับเวลา 5 วิ
-      this.addToHistoryAfterDelay(movie);
+      this.clearHistoryTimer();
+
+      console.log("⏳ start history timer", movie.id);
+
+      this._historyTimer = setTimeout(() => {
+        this.addToHistory(movie, userId);
+        this._historyTimer = null;
+        console.log("✅ history saved");
+      }, 5000);
     },
 
     // =========================
     // ADD HISTORY IMMEDIATE
     // =========================
-    addToHistory(movie) {
-      // กันซ้ำ
+    addToHistory(movie, userId) {
       this.history = this.history.filter(i => i.id !== movie.id);
 
-      // push ใหม่
       this.history.unshift({
         ...movie,
         viewedAt: new Date().toISOString(),
         isViewed: true
       });
 
-      // limit 50
       if (this.history.length > 50) {
         this.history.splice(50);
       }
 
-      // persist
-      this.saveHistoryToLocalStorage();
-    },
-
-    // =========================
-    // ADD HISTORY AFTER DELAY
-    // =========================
-    addToHistoryAfterDelay(movie, userId, delay = 5000) {
-      if (!userId) return;
-
-      if (this._historyTimer) {
-        clearTimeout(this._historyTimer);
-      }
-
-      this._historyTimer = setTimeout(() => {
-        this.history = this.history.filter(i => i.id !== movie.id);
-
-        this.history.unshift({
-          ...movie,
-          viewedAt: new Date().toISOString(),
-          isViewed: true
-        });
-
-        if (this.history.length > 50) {
-          this.history.splice(50);
-        }
-
-        this.saveHistoryToLocalStorage(userId);
-        this._historyTimer = null;
-      }, delay);
+      this.saveHistoryToLocalStorage(userId);
     },
 
     // =========================
@@ -82,46 +59,43 @@ export const useMainStore = defineStore("main", {
     },
 
     // =========================
-    // CLEAR SINGLE HISTORY
+    // REMOVE SINGLE HISTORY
     // =========================
-    removeHistoryItem(id) {
+    removeHistoryItem(id, userId) {
       this.history = this.history.filter(i => i.id !== id);
-      this.saveHistoryToLocalStorage();
+      this.saveHistoryToLocalStorage(userId);
     },
 
     // =========================
     // CLEAR ALL HISTORY
     // =========================
     clearAllHistory(userId) {
-  this.history = [];
+      this.history = [];
 
-  if (process.client) {
-    const key = userId ? `history_${userId}` : 'history_guest';
-    localStorage.removeItem(key);
-  }
-},
+      if (!import.meta.client || !userId) return;
+
+      localStorage.removeItem(`history_${userId}`);
+    },
 
     // =========================
     // SAVE → LocalStorage
     // =========================
     saveHistoryToLocalStorage(userId) {
-      if (!process.client || !userId) return;
+      if (!import.meta.client || !userId) return;
 
-      const key = `history_${userId}`;
-      localStorage.setItem(key, JSON.stringify(this.history));
+      localStorage.setItem(
+        `history_${userId}`,
+        JSON.stringify(this.history)
+      );
     },
 
     // =========================
     // LOAD → LocalStorage
     // =========================
     loadHistoryFromLocalStorage(userId) {
-      if (!process.client || !userId) {
-        this.history = [];
-        return;
-      }
+      if (!import.meta.client || !userId) return;
 
-      const key = `history_${userId}`;
-      const data = localStorage.getItem(key);
+      const data = localStorage.getItem(`history_${userId}`);
       this.history = data ? JSON.parse(data) : [];
     }
   }
