@@ -14,14 +14,17 @@
       <div class="welcome-hint">
         <span>Just click</span>
 
-        <img class="welcome-plus-icon" src="/icons/plus-icon.svg" alt="Add movie" />
+        <span class="hint-inline">
+          <img class="welcome-plus-icon" src="/icons/plus-icon.svg" />
+          <span>to add a movie, </span>
+        </span>
 
-        <span>to add a movie, the poster to see more details or</span>
+        <span>the poster to see more details or</span>
 
-        <img class="check-icon" :src="isChecked ? '/icons/check-icon-green.png' : '/icons/check-icon.png'"
-          @click="isChecked = !isChecked" alt="Watched" />
-
-        <span>to mark the movie as watched.</span>
+        <span class="hint-inline">
+          <img class="check-icon" src="/icons/check-icon.png" />
+          <span>to mark the movie as watched.</span>
+        </span>
       </div>
     </div>
 
@@ -120,6 +123,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   width: 988px;
+  max-width: 100%;
   background-color: #D9D9D91A;
   border: 1px solid #A41B1B;
   padding: 20px 20px 33px;
@@ -148,9 +152,20 @@ onMounted(() => {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 6px 8px;
   font-size: 20px;
   margin-top: 14px;
+}
+
+.welcome-hint img {
+  flex-shrink: 0;
+}
+
+.hint-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap; /* ห้ามตัดกลางกลุ่ม */
 }
 
 .welcome-plus-icon {

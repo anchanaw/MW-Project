@@ -26,8 +26,14 @@ onMounted(() => {
 .ant-message {
   position: fixed !important;
   top: 16px;
-  left: calc(50% + 160px);
+  left: 50%;
   transform: translateX(-50%);
+  right: auto !important;
   z-index: 9999;
+}
+
+.ant-message-notice-content {
+  max-width: calc(100vw - 32px);
+  text-align: center;
 }
 </style>

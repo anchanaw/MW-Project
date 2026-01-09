@@ -119,7 +119,6 @@ export default {
 <style scoped>
 /* ================= PAGE ================= */
 .register-page {
-  background: #111;
   min-height: 100vh;
   padding: 40px 60px;
   color: white;

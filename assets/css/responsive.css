@@ -45,21 +45,25 @@ img {
   .layout {
     display: block !important;
     width: 100%;
-    height: 100vh;
+    height: auto !important;
+    min-height: 100vh !important;
   }
 
   .ant-layout {
-    width: 100% !important;
+    height: auto !important;
+    min-height: 100vh;
   }
 
   .content {
     width: 100% !important;
+    min-height: auto !important;
     margin-left: 0 !important;
     padding-top: 55px;
-    box-sizing: border-box;
+    padding-bottom: 40px;
+    box-sizing: border-box !important;
   }
 
-  /* ===== SIDEBAR (ตัวจริง) ===== */
+  /* ===== SIDEBAR ===== */
   .ant-layout-sider.sidebar {
     position: fixed !important;
     top: 0;
@@ -70,7 +74,7 @@ img {
     min-width: 0 !important;
     height: 100vh !important;
 
-    flex: none !important;              /* ⭐ สำคัญสุด */
+    flex: none !important;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
 
@@ -115,7 +119,7 @@ img {
   /* Movie card */
   .movie-card {
     width: 100%;
-    max-width: 180px;
+    max-width: none !important;
   }
 
   .movie-card:hover,
@@ -140,6 +144,7 @@ img {
     line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -203,8 +208,8 @@ img {
     font-size: 14px !important;
   }
 
-  .movie-grid {
-    gap: 16px !important;
+  .movies-grid {
+    justify-content: center;
   }
 
   /* Popup */
@@ -228,7 +233,52 @@ img {
   }
 
   .watchlist-page {
-    margin: 25px 35px !important;
+    margin: 16px !important;
+    padding-bottom: 40px;
+  }
+
+  .watchlist-header {
+    gap: 16px;
+  }
+
+  .watchlist-title {
+    font-size: 26px;
+    line-height: 1.2;
+  }
+
+  .watchlist-description {
+    margin-bottom: 32px;
+  }
+
+  /* ===== STATS ===== */
+  .watchlist-stats {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .stat-box {
+    width: 100% !important;
+    height: auto;
+    padding: 16px 12px;
+  }
+
+  .stat-box .label {
+    font-size: 14px;
+  }
+
+  .stat-box .value {
+    font-size: 28px;
+  }
+
+  .edit-page,
+  .profile-page {
+    padding: 24px !important;
+  }
+
+  .create-container,
+  .history-page {
+    min-height: 100vh;
+    box-sizing: border-box;
   }
 }
 
@@ -238,9 +288,34 @@ img {
     padding: 12px !important;
   }
 
-  .movie-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 30px !important;
+  .welcome-box {
+    padding: 16px !important;
+  }
+
+  .welcome-title {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  .welcome-desc {
+    font-size: 15px;
+  }
+
+  .welcome-hint {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .welcome-plus-icon {
+    width: 16px;
+  }
+
+  .check-icon {
+    width: 18px;
+  }
+
+  .movies-grid {
+    justify-content: center;
   }
 
   .movie-card {
@@ -283,6 +358,7 @@ img {
     width: 92% !important;
     max-width: 360px;
     padding: 16px !important;
+    height: auto !important;
   }
 
   .cancel-btn,
@@ -363,4 +439,12 @@ img {
     height: 180px;
   }
 
+  .edit-page,
+  .profile-page {
+    padding: 16px !important;
+  }
+
+  .edit-container {
+    max-width: 100% !important;
+  }
 }
